@@ -6,17 +6,26 @@
 /* It defines the agent (solution) to be used
 for all optimization techniques */
 typedef struct Agent_{
+    /* common definitions */
     int n; /* number of decision variables */
     double *x; /* position */
-    double *v; /* velocity */
     double f; /* fitness value */
+    
+    /* PSO */
+    double *v; /* velocity */
+    double *xl; /* local best */
 }Agent;
 
 /* It defines the search space */
 typedef struct SearchSpace_{
+    /* common definitions */
     int m; /* number of agents (solutions) */
     int n; /* number of decision variables */
     Agent **a; /* array of pointers to agents */
+    
+    /* PSO */
+    double *g; /* global best */
+    
 }SearchSpace;
 
 /* Agent-related functions */
