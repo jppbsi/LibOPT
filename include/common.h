@@ -29,4 +29,6 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id); /* It creates a search
 void DestroySearchSpace(SearchSpace **s, int opt_id); /* It deallocates a search space */
 /**************************/
 
+typedef double (*prtFun)(Agent *, ...);
+
 #endif

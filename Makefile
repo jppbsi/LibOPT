@@ -16,11 +16,13 @@ libopt-plus: $(LIB)/libopt-plus.a
 $(LIB)/libopt-plus.a: \
 $(OBJ)/opt.o \
 $(OBJ)/common.o \
+$(OBJ)/function.o \
 $(OBJ)/pso.o \
 
 	ar csr $(LIB)/libopt-plus.a \
 $(OBJ)/opt.o \
 $(OBJ)/common.o \
+$(OBJ)/function.o \
 $(OBJ)/pso.o \
 
 $(OBJ)/opt.o: $(SRC)/opt.c
@@ -28,6 +30,9 @@ $(OBJ)/opt.o: $(SRC)/opt.c
 
 $(OBJ)/common.o: $(SRC)/common.c
 	$(CC) $(FLAGS) -I $(INCLUDE) -c $(SRC)/common.c -o $(OBJ)/common.o
+
+$(OBJ)/function.o: $(SRC)/function.c
+	$(CC) $(FLAGS) -I $(INCLUDE) -c $(SRC)/function.c -o $(OBJ)/function.o
 
 $(OBJ)/pso.o: $(SRC)/pso.c
 	$(CC) $(FLAGS) -I $(INCLUDE) -c $(SRC)/pso.c -o $(OBJ)/pso.o

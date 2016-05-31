@@ -22,7 +22,4 @@ extern "C" {
 #include <ctype.h>
 #include <stdarg.h>
     
-
-//typedef double (*prtFun)(Subgraph *, ...);
-
 #endif
