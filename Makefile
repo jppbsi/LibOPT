@@ -2,7 +2,6 @@ LIB=./lib
 INCLUDE=./include
 SRC=./src
 OBJ=./obj
-UTIL=./util
 
 CC=gcc 
 
