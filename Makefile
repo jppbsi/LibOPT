@@ -8,7 +8,7 @@ CC=gcc
 FLAGS=  -g -O0
 CFLAGS=''
 
-all: libopt-plus
+all: libopt-plus sphere
 
 libopt-plus: $(LIB)/libopt-plus.a
 	echo "libopt-plus.a built..."
@@ -37,5 +37,8 @@ $(OBJ)/function.o: $(SRC)/function.c
 $(OBJ)/pso.o: $(SRC)/pso.c
 	$(CC) $(FLAGS) -I $(INCLUDE) -c $(SRC)/pso.c -o $(OBJ)/pso.o
 
+sphere: examples/sphere.c
+	gcc $(FLAGS) examples/sphere.c -o examples/bin/sphere -I $(INCLUDE) -L $(LIB) -lopt-plus -lm;
+
 clean:
-	rm -f $(LIB)/lib*.a; rm -f $(OBJ)/*.o
+	rm -f $(LIB)/lib*.a; rm -f $(OBJ)/*.o; rm -f examples/bin/*

@@ -108,6 +108,8 @@ void DestroySearchSpace(SearchSpace **s, int opt_id){
     free(tmp->a);
     
     switch (opt_id){
+        case _PSO_:
+            break;
         default:
             fprintf(stderr,"\nInvalid optimization identifier @DestroySearchSpace.\n");
             break;       
