@@ -1,8 +1,11 @@
 #include "function.h"
 
-/* It computes the equation of a N-D sphere
+/* It computes the equation of a 2-D sphere
 Parameters:
-a: agent */
+a: agent
+---
+Minimum at f(0,0) = 0
+Domain: -infty < x,y < +infty */
 double Sphere(Agent *a, ...){
     int i;
     double sum = 0;
@@ -23,9 +26,12 @@ double Sphere(Agent *a, ...){
     return sum;
 }
 
-/* It computes the equation of the Rosenbrock function
+/* It computes the Rosenbrock's function
 Parameters:
-a: agent */
+a: agent
+---
+Minimum at f(1,1) = 0
+Domain: -infty < x,y < +infty */
 double Rosenbrock(Agent *a, ...){
     int i;
     double sum = 0;
