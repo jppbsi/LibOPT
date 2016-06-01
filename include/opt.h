@@ -5,9 +5,9 @@
 extern "C" {
 #endif
 
-/* Meta-heuristics ***********************************************/
+/* Meta-heuristics */
 #define _PSO_ 1 /* Particle Swarm Optimization */
-/*****************************************************************/
+/**************************/
     
 #include <stdio.h>
 #include <stdlib.h>

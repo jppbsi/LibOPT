@@ -1,6 +1,6 @@
 #include "random.h"
 
-/* The source code to generate random numbers was taken from  http://www.physics.drexel.edu/courses/Comp_Phys/Physics-306/random.c.*/
+/* The source code to generate random numbers was taken from  http://www.physics.drexel.edu/courses/Comp_Phys/Physics-306/random.c. */
 
 double ran2(int *idum){
     int j;

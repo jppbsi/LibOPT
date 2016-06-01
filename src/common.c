@@ -36,7 +36,8 @@ Agent *CreateAgent(int n, int opt_id){
 
 /* It deallocates an agent
 Parameters:
-a: address of the agent to be deallocated */
+a: address of the agent to be deallocated
+opt_id: identifier of the optimization technique */
 void DestroyAgent(Agent **a, int opt_id){
     Agent *tmp = NULL;
     
@@ -67,7 +68,7 @@ s: search space
 a: agent */
 void CheckAgentLimits(SearchSpace *s, Agent *a){
     if((!s) || (!a)){
-        fprintf(stderr,"\nInvalid input parameters @CheckLimits.\n");
+        fprintf(stderr,"\nInvalid input parameters @CheckAgentLimits.\n");
         exit(-1);
     }
     
@@ -125,7 +126,8 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id){
 
 /* It deallocates a search space
 Parameters:
-s: address of the search space to be deallocated */
+s: address of the search space to be deallocated
+opt_id: identifier of the optimization technique */
 void DestroySearchSpace(SearchSpace **s, int opt_id){
     SearchSpace *tmp = NULL;
     int i;
@@ -193,7 +195,6 @@ void ShowSearchSpace(SearchSpace *s){
 
 /**************************/
 
-
 /* General-purpose functions */
 /* It generates a random number uniformly distributed between low and high
 Parameters:
@@ -203,5 +204,5 @@ This algorithm has been inspired by: http://www.cprogramming.com/tutorial/random
 double GenerateRandomNumber(double low, double high){
     return randinter(low, high);
 }
-/**************************/
 
+/**************************/

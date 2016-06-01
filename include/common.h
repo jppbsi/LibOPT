@@ -14,6 +14,7 @@ typedef struct Agent_{
     /* PSO */
     double *v; /* velocity */
     double *xl; /* local best */
+    
 }Agent;
 
 /* It defines the search space */
