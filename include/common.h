@@ -15,6 +15,9 @@ typedef struct Agent_{
     double *v; /* velocity */
     double *xl; /* local best */
     
+    /* AIWPSO */
+    double pfit; /* fitness value of the previous iteration */
+    
 }Agent;
 
 /* It defines the search space */
@@ -32,8 +35,7 @@ typedef struct SearchSpace_{
     double w; /* inertia weight */
     double c1; /* c1 parameter */
     double c2; /* c2 parameter */
-    double gfit; /* global best fitness */
-    
+    double gfit; /* global best fitness */    
 }SearchSpace;
 
 /* Agent-related functions */

@@ -16,6 +16,7 @@ Agent *CreateAgent(int n, int opt_id){
     a->v = NULL;
     a->xl = NULL;
     a->fit = DBL_MAX;
+    a->pfit = DBL_MAX;
     a->n = n;
     
     switch (opt_id){
@@ -100,6 +101,9 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id){
     s->m = m;
     s->n = n;
     s->gfit = DBL_MAX;
+    s->w = 0;
+    s->c1 = 0;
+    s->c2 = 0;
     
     s->a = (Agent **)malloc(s->m*sizeof(Agent *));
     s->a[0] = CreateAgent(s->n, opt_id);
