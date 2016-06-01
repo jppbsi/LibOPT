@@ -18,6 +18,7 @@ Agent *CreateAgent(int n, int opt_id){
     switch (opt_id){
         case _PSO_:
             a->v = (double *)malloc(n*sizeof(double));
+            a->xl = (double *)malloc(n*sizeof(double));
             break;
         default:
             free(a);
@@ -47,6 +48,7 @@ void DestroyAgent(Agent **a, int opt_id){
     switch (opt_id){
         case _PSO_:
             if(tmp->v) free(tmp->v);
+            if(tmp->xl) free(tmp->xl);
             break;
         default:
             fprintf(stderr,"\nInvalid optimization identifier @DestroyAgent.\n");
@@ -87,6 +89,15 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id){
         return NULL;
     }
     
+    switch (opt_id){
+        case _PSO_:
+            s->g = (double *)malloc(s->n*sizeof(double));
+            break;
+    }
+    
+    s->LB = (double *)malloc(s->n*sizeof(double));
+    s->UB = (double *)malloc(s->n*sizeof(double));
+    
     return s;
 }
 
@@ -107,8 +118,12 @@ void DestroySearchSpace(SearchSpace **s, int opt_id){
         if(tmp->a[i]) DestroyAgent(&(tmp->a[i]), opt_id);
     free(tmp->a);
     
+    if(tmp->LB) free(tmp->LB);
+    if(tmp->UB) free(tmp->UB);
+    
     switch (opt_id){
         case _PSO_:
+            if(tmp->g) free(tmp->g);
             break;
         default:
             fprintf(stderr,"\nInvalid optimization identifier @DestroySearchSpace.\n");

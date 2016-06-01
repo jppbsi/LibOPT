@@ -22,6 +22,8 @@ typedef struct SearchSpace_{
     int m; /* number of agents (solutions) */
     int n; /* number of decision variables */
     Agent **a; /* array of pointers to agents */
+    double *LB; /* lower boundaries of each decision variable */
+    double *UB; /* upper boundaries of each decision variable */
     
     /* PSO */
     double *g; /* global best */

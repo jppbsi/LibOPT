@@ -41,4 +41,4 @@ sphere: examples/sphere.c
 	gcc $(FLAGS) examples/sphere.c -o examples/bin/sphere -I $(INCLUDE) -L $(LIB) -lopt-plus -lm;
 
 clean:
-	rm -f $(LIB)/lib*.a; rm -f $(OBJ)/*.o; rm -f examples/bin/*
+	rm -f $(LIB)/lib*.a; rm -f $(OBJ)/*.o; rm -rf examples/bin/*
