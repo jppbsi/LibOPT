@@ -132,6 +132,22 @@ void DestroySearchSpace(SearchSpace **s, int opt_id){
     
     free(tmp);
 }
+
+/* It initializes an allocated search space
+Parameters:
+s: search space */
+void InitializeSearchSpace(SearchSpace *s){
+    if(!s){
+        fprintf(stderr,"\nSearch space not allocated @InitializeSearchSpace.\n");
+        exit(-1);
+    }
+    
+    int i, j;
+    for(i = 0; i < s->m; i++){
+        for(j = 0; j < s->n; j++)
+            s->a[i]->x[j] = GenerateRandomNumber(s->LB[j], s->UB[j]);
+    }
+}
 /**************************/
 
 /* It checks whether a given agent has excedeed boundaries

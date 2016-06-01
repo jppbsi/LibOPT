@@ -32,14 +32,18 @@ typedef struct SearchSpace_{
 /* Agent-related functions */
 Agent *CreateAgent(int n, int opt_id); /* It creates an agent */
 void DestroyAgent(Agent **a, int opt_id); /* It deallocates an agent */
+void CheckLimits(SearchSpace *s, Agent *a); /* It checks whether a given agent has excedeed boundaries */
 /**************************/
 
 /* Search Space-related functions */
 SearchSpace *CreateSearchSpace(int m, int n, int opt_id); /* It creates a search space */
 void DestroySearchSpace(SearchSpace **s, int opt_id); /* It deallocates a search space */
+void InitializeSearchSpace(SearchSpace *s); /* It initializes an allocated search space */
 /**************************/
 
-void CheckLimits(SearchSpace *s, Agent *a); /* It checks whether a given agent has excedeed boundaries */
+/* General-purpose functions */
+double GenerateRandomNumber(double low, double high);
+/**************************/
 
 typedef double (*prtFun)(Agent *, ...); /* Pointer to the function used to evaluate agents */
 
