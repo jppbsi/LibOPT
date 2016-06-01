@@ -1,5 +1,6 @@
 #include "pso.h"
 
+/* PSO-related functions */
 /* It updates the velocity of an agent (particle)
 Parameters:
 S: search space
@@ -110,7 +111,9 @@ void runPSO(SearchSpace *s, prtFun Evaluate, ...){
 
     va_end(arg);
 }
+/*************************/
 
+/* AIWPSO-related functions */
 /* It executes the Particle Swarm Optimization with Adpative Inertia Weight for function minimization
 Parameters:
 s: search space
@@ -143,6 +146,8 @@ void runAIWPSO(SearchSpace *s, prtFun Evaluate, ...){
         }
 	        			
 	EvaluateSwarm(s, Evaluate, arg);
+        ComputeSuccess(s); /* Equation 17 */
+        
         va_copy(arg, argtmp);            
 	        
 	fprintf(stderr, "OK (minimum fitness value %lf)", s->gfit);
@@ -150,3 +155,23 @@ void runAIWPSO(SearchSpace *s, prtFun Evaluate, ...){
 
     va_end(arg);
 }
+
+/* It computes the pecentage of success concerning the whole search space
+Parameters:
+s: search space */
+double ComputeSuccess(SearchSpace *s){
+    if(!s){
+        fprintf(stderr,"\nSearch space not allocated @ComputeSuccess.\n");
+        exit(-1);
+    }
+    
+    int i;
+    double p = 0;
+    
+    for(i = 0; i < s->m; i++){
+        if(s->a[i]->fit < s->a[i]->pfit) p++;
+    }
+    
+    return p/s->m;
+}
+/****************************/
