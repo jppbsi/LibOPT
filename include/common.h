@@ -39,6 +39,7 @@ void CheckAgentLimits(SearchSpace *s, Agent *a); /* It checks whether a given ag
 SearchSpace *CreateSearchSpace(int m, int n, int opt_id); /* It creates a search space */
 void DestroySearchSpace(SearchSpace **s, int opt_id); /* It deallocates a search space */
 void InitializeSearchSpace(SearchSpace *s); /* It initializes an allocated search space */
+void ShowSearchSpace(SearchSpace *s); /* It shows a search space */
 /**************************/
 
 /* General-purpose functions */

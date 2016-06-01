@@ -165,6 +165,26 @@ void InitializeSearchSpace(SearchSpace *s){
             s->a[i]->x[j] = GenerateRandomNumber(s->LB[j], s->UB[j]);
     }
 }
+
+/* It shows a search space
+Parameters:
+s: search space */
+void ShowSearchSpace(SearchSpace *s){
+    if(!s){
+        fprintf(stderr,"\nSearch space not allocated @ShowSearchSpace.\n");
+        exit(-1);
+    }
+    
+    int i, j;
+    fprintf(stderr,"\nSearch space with %d agents and %d decision variables\n", s->m, s->n);
+    for(i = 0; i < s->m; i++){
+        fprintf(stderr,"\nAgent %d-> ", i);
+        for(j = 0; j < s->n; j++)
+            fprintf(stderr,"x[%d]: %f   ", j, s->a[i]->x[j]);
+    }
+    fprintf(stderr,"\n-----------------------------------------------------\n");
+}
+
 /**************************/
 
 
@@ -180,7 +200,8 @@ double GenerateRandomNumber(int low, int high){
     
     time(&seconds);
     srand((unsigned int) seconds);
-    r = rand()%(high-low+1)+low;
+    srand((unsigned)time(NULL));
+    r = (rand()%(high-low+1)+low)/100.0;
     
     return r;
 }
