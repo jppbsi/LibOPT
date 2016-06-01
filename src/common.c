@@ -133,3 +133,20 @@ void DestroySearchSpace(SearchSpace **s, int opt_id){
     free(tmp);
 }
 /**************************/
+
+/* It checks whether a given agent has excedeed boundaries
+Parameters:
+s: search space
+a: agent */
+void CheckLimits(SearchSpace *s, Agent *a){
+    if((!s) || (!a)){
+        fprintf(stderr,"\nInvalid input parameters @CheckLimits.\n");
+        exit(-1);
+    }
+    
+    int j;
+    for(j = 0; j < a->n; j++){
+        if(a->x[j] < s->LB[j]) a->x[j] = s->LB[j];
+        else if(a->x[j] > s->UB[j]) a->x[j] = s->UB[j];
+    }
+}

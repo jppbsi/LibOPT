@@ -3,8 +3,7 @@
 
 #include "opt.h"
 
-/* It defines the agent (solution) to be used
-for all optimization techniques */
+/* It defines the agent (solution) to be used for all optimization techniques */
 typedef struct Agent_{
     /* common definitions */
     int n; /* number of decision variables */
@@ -40,6 +39,8 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id); /* It creates a search
 void DestroySearchSpace(SearchSpace **s, int opt_id); /* It deallocates a search space */
 /**************************/
 
-typedef double (*prtFun)(Agent *, ...);
+void CheckLimits(SearchSpace *s, Agent *a); /* It checks whether a given agent has excedeed boundaries */
+
+typedef double (*prtFun)(Agent *, ...); /* Pointer to the function used to evaluate agents */
 
 #endif
