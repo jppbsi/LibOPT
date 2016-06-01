@@ -160,6 +160,7 @@ void InitializeSearchSpace(SearchSpace *s){
     }
     
     int i, j;
+    #pragma omp parallel for
     for(i = 0; i < s->m; i++){
         for(j = 0; j < s->n; j++)
             s->a[i]->x[j] = (double)randinter((float)s->LB[j],(float) s->UB[j]);

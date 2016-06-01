@@ -28,22 +28,22 @@ $(OBJ)/random.o \
 $(OBJ)/pso.o \
 
 $(OBJ)/opt.o: $(SRC)/opt.c
-	$(CC) $(FLAGS) -I $(INCLUDE) -c $(SRC)/opt.c -o $(OBJ)/opt.o
+	$(CC) $(FLAGS) -I $(INCLUDE) -c $(SRC)/opt.c -o $(OBJ)/opt.o -fopenmp
 
 $(OBJ)/common.o: $(SRC)/common.c
-	$(CC) $(FLAGS) -I $(INCLUDE) -c $(SRC)/common.c -o $(OBJ)/common.o
+	$(CC) $(FLAGS) -I $(INCLUDE) -c $(SRC)/common.c -o $(OBJ)/common.o -fopenmp
 
 $(OBJ)/function.o: $(SRC)/function.c
-	$(CC) $(FLAGS) -I $(INCLUDE) -c $(SRC)/function.c -o $(OBJ)/function.o
+	$(CC) $(FLAGS) -I $(INCLUDE) -c $(SRC)/function.c -o $(OBJ)/function.o -fopenmp
 
 $(OBJ)/random.o: $(SRC)/random.c
-	$(CC) $(FLAGS) -I $(INCLUDE) -c $(SRC)/random.c -o $(OBJ)/random.o
+	$(CC) $(FLAGS) -I $(INCLUDE) -c $(SRC)/random.c -o $(OBJ)/random.o -fopenmp
 	
 $(OBJ)/pso.o: $(SRC)/pso.c
-	$(CC) $(FLAGS) -I $(INCLUDE) -c $(SRC)/pso.c -o $(OBJ)/pso.o
+	$(CC) $(FLAGS) -I $(INCLUDE) -c $(SRC)/pso.c -o $(OBJ)/pso.o -fopenmp
 
 sphere: examples/sphere.c
-	gcc $(FLAGS) examples/sphere.c -o examples/bin/sphere -I $(INCLUDE) -L $(LIB) -lopt-plus -lm;
+	gcc $(FLAGS) examples/sphere.c -o examples/bin/sphere -I $(INCLUDE) -L $(LIB) -lopt-plus -lm -fopenmp
 
 clean:
 	rm -f $(LIB)/lib*.a; rm -f $(OBJ)/*.o; rm -rf examples/bin/*
