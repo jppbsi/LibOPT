@@ -9,7 +9,7 @@ typedef struct Agent_{
     /* common definitions */
     int n; /* number of decision variables */
     double *x; /* position */
-    double f; /* fitness value */
+    double fit; /* fitness value */
     
     /* PSO */
     double *v; /* velocity */
@@ -21,12 +21,17 @@ typedef struct SearchSpace_{
     /* common definitions */
     int m; /* number of agents (solutions) */
     int n; /* number of decision variables */
+    int iterations; /* number of iterations for convergence */
     Agent **a; /* array of pointers to agents */
     double *LB; /* lower boundaries of each decision variable */
     double *UB; /* upper boundaries of each decision variable */
     
     /* PSO */
-    double *g; /* global best */
+    double *g; /* global best agent */
+    double w; /* inertia weight */
+    double c1; /* c1 parameter */
+    double c2; /* c2 parameter */
+    double gfit; /* global best fitness */
     
 }SearchSpace;
 

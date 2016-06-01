@@ -13,8 +13,10 @@ Agent *CreateAgent(int n, int opt_id){
     
     Agent *a = NULL;
     a = (Agent *)malloc(sizeof(Agent));
-    a->n = n;
     a->v = NULL;
+    a->xl = NULL;
+    a->fit = DBL_MAX;
+    a->n = n;
     
     switch (opt_id){
         case _PSO_:
@@ -95,6 +97,7 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id){
     s = (SearchSpace *)malloc(sizeof(SearchSpace));
     s->m = m;
     s->n = n;
+    s->gfit = DBL_MAX;
     
     s->a = (Agent **)malloc(s->m*sizeof(Agent *));
     s->a[0] = CreateAgent(s->n, opt_id);
@@ -161,7 +164,6 @@ void InitializeSearchSpace(SearchSpace *s){
     }
     
     int i, j;
-    #pragma omp parallel for
     for(i = 0; i < s->m; i++){
         for(j = 0; j < s->n; j++)
             s->a[i]->x[j] = (double)randinter((float)s->LB[j],(float) s->UB[j]);
@@ -183,6 +185,7 @@ void ShowSearchSpace(SearchSpace *s){
         fprintf(stderr,"\nAgent %d-> ", i);
         for(j = 0; j < s->n; j++)
             fprintf(stderr,"x[%d]: %f   ", j, s->a[i]->x[j]);
+        fprintf(stderr,"fitness value: %f", s->a[i]->fit);
     }
     fprintf(stderr,"\n-----------------------------------------------------\n");
 }
