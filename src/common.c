@@ -20,8 +20,8 @@ Agent *CreateAgent(int n, int opt_id){
     
     switch (opt_id){
         case _PSO_:
-            a->v = (double *)malloc(n*sizeof(double));
-            a->xl = (double *)malloc(n*sizeof(double));
+            a->v = (double *)calloc(n,sizeof(double));
+            a->xl = (double *)calloc(n,sizeof(double));
             break;
         default:
             free(a);
@@ -72,6 +72,7 @@ void CheckAgentLimits(SearchSpace *s, Agent *a){
     }
     
     int j;
+
     for(j = 0; j < a->n; j++){
         if(a->x[j] < s->LB[j]) a->x[j] = s->LB[j];
         else if(a->x[j] > s->UB[j]) a->x[j] = s->UB[j];
@@ -112,7 +113,7 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id){
     
     switch (opt_id){
         case _PSO_:
-            s->g = (double *)malloc(s->n*sizeof(double));
+            s->g = (double *)calloc(s->n,sizeof(double));
             break;
     }
     

@@ -101,9 +101,7 @@ void runPSO(SearchSpace *s, prtFun Evaluate, ...){
             UpdateParticlePosition(s, i);
             CheckAgentLimits(s, s->a[i]);
         }
-	        
-	
-			
+	        			
 	EvaluateSwarm(s, Evaluate, arg);
         va_copy(arg, argtmp);            
 	        
