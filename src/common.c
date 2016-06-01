@@ -162,7 +162,7 @@ void InitializeSearchSpace(SearchSpace *s){
     int i, j;
     for(i = 0; i < s->m; i++){
         for(j = 0; j < s->n; j++)
-            s->a[i]->x[j] = GenerateRandomNumber(s->LB[j], s->UB[j]);
+            s->a[i]->x[j] = (double)randinter((float)s->LB[j],(float) s->UB[j]);
     }
 }
 
@@ -189,20 +189,13 @@ void ShowSearchSpace(SearchSpace *s){
 
 
 /* General-purpose functions */
-/* It generates a random number whithin [low,high]
+/* It generates a random number uniformly distributed between low and high
 Parameters:
 low: lower bound
 high: upper bound
 This algorithm has been inspired by: http://www.cprogramming.com/tutorial/random.html */
-double GenerateRandomNumber(int low, int high){
-    time_t seconds;
-    double r;
-    
-    time(&seconds);
-    srand((unsigned int) seconds);
-    srand((unsigned)time(NULL));
-    r = (rand()%(high-low+1)+low)/100.0;
-    
-    return r;
+double GenerateRandomNumber(double low, double high){
+    return randinter(low, high);
 }
 /**************************/
+

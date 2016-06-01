@@ -17,12 +17,14 @@ $(LIB)/libopt-plus.a: \
 $(OBJ)/opt.o \
 $(OBJ)/common.o \
 $(OBJ)/function.o \
+$(OBJ)/random.o \
 $(OBJ)/pso.o \
 
 	ar csr $(LIB)/libopt-plus.a \
 $(OBJ)/opt.o \
 $(OBJ)/common.o \
 $(OBJ)/function.o \
+$(OBJ)/random.o \
 $(OBJ)/pso.o \
 
 $(OBJ)/opt.o: $(SRC)/opt.c
@@ -34,6 +36,9 @@ $(OBJ)/common.o: $(SRC)/common.c
 $(OBJ)/function.o: $(SRC)/function.c
 	$(CC) $(FLAGS) -I $(INCLUDE) -c $(SRC)/function.c -o $(OBJ)/function.o
 
+$(OBJ)/random.o: $(SRC)/random.c
+	$(CC) $(FLAGS) -I $(INCLUDE) -c $(SRC)/random.c -o $(OBJ)/random.o
+	
 $(OBJ)/pso.o: $(SRC)/pso.c
 	$(CC) $(FLAGS) -I $(INCLUDE) -c $(SRC)/pso.c -o $(OBJ)/pso.o
 

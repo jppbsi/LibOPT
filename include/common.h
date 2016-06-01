@@ -2,6 +2,7 @@
 #define COMMON_H
 
 #include "opt.h"
+#include "random.h"
 
 /* It defines the agent (solution) to be used for all optimization techniques */
 typedef struct Agent_{
@@ -43,7 +44,7 @@ void ShowSearchSpace(SearchSpace *s); /* It shows a search space */
 /**************************/
 
 /* General-purpose functions */
-double GenerateRandomNumber(int low, int high); /* It generates a random number whithin [low,high] */
+double GenerateRandomNumber(double low, double high); /* It generates a random number whithin [low,high] */
 /**************************/
 
 typedef double (*prtFun)(Agent *, ...); /* Pointer to the function used to evaluate agents */
