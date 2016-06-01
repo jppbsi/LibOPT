@@ -13,6 +13,7 @@ Agent *CreateAgent(int n, int opt_id){
     
     Agent *a = NULL;
     a = (Agent *)malloc(sizeof(Agent));
+    a->n = n;
     a->v = NULL;
     
     switch (opt_id){
