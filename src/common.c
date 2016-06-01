@@ -57,6 +57,23 @@ void DestroyAgent(Agent **a, int opt_id){
     
     free(tmp);
 }
+
+/* It checks whether a given agent has excedeed boundaries
+Parameters:
+s: search space
+a: agent */
+void CheckAgentLimits(SearchSpace *s, Agent *a){
+    if((!s) || (!a)){
+        fprintf(stderr,"\nInvalid input parameters @CheckLimits.\n");
+        exit(-1);
+    }
+    
+    int j;
+    for(j = 0; j < a->n; j++){
+        if(a->x[j] < s->LB[j]) a->x[j] = s->LB[j];
+        else if(a->x[j] > s->UB[j]) a->x[j] = s->UB[j];
+    }
+}
 /**************************/
 
 /* Search Space-related functions */
@@ -150,19 +167,21 @@ void InitializeSearchSpace(SearchSpace *s){
 }
 /**************************/
 
-/* It checks whether a given agent has excedeed boundaries
+
+/* General-purpose functions */
+/* It generates a random number whithin [low,high]
 Parameters:
-s: search space
-a: agent */
-void CheckLimits(SearchSpace *s, Agent *a){
-    if((!s) || (!a)){
-        fprintf(stderr,"\nInvalid input parameters @CheckLimits.\n");
-        exit(-1);
-    }
+low: lower bound
+high: upper bound
+This algorithm has been inspired by: http://www.cprogramming.com/tutorial/random.html */
+double GenerateRandomNumber(int low, int high){
+    time_t seconds;
+    double r;
     
-    int j;
-    for(j = 0; j < a->n; j++){
-        if(a->x[j] < s->LB[j]) a->x[j] = s->LB[j];
-        else if(a->x[j] > s->UB[j]) a->x[j] = s->UB[j];
-    }
+    time(&seconds);
+    srand((unsigned int) seconds);
+    r = rand()%(high-low+1)+low;
+    
+    return r;
 }
+/**************************/
