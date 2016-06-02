@@ -1,0 +1,5 @@
+10 2 10 #<n_particles> <dimension> <max_iterations>
+1.7 1.7 # <c1> <c2>
+0.7 0.5 1.5 #<w> <w_min> <w_max>
+-5.12 5.12 #<LB> <UB> x[0]
+-5.12 5.12 #<LB> <UB> x[1]

@@ -7,25 +7,10 @@ int main(){
     
     SearchSpace *s = NULL;
     int i;
-    
-    double r = GenerateRandomNumber(-20,20);
-    
-    s = CreateSearchSpace(10, 2, _PSO_); /* It creates a search space with 10 agents for a N-D problem. We are going to use PSO to solve it. */
-    
-    /* It initializes PSO parameters */
-    s->w = 1.4;
-    s->c1 = 1.4;
-    s->c2 = 0.6;
-    s->iterations = 10;
-    
-    /* It initalizes the boundaries of decision variables within the range [-5,10] */
-    for (i = 0; i < s->n; i++){
-        s->LB[i] = -5;
-        s->UB[i] = 10;
-    }
-    /******/
-    
+        
+    s = ReadSearchSpaceFromFile("examples/model_files/pso_model.txt", _PSO_); /* It reads a model file and creates a search space considering all the inputed parameters. */
     InitializeSearchSpace(s); /* It initalizes the search space */
+    
     runPSO(s, Rosenbrock); /* It minimizes the Rosenbrock's function */
         
     DestroySearchSpace(&s, _PSO_); /* It deallocates the search space */

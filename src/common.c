@@ -241,6 +241,7 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
     switch (opt_id){
         case _PSO_:
             s = CreateSearchSpace(m, n, _PSO_);
+            s->iterations = iterations;
             
             fscanf(fp, "%lf %lf", &(s->c1), &(s->c2));
             WaiveComment(fp);
