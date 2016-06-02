@@ -23,11 +23,11 @@ Agent *CreateAgent(int n, int opt_id){
         case _PSO_:
             a->v = (double *)calloc(n,sizeof(double));
             a->xl = (double *)calloc(n,sizeof(double));
-            break;
+        break;
         default:
             free(a);
             fprintf(stderr,"\nInvalid optimization identifier @CreateAgent\n");
-            return NULL;
+        return NULL;
     }
     
     a->x = (double *)malloc(n*sizeof(double));
@@ -54,10 +54,10 @@ void DestroyAgent(Agent **a, int opt_id){
         case _PSO_:
             if(tmp->v) free(tmp->v);
             if(tmp->xl) free(tmp->xl);
-            break;
+        break;
         default:
             fprintf(stderr,"\nInvalid optimization identifier @DestroyAgent.\n");
-            break;
+        break;
     }
     
     free(tmp);
@@ -119,7 +119,7 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id){
     switch (opt_id){
         case _PSO_:
             s->g = (double *)calloc(s->n,sizeof(double));
-            break;
+        break;
     }
     
     s->LB = (double *)malloc(s->n*sizeof(double));
@@ -152,10 +152,10 @@ void DestroySearchSpace(SearchSpace **s, int opt_id){
     switch (opt_id){
         case _PSO_:
             if(tmp->g) free(tmp->g);
-            break;
+        break;
         default:
             fprintf(stderr,"\nInvalid optimization identifier @DestroySearchSpace.\n");
-            break;       
+        break;       
     }
     
     free(tmp);
@@ -209,4 +209,55 @@ double GenerateRandomNumber(double low, double high){
     return randinter(low, high);
 }
 
+/* It waives a comment in a model file
+Parameters:
+fp = file pointer */
+void WaiveComment(FILE *fp){
+    char c;
+    
+    fscanf(fp, "%c", &c);
+    while((c != '\n') && (!feof(fp))) fscanf(fp, "%c", &c);
+    
+}
+
+/* It loads a search space with parameters specified in a file
+Parameters:
+fileName: path to the file that contains the parameters of the search space
+opt_id: identifier of the optimization technique */
+SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
+    FILE *fp = NULL;
+    SearchSpace *s = NULL;
+    int j, m, n, iterations;
+    
+    fp = fopen(fileName, "r");
+    if(!fp){
+        fprintf(stderr,"\nUnable to open file %s @ReadSearchSpaceFromFile.\n", fileName);
+        return NULL;
+    }
+    
+    fscanf(fp, "%d %d %d", &m, &n, &iterations);
+    WaiveComment(fp);
+        
+    switch (opt_id){
+        case _PSO_:
+            s = CreateSearchSpace(m, n, _PSO_);
+            
+            fscanf(fp, "%lf %lf", &(s->c1), &(s->c2));
+            WaiveComment(fp);
+            fscanf(fp, "%lf %lf %lf", &(s->w), &(s->w_min), &(s->w_max));
+            WaiveComment(fp);
+            for(j = 0; j < s->n; j++){
+                fscanf(fp, "%lf %lf", &(s->LB[j]), &(s->UB[j]));
+                WaiveComment(fp);
+            }
+            fclose(fp);
+            
+        break;
+        default:
+            fprintf(stderr,"\nInvalid optimization identifier @ReadSearchSpaceFromFile.\n");
+        break;
+    }
+    
+    return s;
+}
 /**************************/

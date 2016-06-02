@@ -33,6 +33,8 @@ typedef struct SearchSpace_{
     /* PSO */
     double *g; /* global best agent */
     double w; /* inertia weight */
+    double w_min; /* lower bound for w - used for adaptive inertia weight */
+    double w_max; /* upper bound for w - used for adaptive inertia weight */
     double c1; /* c1 parameter */
     double c2; /* c2 parameter */
     double gfit; /* global best fitness */    
@@ -53,6 +55,9 @@ void ShowSearchSpace(SearchSpace *s); /* It shows a search space */
 
 /* General-purpose functions */
 double GenerateRandomNumber(double low, double high); /* It generates a random number whithin [low,high] */
+void WaiveComment(FILE *fp); /* It waives a comment in a model file */
+SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id); /* It loads a search space with parameters specified in a file */
+
 /**************************/
 
 typedef double (*prtFun)(Agent *, ...); /* Pointer to the function used to evaluate agents */
