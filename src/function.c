@@ -52,9 +52,12 @@ double Rosenbrock(Agent *a, ...){
     return sum;
 }
 
-/* It computes the equation of the Dixon-Price function
+/* It computes the Dixon-Price's function
 Parameters:
-a: agent */
+a: agent
+---
+Minimum at f(x*) = 0 at x_i = 2^{-/frac{2^i-2}{2^i}}
+Domain: -infty < x,y < +infty */
 double Dixon_Price(Agent *a, ...){
     int i;
     double sum = 0;

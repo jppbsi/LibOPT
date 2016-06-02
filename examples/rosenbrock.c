@@ -18,7 +18,7 @@ int main(){
     s->c2 = 0.6;
     s->iterations = 10;
     
-    /* It initalizes the boundaries of decision variables */
+    /* It initalizes the boundaries of decision variables within the range [-5,10] */
     for (i = 0; i < s->n; i++){
         s->LB[i] = -5;
         s->UB[i] = 10;
@@ -26,7 +26,7 @@ int main(){
     /******/
     
     InitializeSearchSpace(s); /* It initalizes the search space */
-    runPSO(s, Rosenbrock); /* It minimizes the Rosenbrock function */
+    runPSO(s, Rosenbrock); /* It minimizes the Rosenbrock's function */
         
     DestroySearchSpace(&s, _PSO_); /* It deallocates the search space */
     
