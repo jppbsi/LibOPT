@@ -7,9 +7,7 @@ int main(){
     
     SearchSpace *s = NULL;
     int i;
-    
-    double r = GenerateRandomNumber(-20,20);
-    
+        
     s = CreateSearchSpace(10, 2, _PSO_); /* It creates a search space with 10 agents for a 2-D problem. We are going to use PSO to solve it. */
     
     /* It initializes PSO parameters */
@@ -18,7 +16,7 @@ int main(){
     s->c2 = 0.6;
     s->iterations = 10;
     
-    /* It initalizes the boundaries of decision variables */
+    /* It initalizes the boundaries of decision variables within the range [-5.12,5.12] */
     for (i = 0; i < s->n; i++){
         s->LB[i] = -5.12;
         s->UB[i] = 5.12;
