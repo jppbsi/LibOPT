@@ -25,7 +25,7 @@ int main(){
     
     InitializeSearchSpace(s); /* It initalizes the search space */
     
-    runAIWPSO(s, Sphere); /* It minimizes function Sphere */
+    runPSO(s, Sphere); /* It minimizes function Sphere */
     
     DestroySearchSpace(&s, _PSO_); /* It deallocates the search space */
     
