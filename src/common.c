@@ -20,9 +20,9 @@ Agent *CreateAgent(int n, int opt_id){
     a->n = n;
     
     switch (opt_id){
-        case _PSO_:
+        case (_PSO_ || _BA_):
             a->v = (double *)calloc(n,sizeof(double));
-            a->xl = (double *)calloc(n,sizeof(double));
+            if(opt_id == _PSO_) a->xl = (double *)calloc(n,sizeof(double));
         break;
         default:
             free(a);
@@ -51,9 +51,9 @@ void DestroyAgent(Agent **a, int opt_id){
     if(tmp->x) free(tmp->x);
     
     switch (opt_id){
-        case _PSO_:
+        case (_PSO_ || _BA_):
             if(tmp->v) free(tmp->v);
-            if(tmp->xl) free(tmp->xl);
+            if(opt_id == _PSO_) if(tmp->xl) free(tmp->xl);
         break;
         default:
             fprintf(stderr,"\nInvalid optimization identifier @DestroyAgent.\n");
@@ -80,6 +80,35 @@ void CheckAgentLimits(SearchSpace *s, Agent *a){
         else if(a->x[j] > s->UB[j]) a->x[j] = s->UB[j];
     }
 }
+
+/* It copies an agent
+Parameters:
+a: agent
+opt_id: identifier of the optimization technique */
+Agent *CopyAgent(Agent *a, int opt_id){
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @CopyAgent.\n");
+        exit(-1);
+    }
+    
+    Agent *cpy = NULL;
+    cpy = CreateAgent(a->n, opt_id);
+    
+    switch (opt_id){
+        case (_PSO_ || _BA_):
+            memcpy(cpy->v, a->v, a->n*sizeof(double));
+            if(opt_id == _PSO_) memcpy(cpy->xl, a->xl, a->n*sizeof(double));
+        break;
+        default:
+            fprintf(stderr,"\nInvalid optimization identifier @CopyAgent.\n");
+            DestroyAgent(&cpy, opt_id);
+            return NULL;
+        break;
+    }
+    
+    return cpy;
+}
+
 /**************************/
 
 /* Search Space-related functions */
@@ -231,7 +260,6 @@ void EvaluateSearchSpace(SearchSpace *s, prtFun Evaluate, va_list arg){
         va_copy(arg, argtmp);
     }
 }
-
 /**************************/
 
 /* General-purpose functions */

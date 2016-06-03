@@ -45,7 +45,7 @@ arg: list of additional arguments */
 void EvaluateSwarm(SearchSpace *s, prtFun Evaluate, va_list arg){
     va_list argtmp;
     int i, j;
-    double f;
+    double fitValue;
     
     if(!s){
         fprintf(stderr,"\nSearch space not allocated @EvaluateSwarm.\n");
@@ -54,10 +54,10 @@ void EvaluateSwarm(SearchSpace *s, prtFun Evaluate, va_list arg){
     
     va_copy(argtmp, arg);
     for(i = 0; i < s->m; i++){
-        f = Evaluate(s->a[i], arg); /* It executes the fitness function for agent i */
+        fitValue = Evaluate(s->a[i], arg); /* It executes the fitness function for agent i */
         
-        if(f < s->a[i]->fit){ /* It updates the local best value and position */
-            s->a[i]->fit = f;    
+        if(fitValue < s->a[i]->fit){ /* It updates the local best value and position */
+            s->a[i]->fit = fitValue;    
             for(j = 0; j < s->n; j++) 
                 s->a[i]->xl[j] = s->a[i]->x[j];
         }

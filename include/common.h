@@ -55,6 +55,7 @@ typedef double (*prtFun)(Agent *, ...); /* Pointer to the function used to evalu
 Agent *CreateAgent(int n, int opt_id); /* It creates an agent */
 void DestroyAgent(Agent **a, int opt_id); /* It deallocates an agent */
 void CheckAgentLimits(SearchSpace *s, Agent *a); /* It checks whether a given agent has excedeed boundaries */
+Agent *CopyAgent(Agent *a, int opt_id); /* It copies an agent */
 /**************************/
 
 /* Search Space-related functions */

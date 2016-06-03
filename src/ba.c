@@ -67,7 +67,8 @@ arg: list of additional arguments */
 void runBA(SearchSpace *s, prtFun Evaluate, ...){
     va_list arg, argtmp;
     int t, i;
-    double beta, prob;
+    double beta, prob, fitValue;
+    Agent *tmp = NULL;
     		
     va_start(arg, Evaluate);
     va_copy(argtmp, arg);
@@ -78,24 +79,33 @@ void runBA(SearchSpace *s, prtFun Evaluate, ...){
     }
         
     EvaluateSearchSpace(s, Evaluate, arg); /* Initial evaluation of the search space */
+    tmp = CreateAgent(s->n, _BA_);
         
-    /*for(t = 1; t <= s->iterations; t++){
+    for(t = 1; t <= s->iterations; t++){
         fprintf(stderr,"\nRunning iteration %d/%d ... ", t, s->iterations);
-        va_copy(arg, argtmp);
             
-        /* for each particle */
-       /* for(i = 0; i < s->m; i++){
-            UpdateParticleVelocity(s, i);
-            UpdateParticlePosition(s, i);
+        /* for each bat */
+       for(i = 0; i < s->m; i++){
+            va_copy(arg, argtmp);
+            SetBatFrequency(s, i); /* Equation 1 */
+            UpdateBatVelocity(s, i); /* Equation 2 */
+            
+            tmp = CopyAgent(s->a[i], _BA_);
+            //tmp = tmp+v; TO BE DONE HERE!!!
+            fitValue = Evaluate(tmp, arg); /* It executes the fitness function for agent i */
+            if(fitValue < s->a[i]->fit){ /* We accept the new solution */
+                
+            }
+            
             CheckAgentLimits(s, s->a[i]);
         }
 	        			
-	EvaluateSwarm(s, Evaluate, arg);
-        va_copy(arg, argtmp);            
+	//EvaluateSwarm(s, Evaluate, arg);
 	        
 	fprintf(stderr, "OK (minimum fitness value %lf)", s->gfit);
-    }*/
+    }
 
+    DestroyAgent(&tmp, _BA_);
     va_end(arg);
 }
 /*************************/
