@@ -44,9 +44,12 @@ typedef struct SearchSpace_{
     /* BA */
     double f_min; /* minimum frequency */
     double f_max; /* maximum frequency */
+    double r; /* pulse rate */
 
 
 }SearchSpace;
+
+typedef double (*prtFun)(Agent *, ...); /* Pointer to the function used to evaluate agents */
 
 /* Agent-related functions */
 Agent *CreateAgent(int n, int opt_id); /* It creates an agent */
@@ -59,6 +62,7 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id); /* It creates a search
 void DestroySearchSpace(SearchSpace **s, int opt_id); /* It deallocates a search space */
 void InitializeSearchSpace(SearchSpace *s); /* It initializes an allocated search space */
 void ShowSearchSpace(SearchSpace *s); /* It shows a search space */
+void EvaluateSearchSpace(SearchSpace *s, prtFun Evaluate, va_list arg); /* It evaluates a search space */
 /**************************/
 
 /* General-purpose functions */
@@ -67,7 +71,5 @@ void WaiveComment(FILE *fp); /* It waives a comment in a model file */
 SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id); /* It loads a search space with parameters specified in a file */
 
 /**************************/
-
-typedef double (*prtFun)(Agent *, ...); /* Pointer to the function used to evaluate agents */
 
 #endif
