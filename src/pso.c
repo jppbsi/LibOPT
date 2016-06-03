@@ -133,7 +133,10 @@ void runAIWPSO(SearchSpace *s, prtFun Evaluate, ...){
     }
         
     EvaluateSwarm(s, Evaluate, arg); /* Initial evaluation */
-        
+    
+    for(i = 0; i < s->m; i++)
+        s->a[i]->pfit = s->a[i]->fit;
+    
     for(t = 1; t <= s->iterations; t++){
         fprintf(stderr,"\nRunning iteration %d/%d ... ", t, s->iterations);
         va_copy(arg, argtmp);
@@ -146,10 +149,14 @@ void runAIWPSO(SearchSpace *s, prtFun Evaluate, ...){
         }
 	        			
 	EvaluateSwarm(s, Evaluate, arg);
-        ComputeSuccess(s); /* Equation 17 */
+        prob = ComputeSuccess(s); /* Equations 17 and 18 */
+        s->w = (s->w_max-s->w_min)*prob-s->w_min; /* Equation 20 */
         
         va_copy(arg, argtmp);            
-	        
+	
+        for(i = 0; i < s->m; i++)
+            s->a[i]->pfit = s->a[i]->fit;
+        
 	fprintf(stderr, "OK (minimum fitness value %lf)", s->gfit);
     }
 

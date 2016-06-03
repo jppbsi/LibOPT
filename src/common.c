@@ -102,6 +102,8 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id){
     s->n = n;
     s->gfit = DBL_MAX;
     s->w = 0;
+    s->w_min = 0;
+    s->w_max = 0;
     s->c1 = 0;
     s->c2 = 0;
     
