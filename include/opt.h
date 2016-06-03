@@ -7,6 +7,7 @@ extern "C" {
 
 /* Meta-heuristics */
 #define _PSO_ 1 /* Particle Swarm Optimization */
+#define _BA_ 2 /* Bat Algorithm */
 /**************************/
     
 #include <stdio.h>

@@ -119,7 +119,7 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id){
     }
     
     switch (opt_id){
-        case _PSO_:
+        case (_PSO_ || _BA_):
             s->g = (double *)calloc(s->n,sizeof(double));
         break;
     }
@@ -152,7 +152,7 @@ void DestroySearchSpace(SearchSpace **s, int opt_id){
     if(tmp->UB) free(tmp->UB);
     
     switch (opt_id){
-        case _PSO_:
+        case (_PSO_ || _BA_):
             if(tmp->g) free(tmp->g);
         break;
         default:

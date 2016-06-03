@@ -18,12 +18,14 @@ $(OBJ)/common.o \
 $(OBJ)/function.o \
 $(OBJ)/random.o \
 $(OBJ)/pso.o \
+$(OBJ)/ba.o \
 
 	ar csr $(LIB)/libopt-plus.a \
 $(OBJ)/common.o \
 $(OBJ)/function.o \
 $(OBJ)/random.o \
 $(OBJ)/pso.o \
+$(OBJ)/ba.o \
 
 $(OBJ)/common.o: $(SRC)/common.c
 	$(CC) $(FLAGS) -I $(INCLUDE) -c $(SRC)/common.c -o $(OBJ)/common.o
@@ -36,6 +38,9 @@ $(OBJ)/random.o: $(SRC)/random.c
 	
 $(OBJ)/pso.o: $(SRC)/pso.c
 	$(CC) $(FLAGS) -I $(INCLUDE) -c $(SRC)/pso.c -o $(OBJ)/pso.o
+
+$(OBJ)/ba.o: $(SRC)/ba.c
+	$(CC) $(FLAGS) -I $(INCLUDE) -c $(SRC)/ba.c -o $(OBJ)/ba.o
 
 sphere: examples/sphere.c
 	$(CC) $(FLAGS) examples/sphere.c -o examples/bin/sphere -I $(INCLUDE) -L $(LIB) -lopt-plus -lm;
