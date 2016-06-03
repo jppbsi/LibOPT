@@ -150,7 +150,7 @@ void runAIWPSO(SearchSpace *s, prtFun Evaluate, ...){
 	        			
 	EvaluateSwarm(s, Evaluate, arg);
         prob = ComputeSuccess(s); /* Equations 17 and 18 */
-        s->w = (s->w_max-s->w_min)*prob-s->w_min; /* Equation 20 */
+        s->w = (s->w_max-s->w_min)*prob+s->w_min; /* Equation 20 */
         
         va_copy(arg, argtmp);            
 	
