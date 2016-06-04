@@ -38,7 +38,6 @@ arg: list of additional arguments */
 void EvaluateBats(SearchSpace *s, prtFun Evaluate, va_list arg){
     va_list argtmp;
     int i, j;
-    double fit;
     
     if(!s){
         fprintf(stderr,"\nSearch space not allocated @EvaluateBats.\n");
@@ -47,9 +46,8 @@ void EvaluateBats(SearchSpace *s, prtFun Evaluate, va_list arg){
     
     va_copy(argtmp, arg);
     for(i = 0; i < s->m; i++){
-        fit = Evaluate(s->a[i], arg); /* It executes the fitness function for agent i */
+        s->a[i]->fit = Evaluate(s->a[i], arg); /* It executes the fitness function for agent i */
                     
-        s->a[i]->fit = fit;
         if(s->a[i]->fit < s->gfit){ /* It updates the global best value and position */
             s->gfit = s->a[i]->fit;
         

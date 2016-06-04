@@ -24,12 +24,12 @@ int main(){
     }
     /******/
     
-    s = CreateSearchSpace(10, 2, _BA_);
+    s = CreateSearchSpace(100, 2, _BA_);
     s->f_min = 0;
-    s->f_max = 7;
-    s->r = 0.7;
-    s->A = 0.7;
-    s->iterations = 10;
+    s->f_max = 100;
+    s->r = 0.3;
+    s->A = 0.9;
+    s->iterations = 10000;
     for (i = 0; i < s->n; i++){
         s->LB[i] = -5.12;
         s->UB[i] = 5.12;
