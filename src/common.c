@@ -20,7 +20,8 @@ Agent *CreateAgent(int n, int opt_id){
     a->n = n;
     
     switch (opt_id){
-        case (_PSO_ || _BA_):
+        case _PSO_:
+        case _BA_:
             a->v = (double *)calloc(n,sizeof(double));
             if(opt_id == _PSO_) a->xl = (double *)calloc(n,sizeof(double));
         break;
@@ -51,7 +52,8 @@ void DestroyAgent(Agent **a, int opt_id){
     if(tmp->x) free(tmp->x);
     
     switch (opt_id){
-        case (_PSO_ || _BA_):
+        case _PSO_:
+        case _BA_  :
             if(tmp->v) free(tmp->v);
             if(opt_id == _PSO_) if(tmp->xl) free(tmp->xl);
         break;
@@ -95,7 +97,8 @@ Agent *CopyAgent(Agent *a, int opt_id){
     cpy = CreateAgent(a->n, opt_id);
     
     switch (opt_id){
-        case (_PSO_ || _BA_):
+        case _PSO_:
+        case _BA_:
             memcpy(cpy->v, a->v, a->n*sizeof(double));
             if(opt_id == _PSO_) memcpy(cpy->xl, a->xl, a->n*sizeof(double));
         break;
@@ -148,7 +151,8 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id){
     }
     
     switch (opt_id){
-        case (_PSO_ || _BA_):
+        case _PSO_:
+        case _BA_:
             s->g = (double *)calloc(s->n,sizeof(double));
         break;
     }
@@ -181,7 +185,8 @@ void DestroySearchSpace(SearchSpace **s, int opt_id){
     if(tmp->UB) free(tmp->UB);
     
     switch (opt_id){
-        case (_PSO_ || _BA_):
+        case _PSO_:
+        case _BA_:
             if(tmp->g) free(tmp->g);
         break;
         default:

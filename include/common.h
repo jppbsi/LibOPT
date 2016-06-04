@@ -45,6 +45,7 @@ typedef struct SearchSpace_{
     double f_min; /* minimum frequency */
     double f_max; /* maximum frequency */
     double r; /* pulse rate */
+    double A; /* loudness */
 
 
 }SearchSpace;

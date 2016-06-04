@@ -126,8 +126,9 @@ void runBA(SearchSpace *s, prtFun Evaluate, ...){
                 tmp = GenerateNewBatNearBest(s);
             }
             
+            prob = GenerateRandomNumber(0,1);
             fitValue = Evaluate(tmp, arg); /* It executes the fitness function for agent i */
-            if(fitValue < s->a[i]->fit){ /* We accept the new solution */
+            if((fitValue < s->a[i]->fit) && (prob < s->A)){ /* We accept the new solution */
                 DestroyAgent(&(s->a[i]), _BA_);
                 s->a[i] = CopyAgent(tmp, _BA_);
                 s->a[i]->fit = fitValue;
