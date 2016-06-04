@@ -27,7 +27,7 @@ void SetBatFrequency(SearchSpace *s, int i){
     }
     
     double beta = GenerateRandomNumber(0,1);
-    s->a[i]->f = s->f_min+(s->f_max-s->f_min)*beta;
+    s->a[i]->f = s->f_min+(s->f_min-s->f_max)*beta;
 }
 
 /* It evaluates the entire search space
