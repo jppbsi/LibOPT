@@ -136,7 +136,7 @@ void runBA(SearchSpace *s, prtFun Evaluate, ...){
             DestroyAgent(&tmp, _BA_);
         }
 	        			
-	//EvaluateBats(s, Evaluate, arg);
+	EvaluateBats(s, Evaluate, arg);
 	        
 	fprintf(stderr, "OK (minimum fitness value %lf)", s->gfit);
     }
