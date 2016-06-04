@@ -35,10 +35,10 @@ Parameters:
 s: search space
 EvaluateFun: pointer to the function used to evaluate particles (agents)
 arg: list of additional arguments */
-/*void EvaluateBats(SearchSpace *s, prtFun Evaluate, va_list arg){
+void EvaluateBats(SearchSpace *s, prtFun Evaluate, va_list arg){
     va_list argtmp;
     int i, j;
-    double f;
+    double fit;
     
     if(!s){
         fprintf(stderr,"\nSearch space not allocated @EvaluateBats.\n");
@@ -47,17 +47,19 @@ arg: list of additional arguments */
     
     va_copy(argtmp, arg);
     for(i = 0; i < s->m; i++){
-        f = Evaluate(s->a[i], arg); /* It executes the fitness function for agent i */
+        fit = Evaluate(s->a[i], arg); /* It executes the fitness function for agent i */
                     
-        /*if(s->a[i]->fit < s->gfit){ /* It updates the global best value and position */
-          /*  s->gfit = s->a[i]->fit;
+        s->a[i]->fit = fit;
+        if(s->a[i]->fit < s->gfit){ /* It updates the global best value and position */
+            s->gfit = s->a[i]->fit;
+        
             for(j = 0; j < s->n; j++)
                 s->g[j] = s->a[i]->x[j];
         }
         
         va_copy(arg, argtmp);
     }
-}*/
+}
 
 /* It generates an agent (bat) near the best one
  * This code was based on the one available at http://www.mathworks.com/matlabcentral/fileexchange/37582-bat-algorithm--demo-
@@ -121,21 +123,20 @@ void runBA(SearchSpace *s, prtFun Evaluate, ...){
             prob = GenerateRandomNumber(0,1);
             if(prob > s->r){
                 DestroyAgent(&tmp, _BA_);
-                
+                tmp = GenerateNewBatNearBest(s);
             }
-            //best+[-1,1]*mA
             
-            //fitValue = Evaluate(tmp, arg); /* It executes the fitness function for agent i */
-            //if(fitValue < s->a[i]->fit){ /* We accept the new solution */
-                
-            //}
-            
-            
+            fitValue = Evaluate(tmp, arg); /* It executes the fitness function for agent i */
+            if(fitValue < s->a[i]->fit){ /* We accept the new solution */
+                DestroyAgent(&(s->a[i]), _BA_);
+                s->a[i] = CopyAgent(tmp, _BA_);
+                s->a[i]->fit = fitValue;
+            }
             
             DestroyAgent(&tmp, _BA_);
         }
 	        			
-	//EvaluateSwarm(s, Evaluate, arg);
+	//EvaluateBats(s, Evaluate, arg);
 	        
 	fprintf(stderr, "OK (minimum fitness value %lf)", s->gfit);
     }
