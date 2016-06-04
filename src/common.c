@@ -99,6 +99,7 @@ Agent *CopyAgent(Agent *a, int opt_id){
     switch (opt_id){
         case _PSO_:
         case _BA_:
+            memcpy(cpy->x, a->x, a->n*sizeof(double));
             memcpy(cpy->v, a->v, a->n*sizeof(double));
             if(opt_id == _PSO_) memcpy(cpy->xl, a->xl, a->n*sizeof(double));
         break;

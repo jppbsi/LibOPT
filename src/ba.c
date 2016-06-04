@@ -108,38 +108,39 @@ void runBA(SearchSpace *s, prtFun Evaluate, ...){
         /* for each bat */
        for(i = 0; i < s->m; i++){
             va_copy(arg, argtmp);
-            SetBatFrequency(s, i); /* Equation 1 */
-            UpdateBatVelocity(s, i); /* Equation 2 */
             
-            /* Equation 3
+	    SetBatFrequency(s, i); /* Equation 1 */
+            UpdateBatVelocity(s, i); /* Equation 2 */
+	    
+	    /* Equation 3
             Here, we generate a temporary agent (bat) */
             tmp = CopyAgent(s->a[i], _BA_);
             for(j = 0; j < s->n; j++)
                 tmp->x[j] = tmp->x[j]+tmp->v[j];
             /**************/
             
-            CheckAgentLimits(s, s->a[i]);
-            
-            prob = GenerateRandomNumber(0,1);
+	    prob = GenerateRandomNumber(0,1);
             if(prob > s->r){
                 DestroyAgent(&tmp, _BA_);
                 tmp = GenerateNewBatNearBest(s);
             }
-            
-            prob = GenerateRandomNumber(0,1);
+	    CheckAgentLimits(s, tmp);
+	    
+	    prob = GenerateRandomNumber(0,1);
             fitValue = Evaluate(tmp, arg); /* It executes the fitness function for agent i */
-            if((fitValue < s->a[i]->fit) && (prob < s->A)){ /* We accept the new solution */
-                DestroyAgent(&(s->a[i]), _BA_);
+	    if((fitValue < s->a[i]->fit) && (prob < s->A)){ /* We accept the new solution */
+		DestroyAgent(&(s->a[i]), _BA_);
                 s->a[i] = CopyAgent(tmp, _BA_);
                 s->a[i]->fit = fitValue;
             }
-            
-            DestroyAgent(&tmp, _BA_);
-        }
-	        			
-	EvaluateBats(s, Evaluate, arg);
-	        
-	fprintf(stderr, "OK (minimum fitness value %lf)", s->gfit);
+	    
+	    DestroyAgent(&tmp, _BA_);
+       }
+       
+       va_copy(arg, argtmp);
+       EvaluateBats(s, Evaluate, arg);
+       
+       fprintf(stderr, "OK (minimum fitness value %lf)", s->gfit);
     }
 
     va_end(arg);
