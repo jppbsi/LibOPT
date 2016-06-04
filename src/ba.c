@@ -124,13 +124,19 @@ void runBA(SearchSpace *s, prtFun Evaluate, ...){
             }
 	    CheckAgentLimits(s, tmp);
 	    
-	    prob = GenerateRandomNumber(0,1);
             fitValue = Evaluate(tmp, arg); /* It executes the fitness function for agent i */
+	    prob = GenerateRandomNumber(0,1);
 	    if((fitValue < s->a[i]->fit) && (prob < s->A)){ /* We accept the new solution */
 		DestroyAgent(&(s->a[i]), _BA_);
                 s->a[i] = CopyAgent(tmp, _BA_);
                 s->a[i]->fit = fitValue;
             }
+	    
+	    if(fitValue < s->gfit){ /* update the global best */
+		s->gfit = fitValue;
+		for(j = 0; j < s->n; j++)
+		    s->g[j] = tmp->x[j];
+	    }
 	    
 	    DestroyAgent(&tmp, _BA_);
        }
