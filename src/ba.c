@@ -59,6 +59,26 @@ arg: list of additional arguments */
     }
 }*/
 
+/* It generates an agent (bat) near the best one
+ * This code was based on the one available at http://www.mathworks.com/matlabcentral/fileexchange/37582-bat-algorithm--demo-
+Paremeters:
+s: search space */
+Agent *GenerateNewBatNearBest(SearchSpace *s){
+    if(!s){
+        fprintf(stderr,"\nSearch space not allocated @GenerateNewBatNearBest.\n");
+        exit(-1);
+    }
+    
+    Agent *a = NULL;
+    int j;
+    
+    a = CreateAgent(s->n, _BA_);
+    for(j = 0; j < s->n; j++)
+        a->x[j] = s->g[j]+0.001*GenerateRandomNumber(0,1); /* The factor 0.001 limits the step sizes of random walks */ 
+    
+    return a;
+}
+
 /* It executes the Bat Algorithm for function minimization
 Parameters:
 s: search space
@@ -99,7 +119,11 @@ void runBA(SearchSpace *s, prtFun Evaluate, ...){
             CheckAgentLimits(s, s->a[i]);
             
             prob = GenerateRandomNumber(0,1);
-            //if(prob > s->r) FAZER ESSA PARTE!
+            if(prob > s->r){
+                DestroyAgent(&tmp, _BA_);
+                
+            }
+            //best+[-1,1]*mA
             
             //fitValue = Evaluate(tmp, arg); /* It executes the fitness function for agent i */
             //if(fitValue < s->a[i]->fit){ /* We accept the new solution */
