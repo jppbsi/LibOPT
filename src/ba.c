@@ -66,7 +66,7 @@ Evaluate: pointer to the function used to evaluate particles
 arg: list of additional arguments */
 void runBA(SearchSpace *s, prtFun Evaluate, ...){
     va_list arg, argtmp;
-    int t, i;
+    int t, i, j;
     double beta, prob, fitValue;
     Agent *tmp = NULL;
     		
@@ -79,7 +79,6 @@ void runBA(SearchSpace *s, prtFun Evaluate, ...){
     }
         
     EvaluateSearchSpace(s, Evaluate, arg); /* Initial evaluation of the search space */
-    tmp = CreateAgent(s->n, _BA_);
         
     for(t = 1; t <= s->iterations; t++){
         fprintf(stderr,"\nRunning iteration %d/%d ... ", t, s->iterations);
@@ -90,14 +89,26 @@ void runBA(SearchSpace *s, prtFun Evaluate, ...){
             SetBatFrequency(s, i); /* Equation 1 */
             UpdateBatVelocity(s, i); /* Equation 2 */
             
+            /* Equation 3
+            Here, we generate a temporary agent (bat) */
             tmp = CopyAgent(s->a[i], _BA_);
-            //tmp = tmp+v; TO BE DONE HERE!!!
-            fitValue = Evaluate(tmp, arg); /* It executes the fitness function for agent i */
-            if(fitValue < s->a[i]->fit){ /* We accept the new solution */
-                
-            }
+            for(j = 0; j < s->n; j++)
+                tmp->x[j] = tmp->x[j]+tmp->v[j];
+            /**************/
             
             CheckAgentLimits(s, s->a[i]);
+            
+            prob = GenerateRandomNumber(0,1);
+            //if(prob > s->r) FAZER ESSA PARTE!
+            
+            //fitValue = Evaluate(tmp, arg); /* It executes the fitness function for agent i */
+            //if(fitValue < s->a[i]->fit){ /* We accept the new solution */
+                
+            //}
+            
+            
+            
+            DestroyAgent(&tmp, _BA_);
         }
 	        			
 	//EvaluateSwarm(s, Evaluate, arg);
@@ -105,7 +116,6 @@ void runBA(SearchSpace *s, prtFun Evaluate, ...){
 	fprintf(stderr, "OK (minimum fitness value %lf)", s->gfit);
     }
 
-    DestroyAgent(&tmp, _BA_);
     va_end(arg);
 }
 /*************************/
