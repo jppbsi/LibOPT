@@ -311,22 +311,29 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
         case _PSO_:
             s = CreateSearchSpace(m, n, _PSO_);
             s->iterations = iterations;
-            
             fscanf(fp, "%lf %lf", &(s->c1), &(s->c2));
             WaiveComment(fp);
             fscanf(fp, "%lf %lf %lf", &(s->w), &(s->w_min), &(s->w_max));
             WaiveComment(fp);
-            for(j = 0; j < s->n; j++){
-                fscanf(fp, "%lf %lf", &(s->LB[j]), &(s->UB[j]));
-                WaiveComment(fp);
-            }
-            fclose(fp);
-            
+        break;
+        case _BA_:
+            s = CreateSearchSpace(m, n, _BA_);
+            s->iterations = iterations;
+            fscanf(fp, "%lf %lf", &(s->f_min), &(s->f_max));
+            WaiveComment(fp);
+            fscanf(fp, "%lf %lf", &(s->A), &(s->r));
+            WaiveComment(fp);
         break;
         default:
             fprintf(stderr,"\nInvalid optimization identifier @ReadSearchSpaceFromFile.\n");
         break;
     }
+    
+    for(j = 0; j < s->n; j++){
+        fscanf(fp, "%lf %lf", &(s->LB[j]), &(s->UB[j]));
+        WaiveComment(fp);
+    }
+    fclose(fp);
     
     return s;
 }
