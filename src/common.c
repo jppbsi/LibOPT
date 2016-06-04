@@ -113,6 +113,36 @@ Agent *CopyAgent(Agent *a, int opt_id){
     return cpy;
 }
 
+/* It generates a new agent according to each technique
+Paremeters:
+s: search space */
+Agent *GenerateNewAgent(SearchSpace *s, int opt_id){
+    if(!s){
+        fprintf(stderr,"\nSearch space not allocated @GenerateNewBatNearBest.\n");
+        exit(-1);
+    }
+    
+    Agent *a = NULL;
+    int j;
+        
+    switch (opt_id){
+        case _PSO_:
+        case _BA_:
+            a = CreateAgent(s->n, _BA_);
+            
+            /* The factor 0.001 limits the step sizes of random walks */ 
+            for(j = 0; j < s->n; j++)
+                a->x[j] = s->g[j]+0.001*GenerateRandomNumber(0,1); 
+        break;
+        default:
+            fprintf(stderr,"\nInvalid optimization identifier @CopyAgent.\n");
+            return NULL;
+        break;
+    }
+    
+    return a;
+}
+
 /**************************/
 
 /* Search Space-related functions */

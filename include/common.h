@@ -57,6 +57,7 @@ Agent *CreateAgent(int n, int opt_id); /* It creates an agent */
 void DestroyAgent(Agent **a, int opt_id); /* It deallocates an agent */
 void CheckAgentLimits(SearchSpace *s, Agent *a); /* It checks whether a given agent has excedeed boundaries */
 Agent *CopyAgent(Agent *a, int opt_id); /* It copies an agent */
+Agent *GenerateNewAgent(SearchSpace *s, int opt_id); /* It generates a new agent according to each technique */
 /**************************/
 
 /* Search Space-related functions */
