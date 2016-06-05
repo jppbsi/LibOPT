@@ -69,7 +69,7 @@ void EvaluateSearchSpace(SearchSpace *s, prtFun Evaluate, va_list arg); /* It ev
 /**************************/
 
 /* General-purpose functions */
-double GenerateRandomNumber(double low, double high); /* It generates a random number whithin [low,high] */
+double GenerateUniformRandomNumber(double low, double high); /* It generates a random number whithin [low,high] */
 void WaiveComment(FILE *fp); /* It waives a comment in a model file */
 SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id); /* It loads a search space with parameters specified in a file */
 

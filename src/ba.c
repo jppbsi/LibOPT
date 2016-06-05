@@ -26,7 +26,7 @@ void SetBatFrequency(SearchSpace *s, int i){
         exit(-1);
     }
     
-    double beta = GenerateRandomNumber(0,1);
+    double beta = GenerateUniformRandomNumber(0,1);
     s->a[i]->f = s->f_min+(s->f_min-s->f_max)*beta;
 }
 
@@ -97,7 +97,7 @@ void runBA(SearchSpace *s, prtFun Evaluate, ...){
                 tmp->x[j] = tmp->x[j]+tmp->v[j];
             /**************/
             
-	    prob = GenerateRandomNumber(0,1);
+	    prob = GenerateUniformRandomNumber(0,1);
             if(prob > s->r){
                 DestroyAgent(&tmp, _BA_);
                 tmp = GenerateNewAgent(s, _BA_);
@@ -105,7 +105,7 @@ void runBA(SearchSpace *s, prtFun Evaluate, ...){
 	    CheckAgentLimits(s, tmp);
 	    
             fitValue = Evaluate(tmp, arg); /* It executes the fitness function for agent i */
-	    prob = GenerateRandomNumber(0,1);
+	    prob = GenerateUniformRandomNumber(0,1);
 	    if((fitValue < s->a[i]->fit) && (prob < s->A)){ /* We accept the new solution */
 		DestroyAgent(&(s->a[i]), _BA_);
                 s->a[i] = CopyAgent(tmp, _BA_);

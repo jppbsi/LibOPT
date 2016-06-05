@@ -132,7 +132,7 @@ Agent *GenerateNewAgent(SearchSpace *s, int opt_id){
             
             /* The factor 0.001 limits the step sizes of random walks */ 
             for(j = 0; j < s->n; j++)
-                a->x[j] = s->g[j]+0.001*GenerateRandomNumber(0,1); 
+                a->x[j] = s->g[j]+0.001*GenerateUniformRandomNumber(0,1); 
         break;
         default:
             fprintf(stderr,"\nInvalid optimization identifier @CopyAgent.\n");
@@ -304,7 +304,7 @@ Parameters:
 low: lower bound
 high: upper bound
 This algorithm has been inspired by: http://www.cprogramming.com/tutorial/random.html */
-double GenerateRandomNumber(double low, double high){
+double GenerateUniformRandomNumber(double low, double high){
     return randinter(low, high);
 }
 

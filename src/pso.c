@@ -14,8 +14,8 @@ void UpdateParticleVelocity(SearchSpace *s, int i){
         exit(-1);
     }
     
-    r1 = GenerateRandomNumber(0,1);
-    r2 = GenerateRandomNumber(0,1);
+    r1 = GenerateUniformRandomNumber(0,1);
+    r2 = GenerateUniformRandomNumber(0,1);
     
     for(j = 0; j < s->n; j++)
         s->a[i]->v[j] = s->w*s->a[i]->v[j]+s->c1*r1*(s->a[i]->xl[j]-s->a[i]->x[j])+s->c2*r2*(s->g[j]-s->a[i]->x[j]);    
