@@ -316,6 +316,15 @@ double GenerateGaussianRandomNumber(double mean, double variance){
     return randGaussian(mean, variance);
 }
 
+/* It generates a random number drawn from a Levy distribution
+ * Since we used a normal distribution to generate such number, we need the mean and variance
+Parameters:
+mean: mean of the distribution
+variance: variance of the distribution */
+double GenerateLevyRandomNumber(double mean, double variance){
+    
+}
+
 /* It waives a comment in a model file
 Parameters:
 fp = file pointer */
