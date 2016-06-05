@@ -1,6 +1,6 @@
 #include "random.h"
 
-/* The source code to generate random numbers was taken from  http://www.physics.drexel.edu/courses/Comp_Phys/Physics-306/random.c. */
+/* The source code to generate random numbers was taken from http://www.physics.drexel.edu/courses/Comp_Phys/Physics-306/random.c. */
 
 double ran2(int *idum){
     int j;
@@ -73,4 +73,22 @@ int srandinter(int seed){
 double randinter(double a, double b){	
     if (randx == 0) srandinter(0);
     return a + (b-a)*((double)ran2(&randx));
+}
+
+/* It returns a number drawn from a Gaussian distribution
+Parameters:
+mean: mean of the distribution
+variance: variance of the distribution */
+double randGaussian(double mean, double variance){
+    double v, x, y,r;
+
+    do{
+        x = (double)2*randinter(1,100)/99;
+        y = (double)2*randinter(1,100)/99;
+        r = x*x + y*y;
+    }while(r >= 1 || r == 0);
+
+    v = x*sqrt(-2*log(r)/r)*variance+mean;
+
+   return v;
 }

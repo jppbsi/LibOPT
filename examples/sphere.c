@@ -30,5 +30,7 @@ int main(){
     
     DestroySearchSpace(&s, _BA_); /* It deallocates the search space */
     
+    fprintf(stderr,"\nrandGaussian: %lf", randGaussian(0,1));
+    
     return 0;
 }

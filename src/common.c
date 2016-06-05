@@ -308,6 +308,14 @@ double GenerateUniformRandomNumber(double low, double high){
     return randinter(low, high);
 }
 
+/* It generates a random number drawn from a Gaussian (normal) distribution
+Parameters:
+mean: mean of the distribution
+variance: variance of the distribution */
+double GenerateGaussianRandomNumber(double mean, double variance){
+    return randGaussian(mean, variance);
+}
+
 /* It waives a comment in a model file
 Parameters:
 fp = file pointer */
