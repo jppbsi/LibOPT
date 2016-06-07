@@ -6,11 +6,9 @@
 double Ackley_First(Agent *a, ...); /* It computes the 1st Ackley's function */
 double Ackley_Second(Agent *a, ...); /* It computes the 2nd Ackley's function */
 double Ackley_Third(Agent *a, ...); /* It computes the 3rd Ackley's function */
-double Ackley_Forth(Agent *a, ...); /* It computes the 4th Ackley's function */
 double Adjiman(Agent *a, ...); /* It computes the Adjiman's function */
 double Alpine_First(Agent *a, ...); /* It computes the 1st Alpine's function */
 double Alpine_Second(Agent *a, ...); /* It computes the 2nd Alpine's function */
-double Brad(Agent *a, ...); /* It computes the Brad's function */
 double Bartels_Conn(Agent *a, ...); /* It computes the Bartels' Conn function */
 double Beale(Agent *a, ...); /* It computes the Beale's function */
 double Biggs_EXP2(Agent *a, ...); /* It computes the 2-D Biggs' Exponential function */
@@ -24,8 +22,6 @@ double Bohachevsky_Second(Agent *a, ...); /* It computes the 2nd Bohachevsky's f
 double Bohachevsky_Third(Agent *a, ...); /* It computes the 3rd Bohachevsky's function */
 double Booth(Agent *a, ...); /* It computes the Booth's function */
 double Box_Betts(Agent *a, ...); /* It computes the Box-Betts Quadratic Sum function */
-double Branin_RCOS(Agent *a, ...); /* It computes the 1st Branin RCOS function */
-double Branin_RCOS2(Agent *a, ...); /* It computes the 2nd Branin RCOS function */
 double Brent(Agent *a, ...); /* It computes the Brent's function */
 double Brown(Agent *a, ...); /* It computes the Brown's function */
 double Bukin_Second(Agent *a, ...); /* It computes the 2nd Bukin's function */
