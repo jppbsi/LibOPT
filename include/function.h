@@ -33,28 +33,19 @@ double Chen_Bird(Agent *a, ...); /* It computes the Chen's Bird function */
 double Chen_V(Agent *a, ...); /* It computes the Chen's V function */
 double Chichinadze(Agent *a, ...); /* It computes the Chichinadze's function */
 double Chung_Reynolds(Agent *a, ...); /* It computes the Chung Reynolds' function */
-double Cola(Agent *a, ...); /* It computes the Cola's function */
 double Colville(Agent *a, ...); /* It computes the Colville's function */
-double Corana(Agent *a, ...); /* It computes the Corana's function */
-double Cosine_Mixture(Agent *a, ...); /* It computes the Cosine Mixture function */
 double Cross_Tray(Agent *a, ...); /* It computes the Cross-in-Tray function */
 double Csendes(Agent *a, ...); /* It computes the Csendes' function */
 double Cube(Agent *a, ...); /* It computes the Cube's function */
 double Damavandi(Agent *a, ...); /* It computes the Damavandi's function */
-double Deb_First(Agent *a, ...); /* It computes the 1st Deb's function */
-double Deb_Third(Agent *a, ...); /* It computes the 3rd Deb's function */
-double Deckkers_Aarts(Agent *a, ...); /* It computes the Deckkers'-Aarts function */
-double deVilliers_Glasser_First(Agent *a, ...); /* It computes the 1st deVilliers' Glasser function */
-double deVilliers_Glasser_Second(Agent *a, ...); /* It computes the 2nd deVilliers' Glasser function */
+double Deckkers_Aarts(Agent *a, ...); /* It computes the Deckkers-Aarts' function */
 double Dixon_Price(Agent *a, ...); /* It computes the Dixon's-Price function */
-double Dolan(Agent *a, ...); /* It computes the Dolan's function */
 double Easom(Agent *a, ...); /* It computes the Easom's function */
-double ElAttar_VidyasagarDutta(Agent *a, ...); /* It computes the El-Attar-Vidyasagar-Dutta function */
+double ElAttar_VidyasagarDutta(Agent *a, ...); /* It computes the El-Attar-Vidyasagar-Dutta's function */
 double Eggcrate(Agent *a, ...); /* It computes the Egg Crate function */
 double Eggholder(Agent *a, ...); /* It computes the Egg Holder function */
 double Exponential(Agent *a, ...); /* It computes the Exponential function */
 double EXP_2(Agent *a, ...); /* It computes the 2-D Exponential function */
-double Forrester(Agent *a, ...); /* It computes the Forrester et al. (2008) function */
 double Freudenstein_Roth(Agent *a, ...); /* It computes the Freudenstein's Roth function */
 double Giunta(Agent *a, ...); /* It computes the Giunta's function */
 double Goldstein_Price(Agent *a, ...); /* It computes the Goldstein's-Price function */
