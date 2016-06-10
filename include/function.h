@@ -48,8 +48,7 @@ double Exponential(Agent *a, ...); /* It computes the Exponential function */
 double EXP_2(Agent *a, ...); /* It computes the 2-D Exponential function */
 double Freudenstein_Roth(Agent *a, ...); /* It computes the Freudenstein's Roth function */
 double Giunta(Agent *a, ...); /* It computes the Giunta's function */
-double Goldstein_Price(Agent *a, ...); /* It computes the Goldstein's-Price function */
-double Gramacy_Lee(Agent *a, ...); /* It computes the Gramacy & Lee's (2012) function */
+double Goldstein_Price(Agent *a, ...); /* It computes the Goldstein-Price's function */
 double Griewank(Agent *a, ...); /* It computes the Griewank's function */
 double Gulf_Research(Agent *a, ...); /* It computes the Gulf's Research problem */
 double Hansen(Agent *a, ...); /* It computes the Hansen's function */
@@ -136,19 +135,12 @@ double Trefethen(Agent *a, ...); /* It computes the Trefethen's function */
 double Trigonometric_1(Agent *a, ...); /* It computes the Trigonometric 1 function */
 double Trigonometric_2(Agent *a, ...); /* It computes the Trigonometric 2 function */
 double Tripod(Agent *a, ...); /* It computes the Tripod's function */
-double Ursem_1(Agent *a, ...); /* It computes the Ursem 1 function */
-double Ursem_3(Agent *a, ...); /* It computes the Ursem 3 function */
-double Ursem_4(Agent *a, ...); /* It computes the Ursem 4 function */
-double Ursem_Waves(Agent *a, ...); /* It computes the Ursem Waves function */
 double Venter_Sobiezcczanski(Agent *a, ...); /* It computes the Venter's Sobiezcczanski-Sobieski function */
 double Watson(Agent *a, ...); /* It computes the Watson's function */
 double Wayburn_Seader_1(Agent *a, ...); /* It computes the Wayburn Seader 1 function */
 double Wayburn_Seader_2(Agent *a, ...); /* It computes the Wayburn Seader 2 function */
 double Wayburn_Seader_3(Agent *a, ...); /* It computes the Wayburn Seader 3 function */
 double Wavy(Agent *a, ...); /* It computes the Wavy's function */
-double Weierstrass(Agent *a, ...); /* It computes the Weierstrass' function */
-double Whitley(Agent *a, ...); /* It computes the Whitley's function */
-double Wolfe(Agent *a, ...); /* It computes the Wolfe's function */
 double XinShe_Yang_1(Agent *a, ...); /* It computes the Xin-She Yang's 1 function */
 double XinShe_Yang_2(Agent *a, ...); /* It computes the Xin-She Yang's 2 function */
 double XinShe_Yang_3(Agent *a, ...); /* It computes the Xin-She Yang's 3 function */

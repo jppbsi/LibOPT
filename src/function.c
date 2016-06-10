@@ -1100,6 +1100,116 @@ double Freudenstein_Roth(Agent *a, ...){
     return sum;
 }
 
+/* It computes the Giunta's function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = 0.060447 at x* (0.45834282, 0.45834282)
+Domain: -1 <= x_i <= 1 */
+double Giunta(Agent *a, ...){
+    int i;
+    double sum = 0;
+    
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Giunta.\n");
+        return DBL_MAX;
+    }
+    
+    if(a->n != 2){
+        fprintf(stderr,"\nInvalid number of decision variables @Giunta. It must be equal to two.\n");
+        return DBL_MAX;
+    }
+    
+    for (i = 0; i < a->n; i++)
+	sum += sin(16/15*a->x[i] - 1) + pow(sin(16/15*a->x[i] - 1), 2) + (1/50) * sin(4*(16/15*a->x[i] - 1));
+    
+    sum = 0.6 + sum; 
+    	
+    return sum;
+}
+
+/* It computes the Goldstein-Price's function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = 3 at x* (0, -1)
+Domain: -2 <= x_i <= 2 */
+double Goldstein_Price(Agent *a, ...){
+    double sum = 0;
+    
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Goldstein_Price.\n");
+        return DBL_MAX;
+    }
+    
+    if(a->n != 2){
+        fprintf(stderr,"\nInvalid number of decision variables @Goldstein_Price. It must be equal to two.\n");
+        return DBL_MAX;
+    }
+        
+    sum = (1 + pow(a->x[0] + a->x[1] + 1, 2) * (19 - 14 * a->x[0] + 3 * pow(a->x[1], 2) - 14 * a->x[1] + 6 * a->x[0] * a->x[1] + 3 * pow(a->x[1], 2))) * (30 + pow(2 * a->x[0] - 3 * a->x[1], 2) * (18 - 32 * a->x[0] + 12 * pow(a->x[0], 2) + 48 * a->x[1] - 36 * a->x[0] * a->x[1] + 27 * pow(a->x[1], 2)));
+    	
+    return sum;
+}
+
+/* It computes the Griewank's function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = 0 at x* (0, ..., 0)
+Domain: -100 <= x_i <= 100 */
+double Griewank(Agent *a, ...){
+    int i;
+    double partial_sum = 1, sum = 0;
+    
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Griewank.\n");
+        return DBL_MAX;
+    }
+    
+    if(a->n < 1){
+        fprintf(stderr,"\nInvalid number of decision variables @Griewank. It must be equal or greater than one.\n");
+        return DBL_MAX;
+    }
+
+    for (i = 0; i < a->n; i++){
+	partial_sum *= cos(a->x[i]/sqrt(i+1)) + 1;
+	sum += pow(a->x[i], 2) / 4000;
+    }
+	
+    sum = sum - partial_sum;
+    	
+    return sum;
+}
+
+/* It computes the Gulf's Research problem
+Parameters:
+a: agent
+---
+Minimum at f(x*) = 0 at x* (50, 25, 1.5)
+Domain: 0.1 <= x_0 <= 100, 0 <= x_1 <= 25.6 and 0 <= x_2 <= 5 */
+double Gulf_Research(Agent *a, ...){
+    int i;
+    double sum = 0, u;
+    
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Gulf_Research.\n");
+        return DBL_MAX;
+    }
+    
+    if(a->n != 3){
+        fprintf(stderr,"\nInvalid number of decision variables @Gulf_Research. It must be equal to three.\n");
+        return DBL_MAX;
+    }
+	
+    for (i = 1; i < 100; i++){
+	u = 25 + pow((-50 * log(0.01 * i)), 1/1.5);
+	sum += pow(exp(-pow(u - a->x[1], a->x[2])/a->x[0]) - 0.01 * i, 2);
+    }
+    	
+    return sum;
+}
+
 /* It computes the Rosenbrock's function
 Parameters:
 a: agent
@@ -1152,11 +1262,167 @@ double Sphere(Agent *a, ...){
     return sum;
 }
 
+/* It computes the Venter's Sobiezcczanski-Sobieski function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = -400 at x* = (0, 0)
+Domain: -50 <= x_i <= 50 */
+double Venter_Sobiezcczanski(Agent *a, ...){
+    double sum = 0;
+
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Venter_Sobiezcczanski.\n");
+        return DBL_MAX;
+    }
+
+    if(a->n != 2){
+        fprintf(stderr,"\nInvalid number of decision variables @Venter_Sobiezcczanski. It must be equal to two.\n");
+        return DBL_MAX;
+    }
+
+    sum = pow(a->x[0], 2) - 100 * cos(pow(a->x[0], 2)) - 100 * cos(pow(a->x[0], 2)/30) + pow(a->x[1], 2) - 100 * cos(pow(a->x[1], 2)) - 100 * cos(pow(a->x[1], 2)/30);
+
+    return sum;
+}
+
+/* It computes the Watson's function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = 0.002288 at x* = (-0.0158, 1.012, -0.2329, 1.260, -1.513, 0.9928)
+Domain: |x_i| <= 10 with a_i = i/29 */
+double Watson(Agent *a, ...){
+    int i, j;
+    double partial_sum_1 = 0, partial_sum_2 = 0, sum = 0;
+
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Watson.\n");
+        return DBL_MAX;
+    }
+
+    if(a->n != 6){
+        fprintf(stderr,"\nInvalid number of decision variables @Watson. It must be equal to six.\n");
+        return DBL_MAX;
+    }
+    
+    for (i = 0; i < 30; i++){
+	for (j = 0; j < 6; j++){
+	    if (j < 5)
+		partial_sum_1 += ((j - 1) * pow((i/29), j) * a->x[j+1]);
+	    partial_sum_2 += pow((i/29), j) * a->x[j+1];
+	}
+	sum += pow(partial_sum_1 - pow(partial_sum_2, 2) - 1, 2) + pow(a->x[0], 2);
+    }
+
+    return sum;
+}
+
+/* It computes the Wayburn Seader 1 function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = 0 at x* = (1, 2) and (1.597, 0.806)
+Domain: -500 <= x_i <= 500 */
+double Wayburn_Seader_1(Agent *a, ...){
+    double sum = 0;
+
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Wayburn_Seader_1.\n");
+        return DBL_MAX;
+    }
+
+    if(a->n != 2){
+        fprintf(stderr,"\nInvalid number of decision variables @Wayburn_Seader_1. It must be equal to two.\n");
+        return DBL_MAX;
+    }
+
+    sum = pow((pow(a->x[0],6) + pow(a->x[1],4) -17),2) + pow(((2*a->x[0]) + a->x[1] - 4),4);
+
+    return sum;
+}
+
+/* It computes the Wayburn Seader 2 function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = 0 at x* = (0.2, 1) and (0.425, 1)
+Domain: -500 <= x_i <= 500 */
+double Wayburn_Seader_2(Agent *a, ...){
+    double sum = 0;
+
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Wayburn_Seader_2.\n");
+        return DBL_MAX;
+    }
+
+    if(a->n != 2){
+        fprintf(stderr,"\nInvalid number of decision variables @Wayburn_Seader_2. It must be equal to two.\n");
+        return DBL_MAX;
+    }
+
+    sum = pow((1.613 + (4*pow((a->x[0] - 0.3125),2)) - (4*pow((a->x[1] - 1.625),2)) ),2) + pow((a->x[1] - 1),2);
+
+    return sum;
+}
+
+/* It computes the Wayburn Seader 3 function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = 21.35 at x* = (5.611, 6.187)
+Domain: -500 <= x_i <= 500 */
+double Wayburn_Seader_3(Agent *a, ...){
+    double sum = 0;
+
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Wayburn_Seader_3.\n");
+        return DBL_MAX;
+    }
+
+    if(a->n != 2){
+        fprintf(stderr,"\nInvalid number of decision variables @Wayburn_Seader_3. It must be equal to two.\n");
+        return DBL_MAX;
+    }
+
+    sum = 2 * (pow(a->x[0],3)/3) - 8*pow(a->x[0],2) + 31*a->x[0] - (a->x[0] * a->x[1]) + 5 + pow(pow((a->x[0] - 4),2) + (pow((a->x[1] - 5),2) - 4),2);
+
+    return sum;
+}
+
+/* It computes the Wavy's function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = 0 at x* = (0, 0) with k = 10
+Domain: -PI <= x_i <= PI */
+double Wavy(Agent *a, ...){
+    int i, k = 10;
+    double sum = 0;
+
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Wavy.\n");
+        return DBL_MAX;
+    }
+
+    if(a->n < 1){
+        fprintf(stderr,"\nInvalid number of decision variables @Wavy. It must be equal or greater than one.\n");
+        return DBL_MAX;
+    }
+    
+    for (i = 0; i < a->n; i++)
+	sum += cos(k * a->x[i]) * exp(-pow(a->x[i], 2) / 2);
+	
+    sum = 1 - (1 / a->n) * sum;
+
+    return sum;
+}
+
 /* It computes the Xin-She Yang's 1 function
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 0 at x* = (0, .., 0)
+Minimum at f(x*) = 0 at x* = (0, ..., 0)
 Domain: -5 <= x_i <= 5 */
 double XinShe_Yang_1(Agent *a, ...){
     int e, i;
@@ -1184,7 +1450,7 @@ double XinShe_Yang_1(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 0 at x* = (0, .., 0)
+Minimum at f(x*) = 0 at x* = (0, ..., 0)
 Domain: -2PI <= x_i <= 2PI */
 double XinShe_Yang_2(Agent *a, ...){
     double sum = 0, sum1 = 0, sum2 = 0;
@@ -1214,7 +1480,7 @@ double XinShe_Yang_2(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = -1 at x* = (0, .., 0) with m = 5 and beta = 15
+Minimum at f(x*) = -1 at x* = (0, ..., 0) with m = 5 and beta = 15
 Domain: -20 <= x_i <= 20 */
 double XinShe_Yang_3(Agent *a, ...){
     double sum = 0, sum1 = 0, sum2 = 0, sum3 = 1;
@@ -1245,7 +1511,7 @@ double XinShe_Yang_3(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = -1 at x* = (0, .., 0)
+Minimum at f(x*) = -1 at x* = (0, ..., 0)
 Domain: -10 <= x_i <= 10 */
 double XinShe_Yang_4(Agent *a, ...){
     double sum = 0, sum1 = 0, sum2 = 0, sum3 = 0;
@@ -1276,7 +1542,7 @@ double XinShe_Yang_4(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 0 at x* = (0, .., 0)
+Minimum at f(x*) = 0 at x* = (0, ..., 0)
 Domain: -5 <= x_i <= 10 */
 double Zakharov(Agent *a, ...){
     double sum = 0, sum1 = 0, sum2 = 0;

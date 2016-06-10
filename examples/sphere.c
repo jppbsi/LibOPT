@@ -12,9 +12,9 @@ int main(){
     s = CreateSearchSpace(10, 2, _PSO_); /* It creates a search space with 10 agents for a 2-D problem. We are going to use PSO to solve it. */
     
     /* It initializes PSO parameters */
-    s->w = 1.4;
-    s->c1 = 1.4;
-    s->c2 = 0.6;
+    s->w = 0.7;
+    s->c1 = 1.7;
+    s->c2 = 1.7;
     s->iterations = 10;
     
     /* It initalizes the boundaries of decision variables within the range [-5.12,5.12]*/
@@ -28,9 +28,7 @@ int main(){
     
     runPSO(s, Sphere); /* It minimizes function Sphere */
     
-    DestroySearchSpace(&s, _BA_); /* It deallocates the search space */
-    
-    fprintf(stderr,"\nrandGaussian: %lf", randGaussian(0,1));
-    
+    DestroySearchSpace(&s, _PSO_); /* It deallocates the search space */
+        
     return 0;
 }
