@@ -134,7 +134,7 @@ Parameters:
 a: agent
 ---
 Minimum at f(x*) = 2.808^n at x* = (7.917, ..., 7.917)
-Domain: -0 <= x_i <= 10 */
+Domain: 0 <= x_i <= 10 */
 double Alpine_Second(Agent *a, ...){
     int i;
     double sum = 1;
@@ -337,7 +337,7 @@ double Biggs_EXP6(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = -106.764537 at x* = (4,70104, 3.15294), (-1.58214, -3.13024)
+Minimum at f(x*) = -106.764537 at x* = (4,70104, 3.15294) or (-1.58214, -3.13024)
 Domain: -2PI <= x_i <= 2PI */
 double Bird(Agent *a, ...){
     double sum = 0;
@@ -1207,6 +1207,391 @@ double Gulf_Research(Agent *a, ...){
 	sum += pow(exp(-pow(u - a->x[1], a->x[2])/a->x[0]) - 0.01 * i, 2);
     }
     	
+    return sum;
+}
+
+/* It computes the Helical Valley function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = 0 at x* (1, 0, 0)
+Domain: -10 <= x_i <= 10 */
+double Helical_Valley(Agent *a, ...){
+    double sum = 0, theta;
+    
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Helical_Valley.\n");
+        return DBL_MAX;
+    }
+    
+    if(a->n != 3){
+        fprintf(stderr,"\nInvalid number of decision variables @Helical_Valley. It must be equal to three.\n");
+        return DBL_MAX;
+    }
+	
+    if (a->x[0] >= 0)
+	theta = (1 / 2 * M_PI) * pow(tan(a->x[0]/a->x[1]), -1);
+    else
+	theta = (1 / 2 * M_PI) * pow(tan(a->x[0]/a->x[1] + 0.5), -1);
+	
+    sum = 100 * (pow(a->x[1] - 10 * theta, 2) + sqrt(pow(a->x[0], 2) + pow(a->x[1], 2)) - 1) + pow(a->x[2], 2);
+    	
+    return sum;
+}
+
+/* It computes the Himmelblau's function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = 0 at x* (3, 2)
+Domain: -5 <= x_i <= 5 */
+double Himmelblau(Agent *a, ...){
+    double sum = 0;
+    
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Himmelblau.\n");
+        return DBL_MAX;
+    }
+    
+    if(a->n != 2){
+        fprintf(stderr,"\nInvalid number of decision variables @Himmelblau. It must be equal to two.\n");
+        return DBL_MAX;
+    }
+	
+    sum = pow(pow(a->x[0], 2) + a->x[1] - 11, 2) + pow(a->x[0] + pow(a->x[1], 2) - 7, 2);
+        	
+    return sum;
+}
+
+/* It computes the Hosaki's function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = -2.3458 at x* (4, 2)
+Domain: 0 <= x_1 <= 5 and 0 <= x_2 <- 6 */
+double Hosaki(Agent *a, ...){
+    double sum = 0;
+    
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Hosaki.\n");
+        return DBL_MAX;
+    }
+    
+    if(a->n != 2){
+        fprintf(stderr,"\nInvalid number of decision variables @Hosaki. It must be equal to two.\n");
+        return DBL_MAX;
+    }
+	
+    sum = (1 - 8 * a->x[0] + 7 * pow(a->x[0], 2) - (7 / 3 * pow(a->x[0], 3)) + (1 / 4 * pow(a->x[0], 4))) * pow(a->x[1], 2) * exp(-a->x[1]);
+        	
+    return sum;
+}
+
+/* It computes the Jennrick-Sampson's function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = 124.3612 at x* (0.257825, 0.257825)
+Domain: -1 <= x_i <= 1 */
+double Jennrick_Sampson(Agent *a, ...){
+    int i;
+    double sum = 0;
+    
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Jennrick_Sampson.\n");
+        return DBL_MAX;
+    }
+    
+    if(a->n != 2){
+        fprintf(stderr,"\nInvalid number of decision variables @Jennrick_Sampson. It must be equal to two.\n");
+        return DBL_MAX;
+    }
+	
+    for (i = 1; i <= 10; i++)
+	sum += pow(2 + 2 * i - (exp(i * a->x[0]) + exp(i * a->x[1])), 2);
+        	
+    return sum;
+}
+
+/* It computes the Keane's function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = -0.673668 at x* (0, 1.39325) or (1.39325, 0)
+Domain: 0 <= x_i <= 10 */
+double Keane(Agent *a, ...){
+    double sum = 0;
+    
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Keane.\n");
+        return DBL_MAX;
+    }
+    
+    if(a->n != 2){
+        fprintf(stderr,"\nInvalid number of decision variables @Keane. It must be equal to two.\n");
+        return DBL_MAX;
+    }
+	
+    sum = (pow(sin(a->x[0] - a->x[1]), 2) * pow(sin(a->x[0] + a->x[1]), 2)) / sqrt(pow(a->x[0], 2) + pow(a->x[1], 2));
+        	
+    return sum;
+}
+
+/* It computes the Leon's function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = 0 at x* (1, 1)
+Domain: -1.2 <= x_i <= 1.2 */
+double Leon(Agent *a, ...){
+    double sum = 0;
+    
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Leon.\n");
+        return DBL_MAX;
+    }
+    
+    if(a->n != 2){
+        fprintf(stderr,"\nInvalid number of decision variables @Leon. It must be equal to two.\n");
+        return DBL_MAX;
+    }
+	
+    sum = 100 * pow(a->x[1] - pow(a->x[0], 2), 2) + pow(1 - a->x[0], 2);
+        	
+    return sum;
+}
+
+/* It computes the Levy's function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = 0 at x* (1, ...,  1)
+Domain: -10 <= x_i <= 10 */
+double Levy(Agent *a, ...){
+    int i;
+    double partial_sum = 0, sum = 0;
+    double w, w_1, w_d;
+    
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Levy.\n");
+        return DBL_MAX;
+    }
+    
+    if(a->n < 1){
+        fprintf(stderr,"\nInvalid number of decision variables @Levy. It must be equal or greater than one.\n");
+        return DBL_MAX;
+    }
+    
+    w_1 = 1 + ((a->x[0] - 1) / 4);
+    w_d = 1 + ((a->x[a->n-1] - 1) / 4);
+    
+    for (i = 0; i < (a->n-1); i++){
+	w = 1 + ((a->x[i] - 1) / 4);
+	partial_sum += pow(w - 1, 2) * (1 + 10 * pow(sin(M_PI*w+1), 2)) + pow(w_d - 1, 2) * (1 + pow(sin(2*M_PI*w_d), 2));
+    }
+	
+    sum = pow(sin(M_PI*w_1), 2) + partial_sum;
+        	
+    return sum;
+}
+
+/* It computes the 13th Levy's function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = 0 at x* (1, 1)
+Domain: -10 <= x_i <= 10 */
+double Levy_Thirteenth(Agent *a, ...){
+    double sum = 0;
+    
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Levy_Thirteenth.\n");
+        return DBL_MAX;
+    }
+    
+    if(a->n != 2){
+        fprintf(stderr,"\nInvalid number of decision variables @Levy_Thirteenth. It must be equal to two.\n");
+        return DBL_MAX;
+    }
+	
+    sum = pow(sin(3*M_PI*a->x[0]), 2) + (pow(a->x[0] - 1, 2) * (1 + pow(sin(3*M_PI*a->x[1]), 2))) + (pow(a->x[1] - 1, 2) * (1 + pow(sin(2*M_PI*a->x[1]), 2)));
+        	
+    return sum;
+}
+
+/* It computes the Matyas's function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = 0 at x* (0, 0)
+Domain: -10 <= x_i <= 10 */
+double Matyas(Agent *a, ...){
+    double sum = 0;
+    
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Matyas.\n");
+        return DBL_MAX;
+    }
+    
+    if(a->n != 2){
+        fprintf(stderr,"\nInvalid number of decision variables @Matyas. It must be equal to two.\n");
+        return DBL_MAX;
+    }
+	
+    sum = 0.26 * (pow(a->x[0], 2) + pow(a->x[1], 2)) - (0.48 * a->x[0] * a->x[1]);
+        	
+    return sum;
+}
+
+/* It computes the McCormick's function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = -1.9133 at x* (-0.547, -1.547)
+Domain: -1.5 <= x_0 <= 4 and -3 <= x_1 <= 3 */
+double McCormick(Agent *a, ...){
+    double sum = 0;
+    
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @McCormick.\n");
+        return DBL_MAX;
+    }
+    
+    if(a->n != 2){
+        fprintf(stderr,"\nInvalid number of decision variables @McCormick. It must be equal to two.\n");
+        return DBL_MAX;
+    }
+	
+    sum = sin(a->x[0] + a->x[1]) + pow(a->x[0] - a->x[1], 2) - (3/2) * a->x[0] + (5/2) * a->x[1] + 1;
+        	
+    return sum;
+}
+
+/* It computes the Miele Cantrell's function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = 0 at x* = (0, 1, 1, 1)
+Domain: -1 <= x_i <= 1 */
+double Miele_Cantrell(Agent *a, ...){
+    double sum = 0;
+    
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Miele_Cantrell.\n");
+        return DBL_MAX;
+    }
+    
+    if(a->n != 4){
+        fprintf(stderr,"\nInvalid number of decision variables @Miele_Cantrell. It must be equal to four.\n");
+        return DBL_MAX;
+    }
+    
+    sum = pow(exp(-a->x[0]) - a->x[1], 4) + 100 * pow(a->x[1] - a->x[2], 6) + pow(tan(a->x[2] - a->x[3]), 4) + pow(a->x[0], 8);
+	
+    return sum;
+}
+
+/* It computes the Parsopoulos' function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = 0 at x* = (k*PI/2, lambda*PI) with k = +-1, +-3, ... and lambda = 0, +-1, +-2, ...
+Domain: -5 <= x_i <= 5 */
+double Parsopoulos(Agent *a, ...){
+    double sum = 0;
+    
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Parsopoulos.\n");
+        return DBL_MAX;
+    }
+    
+    if(a->n != 2){
+        fprintf(stderr,"\nInvalid number of decision variables @Parsopoulos. It must be equal to two.\n");
+        return DBL_MAX;
+    }
+    
+    sum = cos(pow(a->x[0], 2)) + sin(pow(a->x[1], 2));
+	
+    return sum;
+}
+
+/* It computes the Pen Holder function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = -0.96354 at x* = (+-9.646168, +-9.646168)
+Domain: -11 <= x_i <= 11 */
+double Pen_Holder(Agent *a, ...){
+    double sum = 0;
+    
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Pen_Holder.\n");
+        return DBL_MAX;
+    }
+    
+    if(a->n != 2){
+        fprintf(stderr,"\nInvalid number of decision variables @Pen_Holder. It must be equal to two.\n");
+        return DBL_MAX;
+    }
+    
+    sum = -exp(pow(fabs(cos(a->x[0])*cos(a->x[1])*exp(fabs(1 - pow(pow(a->x[0], 2) + pow(a->x[1], 2), 0.5) / M_PI))), -1));
+	
+    return sum;
+}
+
+/* It computes the Pathological function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = 0 at x* = (0, ..., 0)
+Domain: -100 <= x_i <= 100 */
+double Pathological(Agent *a, ...){
+    int i;
+    double sum = 0;
+    
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Pathological.\n");
+        return DBL_MAX;
+    }
+    
+    if(a->n < 1){
+        fprintf(stderr,"\nInvalid number of decision variables @Pathological. It must be greater than one.\n");
+        return DBL_MAX;
+    }
+    
+    for (i = 0; i < (a->n-1); i++)
+	sum += 0.5 + (pow(sin(sqrt(100*pow(a->x[i], 2) + pow(a->x[i+1], 2)) - 0.5), 2)) / (1 + 0.001 * pow(pow(a->x[i], 2) - 2 * a->x[i] * a->x[i+1] + pow(a->x[i+1], 2), 2));
+	
+    return sum;
+}
+
+/* It computes the Paviani's function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = -45.778 at x* = (9.350266, ..., 9.350266)
+Domain: 2.0001 <= x_i <= 10 */
+double Paviani(Agent *a, ...){
+    int i;
+    double prod = 1, sum = 0;
+    
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Paviani.\n");
+        return DBL_MAX;
+    }
+    
+    if(a->n != 10){
+        fprintf(stderr,"\nInvalid number of decision variables @Paviani. It must be equal to 10.\n");
+        return DBL_MAX;
+    }
+    
+    for (i = 0; i < a->n; i++){
+	prod *= a->x[i];
+	sum += pow(log(a->x[i] - 2), 2) + pow(log(10 - a->x[i]), 2);
+    }
+    
+    sum = sum - pow(prod, 0.2);
+	
     return sum;
 }
 

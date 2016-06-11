@@ -51,37 +51,21 @@ double Giunta(Agent *a, ...); /* It computes the Giunta's function */
 double Goldstein_Price(Agent *a, ...); /* It computes the Goldstein-Price's function */
 double Griewank(Agent *a, ...); /* It computes the Griewank's function */
 double Gulf_Research(Agent *a, ...); /* It computes the Gulf's Research problem */
-double Hansen(Agent *a, ...); /* It computes the Hansen's function */
-double Hartmann_3(Agent *a, ...); /* It computes the Hartmann's 3-D function */
-double Hartmann_6(Agent *a, ...); /* It computes the Hartmann's 6-D function */
 double Helical_Valley(Agent *a, ...); /* It computes the Helical Valley function */
 double Himmelblau(Agent *a, ...); /* It computes the Himmelblau's function */
 double Hosaki(Agent *a, ...); /* It computes the Hosaki's function */
 double Jennrick_Sampson(Agent *a, ...); /* It computes the Jennrick's-Sampson function */
 double Keane(Agent *a, ...); /* It computes the Keane's function */
-double Langermann_5(Agent *a, ...); /* It computes the Langermann's function */
 double Leon(Agent *a, ...); /* It computes the Leon's function */
 double Levy(Agent *a, ...); /* It computes the Levy's function */
 double Levy_Thirteenth(Agent *a, ...); /* It computes the 13th Levy's function */
 double Matyas(Agent *a, ...); /* It computes the Matyas' function */
 double McCormick(Agent *a, ...); /* It computes the McCormick's function */
-double Miele_Cantrell(Agent *a, ...); /* It computes the Miele's Cantrell function */
-double Mishra_1(Agent *a, ...); /* It computes the 1st Mishra function */
-double Mishra_2(Agent *a, ...); /* It computes the 2nd Mishra function */
-double Mishra_3(Agent *a, ...); /* It computes the 3rd Mishra function */
-double Mishra_4(Agent *a, ...); /* It computes the 4th Mishra function */
-double Mishra_5(Agent *a, ...); /* It computes the 5th Mishra function */
-double Mishra_6(Agent *a, ...); /* It computes the 6th Mishra function */
-double Mishra_7(Agent *a, ...); /* It computes the 7th Mishra function */
-double Mishra_8(Agent *a, ...); /* It computes the 8th Mishra function */
-double Mishra_9(Agent *a, ...); /* It computes the 9th Mishra function */
-double Mishra_10(Agent *a, ...); /* It computes the 10th Mishra function */
-double Mishra_11(Agent *a, ...); /* It computes the 11st Mishra function */
+double Miele_Cantrell(Agent *a, ...); /* It computes the Miele Cantrell's function */
 double Parsopoulos(Agent *a, ...); /* It computes the Parsopoulos' function */
 double Pen_Holder(Agent *a, ...); /* It computes the Pen Holder function */
 double Pathological(Agent *a, ...); /* It computes the Pathological function */
 double Paviani(Agent *a, ...); /* It computes the Paviani's function */
-double Pinter(Agent *a, ...); /* It computes the Pintér's function */
 double Periodic(Agent *a, ...); /* It computes the Periodic function */
 double Powell_Singular_First(Agent *a, ...); /* It computes the 1st Powell's Singular function */
 double Powell_Singular_Second(Agent *a, ...); /* It computes the 2nd Powell's Singular function */
