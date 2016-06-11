@@ -2455,7 +2455,6 @@ double Trefethen(Agent *a, ...){
     return sum;
 }
 
-
 /* It computes the Trigonometric 1 function
 Parameters:
 a: agent
