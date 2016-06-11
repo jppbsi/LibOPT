@@ -67,8 +67,6 @@ double Pen_Holder(Agent *a, ...); /* It computes the Pen Holder function */
 double Pathological(Agent *a, ...); /* It computes the Pathological function */
 double Paviani(Agent *a, ...); /* It computes the Paviani's function */
 double Periodic(Agent *a, ...); /* It computes the Periodic function */
-double Powell_Singular_First(Agent *a, ...); /* It computes the 1st Powell's Singular function */
-double Powell_Singular_Second(Agent *a, ...); /* It computes the 2nd Powell's Singular function */
 double Powell_Sum(Agent *a, ...); /* It computes the Powell's Sum function */
 double Price_First(Agent *a, ...); /* It computes the 1st Price's function */
 double Price_Second(Agent *a, ...); /* It computes the 2nd Price's function */
@@ -78,32 +76,20 @@ double Qing(Agent *a, ...); /* It computes the Qing's function */
 double Quadratic(Agent *a, ...); /* It computes the Quadratic function */
 double Quartic(Agent *a, ...); /* It computes the Quartic function */
 double Quintic(Agent *a, ...); /* It computes the Quintic function */
-double Rana(Agent *a, ...); /* It computes the Rana's function */
 double Rastrigin(Agent *a, ...); /* It computes the Rastrigin's function */
-double Ripple_1(Agent *a, ...); /* It computes the Ripple 1 function */
-double Ripple_25(Agent *a, ...); /* It computes the Ripple 25 function */
 double Rosenbrock(Agent *a, ...); /* It computes the Rosenbrock's function */
-double Rosenbrock_Modified(Agent *a, ...); /* It computes the Rosenbrock's Modified function */
 double Rotated_Ellipsoid_1(Agent *a, ...); /* It computes the Rotated Ellipsoid 1 function */
 double Rotated_Ellipsoid_2(Agent *a, ...); /* It computes the Rotated Ellipsoid 2 function */
 double Rump(Agent *a, ...); /* It computes the Rump's function */
 double Salomon(Agent *a, ...); /* It computes the Salomon's function */
-double Sargan(Agent *a, ...); /* It computes the Sargan's function */
 double Schaffer_First(Agent *a, ...); /* It computes the 1st Schaffer's function */
 double Schaffer_Second(Agent *a, ...); /* It computes the 2nd Schaffer's function */
 double Schaffer_Third(Agent *a, ...); /* It computes the 3rd Schaffer's function */
 double Schaffer_Forth(Agent *a, ...); /* It computes the 4th Schaffer's function */
-double Schmidt_Vetters(Agent *a, ...); /* It computes the Schmidt's Vetters function */
-double Schumer_Steiglitz(Agent *a, ...); /* It computes the Schumer's Steiglitz function */
-double Schwefel(Agent *a, ...); /* It computes the Schewefel's function */
-double Shubert_First(Agent *a, ...); /* It computes the 1st Shubert's function */
-double Shubert_Third(Agent *a, ...); /* It computes the 3rd Shubert's function */
-double Shubert_Forth(Agent *a, ...); /* It computes the 4th Shubert's function */
+double Schmidt_Vetters(Agent *a, ...); /* It computes the Schmidt Vetters' function */
+double Schumer_Steiglitz(Agent *a, ...); /* It computes the Schumer Steiglitz's function */
+double Schewefel(Agent *a, ...); /* It computes the Schewefel's function */
 double Sphere(Agent *a, ...); /* It computes the Sphere's function */
-double Step_1(Agent *a, ...); /* It computes the Step 1 function */
-double Step_2(Agent *a, ...); /* It computes the Step 2 function */
-double Step_3(Agent *a, ...); /* It computes the Step 3function */
-double Stepint(Agent *a, ...); /* It computes the Stepint's function */
 double Streched_V_SineWave(Agent *a, ...); /* It computes the Streched V Sine Wave function */
 double Sum_DifferentPowers(Agent *a, ...); /* It computes the Sum of Different Powers function */
 double Sum_Squares(Agent *a, ...); /* It computes the Sum Squares function */
@@ -113,12 +99,9 @@ double Holder_Table_Second(Agent *a, ...); /* It computes the 2nd Holder's Table
 double Carrom_Table(Agent *a, ...); /* It computes the Carrom's Table function */
 double Testtube_Holder(Agent *a, ...); /* It computes the Testtube's Holder function */
 double Trecanni(Agent *a, ...); /* It computes the Trecanni's function */
-double Trid_6(Agent *a, ...); /* It computes the Trid 6 function */
-double Trid_10(Agent *a, ...); /* It computes the Trid 10 function */
 double Trefethen(Agent *a, ...); /* It computes the Trefethen's function */
 double Trigonometric_1(Agent *a, ...); /* It computes the Trigonometric 1 function */
 double Trigonometric_2(Agent *a, ...); /* It computes the Trigonometric 2 function */
-double Tripod(Agent *a, ...); /* It computes the Tripod's function */
 double Venter_Sobiezcczanski(Agent *a, ...); /* It computes the Venter's Sobiezcczanski-Sobieski function */
 double Watson(Agent *a, ...); /* It computes the Watson's function */
 double Wayburn_Seader_1(Agent *a, ...); /* It computes the Wayburn Seader 1 function */

@@ -629,7 +629,7 @@ double Three_HumpCamel(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = -1.0316 at x* = (-0.0898, 0.7126) and (0.0898, -0.7126)
+Minimum at f(x*) = -1.0316 at x* = (-0.0898, 0.7126) or (0.0898, -0.7126)
 Domain: -5 <= x_i <= 5 */
 double Six_HumpCamel(Agent *a, ...){
     double sum = 0;
@@ -777,7 +777,7 @@ double Colville(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = -2.06261 at x = (1.3494, -1.3494), (1.3494, 1.3494), (-1.3494, 1.3494) and (-1.3494, -1.3494)
+Minimum at f(x*) = -2.06261 at x = (1.3494, -1.3494), (1.3494, 1.3494), (-1.3494, 1.3494) or (-1.3494, -1.3494)
 Domain: -10 <= x_i < 10 */
 double Cross_Tray(Agent *a, ...){
     double sum = 0;
@@ -801,7 +801,7 @@ double Cross_Tray(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 0 at x* = (0, ..., 0
+Minimum at f(x*) = 0 at x* = (0, ..., 0)
 Domain: -1 <= x_i <= 1 */
 double Csendes(Agent *a, ...){
     int i;
@@ -1581,7 +1581,7 @@ double Paviani(Agent *a, ...){
     }
     
     if(a->n != 10){
-        fprintf(stderr,"\nInvalid number of decision variables @Paviani. It must be equal to 10.\n");
+        fprintf(stderr,"\nInvalid number of decision variables @Paviani. It must be equal to ten.\n");
         return DBL_MAX;
     }
     
@@ -1592,6 +1592,288 @@ double Paviani(Agent *a, ...){
     
     sum = sum - pow(prod, 0.2);
 	
+    return sum;
+}
+
+/* It computes the Periodic function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = 0.9 at x* = (0, 0)
+Domain: -10 <= x_i <= 10 */
+double Periodic(Agent *a, ...){
+    double sum = 0;
+    
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Periodic.\n");
+        return DBL_MAX;
+    }
+    
+    if(a->n != 2){
+        fprintf(stderr,"\nInvalid number of decision variables @Periodic. It must be equal to two.\n");
+        return DBL_MAX;
+    }
+    
+    sum = 1 + pow(sin(a->x[0]), 2) + pow(sin(a->x[1]), 2) - 0.1 * exp(-(pow(a->x[0], 2) + pow(a->x[1], 2)));
+    
+    return sum;
+}
+
+/* It computes the Powell's Sum function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = 0 at x* = (0, ..., 0)
+Domain: -1 <= x_i <= 1 */
+double Powell_Sum(Agent *a, ...){
+    int i;
+    double sum = 0;
+    
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Powell_Sum.\n");
+        return DBL_MAX;
+    }
+    
+    if(a->n < 1){
+        fprintf(stderr,"\nInvalid number of decision variables @Powell_Sum. It must be equal or greater than one.\n");
+        return DBL_MAX;
+    }
+    
+    for (i = 0; i < a->n; i++)
+	sum += pow(fabs(a->x[i]), (i+2));
+    
+    return sum;
+}
+
+/* It computes the 1st Price's function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = 0 at x* = (-5, -5), (-5, 5), (5, -5) or (5, 5)
+Domain: -500 <= x_i <= 500 */
+double Price_First(Agent *a, ...){
+    double sum = 0;
+    
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Price_First.\n");
+        return DBL_MAX;
+    }
+    
+    if(a->n != 2){
+        fprintf(stderr,"\nInvalid number of decision variables @Price_First. It must be equal to two.\n");
+        return DBL_MAX;
+    }
+    
+    sum = pow(fabs(a->x[0]) - 5, 2) + pow(fabs(a->x[1]) - 5, 2);
+    
+    return sum;
+}
+
+/* It computes the 2nd Price's function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = 0.9 at x* = (0, 0)
+Domain: -10 <= x_i <= 10 */
+double Price_Second(Agent *a, ...){
+    double sum = 0;
+    
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Price_Second.\n");
+        return DBL_MAX;
+    }
+    
+    if(a->n != 2){
+        fprintf(stderr,"\nInvalid number of decision variables @Price_Second. It must be equal to two.\n");
+        return DBL_MAX;
+    }
+    
+    sum = 1 + pow(sin(a->x[0]), 2) + pow(sin(a->x[1]), 2) - 0.1 * exp(-pow(a->x[0], 2) - pow(a->x[1], 2));
+    
+    return sum;
+}
+
+/* It computes the 3rd Price's function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = 0 at x* = (-5, -5), (-5, 5), (5, -5) or (5, 5)
+Domain: -500 <= x_i <= 500 */
+double Price_Third(Agent *a, ...){
+    double sum = 0;
+    
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Price_Third.\n");
+        return DBL_MAX;
+    }
+    
+    if(a->n != 2){
+        fprintf(stderr,"\nInvalid number of decision variables @Price_Third. It must be equal to two.\n");
+        return DBL_MAX;
+    }
+    
+    sum = 100 * pow(a->x[1] - pow(a->x[0], 2), 2) + 6 * pow(6.4 * pow(a->x[1] - 0.5, 2) - a->x[0] - 0.6, 2);
+    
+    return sum;
+}
+
+/* It computes the 4th Price's function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = 0 at x* = (0, 0), (2, 4) or (1.464, -2.506)
+Domain: -500 <= x_i <= 500 */
+double Price_Forth(Agent *a, ...){
+    double sum = 0;
+    
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Price_Forth.\n");
+        return DBL_MAX;
+    }
+    
+    if(a->n != 2){
+        fprintf(stderr,"\nInvalid number of decision variables @Price_Forth. It must be equal to two.\n");
+        return DBL_MAX;
+    }
+    
+    sum = pow(2 * pow(a->x[0], 3) * a->x[1] - pow(a->x[1], 3), 2) + pow(6 * a->x[0] - pow(a->x[1], 2) + a->x[1], 2);
+    
+    return sum;
+}
+
+/* It computes the Qing's function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = 0 at x* = (+-sqrt(i), ..., +-sqrt(i))
+Domain: -500 <= x_i <= 500 */
+double Qing(Agent *a, ...){
+    int i;
+    double sum = 0;
+    
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Qing.\n");
+        return DBL_MAX;
+    }
+    
+    if(a->n < 1){
+        fprintf(stderr,"\nInvalid number of decision variables @Qing. It must be equal or greater than one.\n");
+        return DBL_MAX;
+    }
+    
+    for (i = 0; i < a->n; i++)
+	sum += pow(pow(a->x[i], 2) - (i+1), 2);
+    
+    return sum;
+}
+
+/* It computes the Quadratic function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = -3873.7243 at x* = (0.19388, 0.48513)
+Domain: -10 <= x_i <= 10 */
+double Quadratic(Agent *a, ...){
+    double sum = 0;
+    
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Quadratic.\n");
+        return DBL_MAX;
+    }
+    
+    if(a->n != 2){
+        fprintf(stderr,"\nInvalid number of decision variables @Quadratic. It must be equal to two.\n");
+        return DBL_MAX;
+    }
+    
+    sum = -3803.84 - 138.08 * a->x[0] - 232.92 * a->x[1] + 128.08 * pow(a->x[0], 2) + 203.64 * pow(a->x[1], 2) + 182.25 * a->x[0] * a->x[1];
+    
+    return sum;
+}
+
+/* It computes the Quartic function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = 0 at x* = (0, ..., 0)
+Domain: -1.28 <= x_i <= 1.28 */
+double Quartic(Agent *a, ...){
+    int i;
+    double sum = 0, u;
+    
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Quartic.\n");
+        return DBL_MAX;
+    }
+    
+    if(a->n < 1){
+        fprintf(stderr,"\nInvalid number of decision variables @Quartic. It must be equal or greater than one.\n");
+        return DBL_MAX;
+    }
+    
+    for (i = 0; i < a->n; i++)
+	sum += (i+1) * pow(a->x[i], 4);
+    
+    do{
+	u = GenerateUniformRandomNumber(0, 1);
+    } while (u == 1);
+    
+    sum += u;
+    
+    return sum;
+}
+
+/* It computes the Quintic function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = 0 at x* = (-1 or 2, ..., -1 or 2)
+Domain: -10 <= x_i <= 10 */
+double Quintic(Agent *a, ...){
+    int i;
+    double sum = 0;
+    
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Quintic.\n");
+        return DBL_MAX;
+    }
+    
+    if(a->n < 1){
+        fprintf(stderr,"\nInvalid number of decision variables @Quintic. It must be equal or greater than one.\n");
+        return DBL_MAX;
+    }
+    
+    for (i = 0; i < a->n; i++)
+	sum += fabs(pow(a->x[i], 5) - 3 * pow(a->x[i], 4) + 4 * pow(a->x[i], 3) + 2 * pow(a->x[i], 2) - 10 * a->x[i] - 4);
+    
+    return sum;
+}
+
+/* It computes the Rastringin's function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = 0 at x* = (0, ..., 0)
+Domain: -5.12 <= x_i <= 5.12 */
+double Rastringin(Agent *a, ...){
+    int i;
+    double sum = 0;
+    
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Rastringin.\n");
+        return DBL_MAX;
+    }
+    
+    if(a->n < 1){
+        fprintf(stderr,"\nInvalid number of decision variables @Rastringin. It must be equal or greater than one.\n");
+        return DBL_MAX;
+    }
+    
+    sum = 10 * a->n;
+    
+    for (i = 0; i < a->n; i++)
+	sum += pow(a->x[i], 2) - 10 * cos(2*M_PI*a->x[i]);
+    
     return sum;
 }
 
@@ -1621,6 +1903,282 @@ double Rosenbrock(Agent *a, ...){
     return sum;
 }
 
+/* It computes the Rotated Ellipsoid 1 function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = 0 at x* = (0, 0)
+Domain: -500 <= x_i <= 500 */
+double Rotated_Ellipsoid_1(Agent *a, ...){
+    double sum = 0;
+    
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Rotated_Ellipsoid_1.\n");
+        return DBL_MAX;
+    }
+    
+    if(a->n != 2){
+        fprintf(stderr,"\nInvalid number of decision variables @Rotated_Ellipsoid_1. It must be equal to two.\n");
+        return DBL_MAX;
+    }
+
+    sum = 7 * pow(a->x[0], 2) - 6 * sqrt(3) * a->x[0] * a->x[1] + 13 * pow(a->x[1], 2);
+    
+    return sum;
+}
+
+/* It computes the Rotated Ellipsoid 2 function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = 0 at x* = (0, 0)
+Domain: -500 <= x_i <= 500 */
+double Rotated_Ellipsoid_2(Agent *a, ...){
+    double sum = 0;
+    
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Rotated_Ellipsoid_2.\n");
+        return DBL_MAX;
+    }
+    
+    if(a->n != 2){
+        fprintf(stderr,"\nInvalid number of decision variables @Rotated_Ellipsoid_2. It must be equal to two.\n");
+        return DBL_MAX;
+    }
+
+    sum = pow(a->x[0], 2) - a->x[0] * a->x[1] + pow(a->x[1], 2);
+    
+    return sum;
+}
+
+/* It computes the Rump's function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = 0 at x* = (0, 0)
+Domain: -500 <= x_i <= 500 */
+double Rump(Agent *a, ...){
+    double sum = 0;
+    
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Rump.\n");
+        return DBL_MAX;
+    }
+    
+    if(a->n != 2){
+        fprintf(stderr,"\nInvalid number of decision variables @Rump. It must be equal to two.\n");
+        return DBL_MAX;
+    }
+
+    sum = (333.75 - pow(a->x[0], 2)) * pow(a->x[1], 6) + pow(a->x[0], 2) * (11 * pow(a->x[0], 2) * pow(a->x[1], 2) - 121 * pow(a->x[1], 4) - 2) + 5.5 * pow(a->x[1], 8) + (a->x[0]) / (2 * a->x[1]);
+    
+    return sum;
+}
+
+/* It computes the Salomon's function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = 0 at x* = (0, ..., 0)
+Domain: -100 <= x_i <= 100 */
+double Salomon(Agent *a, ...){
+    int i;
+    double partial_sum = 0, sum = 0;
+    
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Salomon.\n");
+        return DBL_MAX;
+    }
+    
+    if(a->n < 1){
+        fprintf(stderr,"\nInvalid number of decision variables @Salomon. It must be equal or greater than one.\n");
+        return DBL_MAX;
+    }
+    
+    for (i = 0; i < a->n; i++)
+	partial_sum += pow(a->x[i], 2);
+
+    sum = 1 - cos(2*M_PI*sqrt(partial_sum)) + 0.1 * sqrt(partial_sum);
+    
+    return sum;
+}
+
+/* It computes the 1st Schaffer's function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = 0 at x* = (0, 0)
+Domain: -100 <= x_i <= 100 */
+double Schaffer_First(Agent *a, ...){
+    double sum = 0;
+    
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Schaffer_First.\n");
+        return DBL_MAX;
+    }
+    
+    if(a->n != 2){
+        fprintf(stderr,"\nInvalid number of decision variables @Schaffer_First. It must be equal to two.\n");
+        return DBL_MAX;
+    }
+
+    sum = 0.5 + (pow(sin(pow(pow(a->x[0], 2) + pow(a->x[1], 2), 2)), 2) - 0.5) / (1 + 0.001 * pow(pow(a->x[0], 2) + pow(a->x[1], 2), 2));
+    
+    return sum;
+}
+
+/* It computes the 2nd Schaffer's function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = 0 at x* = (0, 0)
+Domain: -100 <= x_i <= 100 */
+double Schaffer_Second(Agent *a, ...){
+    double sum = 0;
+    
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Schaffer_Second.\n");
+        return DBL_MAX;
+    }
+    
+    if(a->n != 2){
+        fprintf(stderr,"\nInvalid number of decision variables @Schaffer_Second. It must be equal to two.\n");
+        return DBL_MAX;
+    }
+
+    sum = 0.5 + (pow(sin(pow(pow(a->x[0], 2) - pow(a->x[1], 2), 2)), 2) - 0.5) / (1 + 0.001 * pow(pow(a->x[0], 2) + pow(a->x[1], 2), 2));
+    
+    return sum;
+}
+
+/* It computes the 3rd Schaffer's function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = 0.001230 at x* = (0, +-1.253002) or (+-1.253002, 0)
+Domain: -100 <= x_i <= 100 */
+double Schaffer_Third(Agent *a, ...){
+    double sum = 0;
+    
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Schaffer_Third.\n");
+        return DBL_MAX;
+    }
+    
+    if(a->n != 2){
+        fprintf(stderr,"\nInvalid number of decision variables @Schaffer_Third. It must be equal to two.\n");
+        return DBL_MAX;
+    }
+
+    sum = 0.5 + (pow(sin(cos(fabs(pow(a->x[0], 2) - pow(a->x[1], 2)))), 2) - 0.5) / (1 + 0.001 * pow(pow(a->x[0], 2) + pow(a->x[1], 2), 2));
+    
+    return sum;
+}
+
+/* It computes the 4th Schaffer's function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = 0.292438 at x* = (0, +-1.253028) or (+-1.253028, 0)
+Domain: -100 <= x_i <= 100 */
+double Schaffer_Forth(Agent *a, ...){
+    double sum = 0;
+    
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Schaffer_Forth.\n");
+        return DBL_MAX;
+    }
+    
+    if(a->n != 2){
+        fprintf(stderr,"\nInvalid number of decision variables @Schaffer_Forth. It must be equal to two.\n");
+        return DBL_MAX;
+    }
+
+    sum = 0.5 + (pow(cos(sin(pow(a->x[0], 2) - pow(a->x[1], 2))), 2) - 0.5) / (1 + 0.001 * pow(pow(a->x[0], 2) + pow(a->x[1], 2), 2));
+    
+    return sum;
+}
+
+/* It computes the Schmidt Vetters' function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = 3 at x* = (0.78547, 0.78547, 0.78547)
+Domain: 0 <= x_i <= 10 */
+double Schmidt_Vetters(Agent *a, ...){
+    double sum = 0;
+    
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Schmidt_Vetters.\n");
+        return DBL_MAX;
+    }
+    
+    if(a->n != 3){
+        fprintf(stderr,"\nInvalid number of decision variables @Schmidt_Vetters. It must be equal to three.\n");
+        return DBL_MAX;
+    }
+
+    sum = 1 / (1 + pow(a->x[0] - a->x[1], 2)) + sin((M_PI * a->x[1] + a->x[2])/2) + exp(pow((a->x[0] + a->x[1]) / a->x[1] - 2, 2));
+    
+    return sum;
+}
+
+/* It computes the Schumer Steiglitz's function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = 0 at x* = (0, ..., 0)
+Domain: -100 <= x_i <= 100 */
+double Schumer_Steiglitz(Agent *a, ...){
+    int i;
+    double sum = 0;
+    
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Schumer_Steiglitz.\n");
+        return DBL_MAX;
+    }
+    
+    if(a->n < 1){
+        fprintf(stderr,"\nInvalid number of decision variables @Schumer_Steiglitz. It must be equal or greater than one.\n");
+        return DBL_MAX;
+    }
+
+    for (i = 0; i < a->n; i++)
+	sum += pow(a->x[i], 4);
+    
+    return sum;
+}
+
+/* It computes the Schewefel's function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = 0 at x* = (0, ..., 0)
+Domain: -100 <= x_i <= 100 */
+double Schewefel(Agent *a, ...){
+    int i;
+    double alpha, sum = 0;
+    
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Schewefel.\n");
+        return DBL_MAX;
+    }
+    
+    if(a->n < 1){
+        fprintf(stderr,"\nInvalid number of decision variables @Schewefel. It must be equal or greater than one.\n");
+        return DBL_MAX;
+    }
+
+    for (i = 0; i < a->n; i++)
+	sum += pow(a->x[i], 2);
+	
+    alpha = sqrt(M_PI);
+	
+    sum = pow(sum, alpha);
+    
+    return sum;
+}
+
 /* It computes the Sphere's function
 Parameters:
 a: agent
@@ -1644,6 +2202,313 @@ double Sphere(Agent *a, ...){
     for (i = 0; i < a->n; i++)
 	sum += pow(a->x[i], 2); 
     	
+    return sum;
+}
+
+/* It computes the Streched V Sine Wave function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = 0 at x* = (0, ..., 0)
+Domain: -10 <= x_i <= 10 */
+double Streched_V_SineWave(Agent *a, ...){
+    int i;
+    double sum = 0;
+    
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Streched_V_SineWave.\n");
+        return DBL_MAX;
+    }
+    
+    if(a->n < 1){
+        fprintf(stderr,"\nInvalid number of decision variables @Streched_V_SineWave. It must be greater than one.\n");
+        return DBL_MAX;
+    }
+    
+    for (i = 0; i < (a->n-1); i++)
+	sum += pow(pow(a->x[i+1], 2) + pow(a->x[i], 2), 0.25) * (pow(sin(50*pow(pow(a->x[i+1], 2) + pow(a->x[i], 2), 0.1)), 2) + 0.1);
+    	
+    return sum;
+}
+
+/* It computes the Sum of Different Powers function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = 0 at x* = (0, ..., 0)
+Domain:  -1 <= x_i <= 1 */
+double Sum_DifferentPowers(Agent *a, ...){
+    int i;
+    double sum = 0;
+
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Sum_DifferentPowers.\n");
+        return DBL_MAX;
+    }
+
+    if(a->n < 1){
+        fprintf(stderr,"\nInvalid number of decision variables @Sum_DifferentPowers. It must be greater than one.\n");
+        return DBL_MAX;
+    }
+    
+    for (i = 0; i < a->n; i++)
+	sum += pow(fabs(a->x[i]), (i+2));
+
+    return sum;
+}
+
+/* It computes the Sum Squares function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = 0 at x* = (0, ..., 0)
+Domain:  -10 <= x_i <= 10 */
+double Sum_Squares(Agent *a, ...){
+    int i;
+    double sum = 0;
+
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Sum_Squares.\n");
+        return DBL_MAX;
+    }
+
+    if(a->n < 1){
+        fprintf(stderr,"\nInvalid number of decision variables @Sum_Squares. It must be greater than one.\n");
+        return DBL_MAX;
+    }
+    
+    for (i = 0; i < a->n; i++)
+	sum += (i+1) * pow(a->x[i], 2);
+
+    return sum;
+}
+
+/* It computes the Styblinski's-Tang function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = -78.332 at x* = (-2.903534, ..., -2.903534)
+Domain:  -5 <= x_i <= 5 */
+double Styblinski_Tang(Agent *a, ...){
+    int i;
+    double sum = 0;
+
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Styblinski_Tang.\n");
+        return DBL_MAX;
+    }
+
+    if(a->n < 1){
+        fprintf(stderr,"\nInvalid number of decision variables @Styblinski_Tang. It must be greater than one.\n");
+        return DBL_MAX;
+    }
+    
+    for (i = 0; i < a->n; i++)
+	sum += pow(a->x[i], 4) - 16 * pow(a->x[i], 2) + 5 * a->x[i];
+    
+    sum *= 0.5;
+
+    return sum;
+}
+
+/* It computes the 1st Holder's Table function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = -26.920336 at x* = (+-9.646168, +-9.646168)
+Domain:  -10 <= x_i <= 10 */
+double Holder_Table_First(Agent *a, ...){
+    double sum = 0;
+
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Holder_Table_First.\n");
+        return DBL_MAX;
+    }
+
+    if(a->n != 2){
+        fprintf(stderr,"\nInvalid number of decision variables @Holder_Table_First. It must be equal to two.\n");
+        return DBL_MAX;
+    }
+    
+    sum = -fabs(cos(a->x[0]) * cos(a->x[1]) * exp(fabs(1 - pow(a->x[0] + a->x[1], 0.5/M_PI))));
+
+    return sum;
+}
+
+/* It computes the 2nd Holder's Table function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = -19.20850 at x* = (+-8.055023472141116, +-9.664590028909654)
+Domain:  -10 <= x_i <= 10 */
+double Holder_Table_Second(Agent *a, ...){
+    double sum = 0;
+
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Holder_Table_Second.\n");
+        return DBL_MAX;
+    }
+
+    if(a->n != 2){
+        fprintf(stderr,"\nInvalid number of decision variables @Holder_Table_Second. It must be equal to two.\n");
+        return DBL_MAX;
+    }
+    
+    sum = -fabs(sin(a->x[0]) * cos(a->x[1]) * exp(fabs(1 - pow(a->x[0] + a->x[1], 0.5/M_PI))));
+
+    return sum;
+}
+
+/* It computes the Carrom's Table function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = -24.1568155 at x* = (+-9.646157266348881, +-9.646134286497169)
+Domain:  -10 <= x_i <= 10 */
+double Carrom_Table(Agent *a, ...){
+    double sum = 0;
+
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Carrom_Table.\n");
+        return DBL_MAX;
+    }
+
+    if(a->n != 2){
+        fprintf(stderr,"\nInvalid number of decision variables @Carrom_Table. It must be equal to two.\n");
+        return DBL_MAX;
+    }
+    
+    sum = -(1/30) * exp(2 * fabs(1 - (sqrt(pow(a->x[0], 2) + pow(a->x[1], 2))/M_PI)) * pow(cos(a->x[0]), 2) * pow(cos(a->x[1]), 2));
+
+    return sum;
+}
+
+/* It computes the Testtube's Holder function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = -10.872300 at x* = (+-PI/2, 0)
+Domain:  -10 <= x_i <= 10 */
+double Testtube_Holder(Agent *a, ...){
+    double sum = 0;
+
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Testtube_Holder.\n");
+        return DBL_MAX;
+    }
+
+    if(a->n != 2){
+        fprintf(stderr,"\nInvalid number of decision variables @Testtube_Holder. It must be equal to two.\n");
+        return DBL_MAX;
+    }
+    
+    sum = -4 * (sin(a->x[0]) * cos(a->x[1]) * exp(fabs(cos(pow(a->x[0], 2) + pow(a->x[1], 2))/200)));
+
+    return sum;
+}
+
+/* It computes the Trecanni's function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = 0 at x* = (0, 0) or (-2, 0)
+Domain:  -5 <= x_i <= 5 */
+double Trecanni(Agent *a, ...){
+    double sum = 0;
+
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Trecanni.\n");
+        return DBL_MAX;
+    }
+
+    if(a->n != 2){
+        fprintf(stderr,"\nInvalid number of decision variables @Trecanni. It must be equal to two.\n");
+        return DBL_MAX;
+    }
+    
+    sum = pow(a->x[0], 4) - 4 * pow(a->x[0], 3) + 4 * a->x[0] + pow(a->x[1], 2);
+
+    return sum;
+}
+
+/* It computes the Trefethen's function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = -3.30686865 at x* = (-0.024403, 0.210612)
+Domain:  -10 <= x_i <= 10 */
+double Trefethen(Agent *a, ...){
+    double sum = 0;
+
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Trefethen.\n");
+        return DBL_MAX;
+    }
+
+    if(a->n != 2){
+        fprintf(stderr,"\nInvalid number of decision variables @Trefethen. It must be equal to two.\n");
+        return DBL_MAX;
+    }
+
+    sum = exp(sin(50*a->x[0])) + sin(60*exp(a->x[1])) + sin(70*sin(a->x[0])) + sin(sin(80*a->x[1])) - sin(10*(a->x[0] + a->x[1])) + ((1/4)*(pow(a->x[0], 2) + pow(a->x[1], 2)));
+
+    return sum;
+}
+
+
+/* It computes the Trigonometric 1 function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = 0 at x* = (0, ..., 0)
+Domain:  0 <= x_i <= PI */
+double Trigonometric_1(Agent *a, ...){
+    int i, j;
+    double partial_sum = 0, sum = 0;
+
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Trigonometric_1.\n");
+        return DBL_MAX;
+    }
+
+    if(a->n < 1){
+        fprintf(stderr,"\nInvalid number of decision variables @Trigonometric_1. It must be greater than one\n");
+        return DBL_MAX;
+    }
+
+    for (i = 0; i < a->n; i++)
+        for (j = 0; j < a->n; j++)
+            partial_sum += cos(a->x[j]);
+        sum += pow(a->n - partial_sum + (i+1) * (1 - cos(a->x[i]) - sin(a->x[i])), 2);
+
+    return sum;
+}
+
+/* It computes the Trigonometric 2 function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = 1 at x* = (0.9, ..., 0.9)
+Domain:  -500 <= x_i <= 500 */
+double Trigonometric_2(Agent *a, ...){
+    int i;
+    double partial_sum = 0, sum = 0;
+
+    if(!a){
+        fprintf(stderr,"\nAgent not allocated @Trigonometric_2.\n");
+        return DBL_MAX;
+    }
+
+    if(a->n < 1){
+        fprintf(stderr,"\nInvalid number of decision variables @Trigonometric_2. It must be greater than one\n");
+        return DBL_MAX;
+    }
+
+    for (i = 0; i < a->n; i++)
+        partial_sum += 8 * pow(sin(7 * pow(a->x[i] - 0.9, 2)), 2) + 6 * pow(sin((14 * pow(a->x[0] - 0.9, 2))), 2) + pow(a->x[i] - 0.9, 2);
+
+    sum = 1 + partial_sum;
+
     return sum;
 }
 
