@@ -777,7 +777,7 @@ double Colville(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = -2.06261 at x = (1.3494, -1.3494), (1.3494, 1.3494), (-1.3494, 1.3494) or (-1.3494, -1.3494)
+Minimum at f(x*) = -2.06261 at x* = (1.3494, -1.3494), (1.3494, 1.3494), (-1.3494, 1.3494) or (-1.3494, -1.3494)
 Domain: -10 <= x_i < 10 */
 double Cross_Tray(Agent *a, ...){
     double sum = 0;
@@ -875,7 +875,7 @@ double Damavandi(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = -24777 at x* = (0, 15) and (0, -15)
+Minimum at f(x*) = -24777 at x* = (0, 15) or (0, -15)
 Domain: -20 <= x_i <= 20 */
 double Deckkers_Aarts(Agent *a, ...){
     double sum = 0;
@@ -927,7 +927,7 @@ double Dixon_Price(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = -1 at x* (PI, PI)
+Minimum at f(x*) = -1 at x* = (PI, PI)
 Domain: -100 <= x_i <= 100 */
 double Easom(Agent *a, ...){
     double sum = 0;
@@ -951,7 +951,7 @@ double Easom(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 0.470427 at x* (2.842503, 1.920175)
+Minimum at f(x*) = 0.470427 at x* = (2.842503, 1.920175)
 Domain: -500 <= x_i <= 500 */
 double ElAttar_VidyasagarDutta(Agent *a, ...){
     double sum = 0;
@@ -975,7 +975,7 @@ double ElAttar_VidyasagarDutta(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 0 at x* (0, 0)
+Minimum at f(x*) = 0 at x* = (0, 0)
 Domain: -5 <= x_i <= 5 */
 double Eggcrate(Agent *a, ...){
     double sum = 0;
@@ -999,7 +999,7 @@ double Eggcrate(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 959.64 at x* (512, 404.2319)
+Minimum at f(x*) = 959.64 at x* = (512, 404.2319)
 Domain: -512 <= x_i <= 512 */
 double Eggholder(Agent *a, ...){
     int i;
@@ -1025,7 +1025,7 @@ double Eggholder(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 1 at x* (0, ..., 0)
+Minimum at f(x*) = 1 at x* = (0, ..., 0)
 Domain: -1 <= x_i <= 1 */
 double Exponential(Agent *a, ...){
     int i;
@@ -1053,7 +1053,7 @@ double Exponential(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 0 at x* (0, 10)
+Minimum at f(x*) = 0 at x* = (0, 10)
 Domain: 0 <= x_i <= 20 */
 double EXP_2(Agent *a, ...){
     int i;
@@ -1079,7 +1079,7 @@ double EXP_2(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 0 at x* (5, 4)
+Minimum at f(x*) = 0 at x* = (5, 4)
 Domain: -10 <= x_i <= 10 */
 double Freudenstein_Roth(Agent *a, ...){
     int i;
@@ -1104,7 +1104,7 @@ double Freudenstein_Roth(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 0.060447 at x* (0.45834282, 0.45834282)
+Minimum at f(x*) = 0.060447 at x* = (0.45834282, 0.45834282)
 Domain: -1 <= x_i <= 1 */
 double Giunta(Agent *a, ...){
     int i;
@@ -1132,7 +1132,7 @@ double Giunta(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 3 at x* (0, -1)
+Minimum at f(x*) = 3 at x* = (0, -1)
 Domain: -2 <= x_i <= 2 */
 double Goldstein_Price(Agent *a, ...){
     double sum = 0;
@@ -1156,7 +1156,7 @@ double Goldstein_Price(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 0 at x* (0, ..., 0)
+Minimum at f(x*) = 0 at x* = (0, ..., 0)
 Domain: -100 <= x_i <= 100 */
 double Griewank(Agent *a, ...){
     int i;
@@ -1186,7 +1186,7 @@ double Griewank(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 0 at x* (50, 25, 1.5)
+Minimum at f(x*) = 0 at x* = (50, 25, 1.5)
 Domain: 0.1 <= x_0 <= 100, 0 <= x_1 <= 25.6 and 0 <= x_2 <= 5 */
 double Gulf_Research(Agent *a, ...){
     int i;
@@ -1214,7 +1214,7 @@ double Gulf_Research(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 0 at x* (1, 0, 0)
+Minimum at f(x*) = 0 at x* = (1, 0, 0)
 Domain: -10 <= x_i <= 10 */
 double Helical_Valley(Agent *a, ...){
     double sum = 0, theta;
@@ -1243,7 +1243,7 @@ double Helical_Valley(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 0 at x* (3, 2)
+Minimum at f(x*) = 0 at x* = (3, 2)
 Domain: -5 <= x_i <= 5 */
 double Himmelblau(Agent *a, ...){
     double sum = 0;
@@ -1267,8 +1267,8 @@ double Himmelblau(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = -2.3458 at x* (4, 2)
-Domain: 0 <= x_1 <= 5 and 0 <= x_2 <- 6 */
+Minimum at f(x*) = -2.3458 at x* = (4, 2)
+Domain: 0 <= x_1 <= 5 and 0 <= x_2 <= 6 */
 double Hosaki(Agent *a, ...){
     double sum = 0;
     
@@ -1291,7 +1291,7 @@ double Hosaki(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 124.3612 at x* (0.257825, 0.257825)
+Minimum at f(x*) = 124.3612 at x* = (0.257825, 0.257825)
 Domain: -1 <= x_i <= 1 */
 double Jennrick_Sampson(Agent *a, ...){
     int i;
@@ -1317,7 +1317,7 @@ double Jennrick_Sampson(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = -0.673668 at x* (0, 1.39325) or (1.39325, 0)
+Minimum at f(x*) = -0.673668 at x* = (0, 1.39325) or (1.39325, 0)
 Domain: 0 <= x_i <= 10 */
 double Keane(Agent *a, ...){
     double sum = 0;
@@ -1341,7 +1341,7 @@ double Keane(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 0 at x* (1, 1)
+Minimum at f(x*) = 0 at x* = (1, 1)
 Domain: -1.2 <= x_i <= 1.2 */
 double Leon(Agent *a, ...){
     double sum = 0;
@@ -1365,7 +1365,7 @@ double Leon(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 0 at x* (1, ...,  1)
+Minimum at f(x*) = 0 at x* = (1, ...,  1)
 Domain: -10 <= x_i <= 10 */
 double Levy(Agent *a, ...){
     int i;
@@ -1399,7 +1399,7 @@ double Levy(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 0 at x* (1, 1)
+Minimum at f(x*) = 0 at x* = (1, 1)
 Domain: -10 <= x_i <= 10 */
 double Levy_Thirteenth(Agent *a, ...){
     double sum = 0;
@@ -1423,7 +1423,7 @@ double Levy_Thirteenth(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 0 at x* (0, 0)
+Minimum at f(x*) = 0 at x* = (0, 0)
 Domain: -10 <= x_i <= 10 */
 double Matyas(Agent *a, ...){
     double sum = 0;
@@ -1447,7 +1447,7 @@ double Matyas(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = -1.9133 at x* (-0.547, -1.547)
+Minimum at f(x*) = -1.9133 at x* = (-0.547, -1.547)
 Domain: -1.5 <= x_0 <= 4 and -3 <= x_1 <= 3 */
 double McCormick(Agent *a, ...){
     double sum = 0;
@@ -2571,7 +2571,7 @@ double Watson(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 0 at x* = (1, 2) and (1.597, 0.806)
+Minimum at f(x*) = 0 at x* = (1, 2) or (1.597, 0.806)
 Domain: -500 <= x_i <= 500 */
 double Wayburn_Seader_1(Agent *a, ...){
     double sum = 0;
@@ -2595,7 +2595,7 @@ double Wayburn_Seader_1(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 0 at x* = (0.2, 1) and (0.425, 1)
+Minimum at f(x*) = 0 at x* = (0.2, 1) or (0.425, 1)
 Domain: -500 <= x_i <= 500 */
 double Wayburn_Seader_2(Agent *a, ...){
     double sum = 0;
