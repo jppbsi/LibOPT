@@ -20,7 +20,6 @@ void runFPA(SearchSpace *s, prtFun Evaluate, ...){
     }
         
     EvaluateSearchSpace(s, Evaluate, arg); /* Initial evaluation of the search space */
-    ShowSearchSpace(s);
         
     for(t = 1; t <= s->iterations; t++){
         fprintf(stderr,"\nRunning iteration %d/%d ... ", t, s->iterations);
@@ -31,7 +30,7 @@ void runFPA(SearchSpace *s, prtFun Evaluate, ...){
             tmp = CopyAgent(s->a[i], _FPA_);
             
             prob = GenerateUniformRandomNumber(0,1);
-            if(s->p > prob){ /* large-scale pollination */
+            if(prob > s->p){ /* large-scale pollination */
                 L = GenerateLevyDistribution(s->n, s->beta);
                 
                 /* Equation 1 */
