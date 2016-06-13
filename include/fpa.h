@@ -6,4 +6,6 @@
 #include "opt.h"
 #include "common.h"
 
+void runFPA(SearchSpace *s, prtFun Evaluate, ...); /* It executes the Flower Pollination Algorithm for function minimization */
+
 #endif

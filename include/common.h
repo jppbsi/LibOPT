@@ -71,7 +71,7 @@ void EvaluateSearchSpace(SearchSpace *s, prtFun Evaluate, va_list arg); /* It ev
 /* General-purpose functions */
 double GenerateUniformRandomNumber(double low, double high); /* It generates a random number drawn from a uniform distribution whithin [low,high] */
 double GenerateGaussianRandomNumber(double mean, double variance); /* It generates a random number drawn from a Gaussian (normal) distribution */
-double GenerateLevyRandomNumber(double mean, double variance); /* It generates a random number drawn from a Levy distribution */
+double *GenerateLevyDistribution(int n, double beta); /* It generates an n-dimensional array drawn from a Levy distribution */
 void WaiveComment(FILE *fp); /* It waives a comment in a model file */
 SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id); /* It loads a search space with parameters specified in a file */
 /**************************/

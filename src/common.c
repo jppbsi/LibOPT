@@ -316,13 +316,40 @@ double GenerateGaussianRandomNumber(double mean, double variance){
     return randGaussian(mean, variance);
 }
 
-/* It generates a random number drawn from a Levy distribution
- * Since we used a normal distribution to generate such number, we need the mean and variance
+/* It generates an n-dimensional array drawn from a Levy distribution
+ * The formulation used here is based on the paper "Multiobjective Cuckoo Search for Design Optimization", X.-S. Yang and S. Deb, Computers & Operations Research, 2013.
 Parameters:
-mean: mean of the distribution
-variance: variance of the distribution */
-double GenerateLevyRandomNumber(double mean, double variance){
+n: dimension of the output array
+beta: input parameter used in the formulation */
+double *GenerateLevyDistribution(int n, double beta){
+    double *L = NULL, sigma_u, sigma_v = 1;
+    double *u = NULL, *v = NULL;
+    int i;
     
+    if(n < 1){
+        fprintf(stderr,"Invalid input paramater @GenerateLevyDistribution.\n");
+        return NULL;
+    }
+    
+    L = (double *)malloc(n*sizeof(double));
+    
+    sigma_u = pow((tgamma(1+beta)*sin(M_PI*beta/2))/(tgamma((1+beta)/2)*beta*pow(2,(beta-1)/2)), 1/beta); /* Equation 16 */
+    
+    u = (double *)malloc(n*sizeof(double));
+    v = (double *)malloc(n*sizeof(double));
+    sigma_u = pow(sigma_u, 2);
+    for(i = 0; i < n; i++){ /* It computes Equation 15 */
+        u[i] = GenerateGaussianRandomNumber(0, sigma_u);
+        v[i] = GenerateGaussianRandomNumber(0, sigma_v);
+    }
+    
+    for(i = 0; i < n; i++)
+        L[i] = 0.01*(u[i]/pow(abs(v[i]), 1/beta)); /* It computes Equation 14 (part of it) */
+    
+    free(u);
+    free(v);
+    
+    return L;
 }
 
 /* It waives a comment in a model file
