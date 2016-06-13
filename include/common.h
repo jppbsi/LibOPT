@@ -46,6 +46,10 @@ typedef struct SearchSpace_{
     double f_max; /* maximum frequency */
     double r; /* pulse rate */
     double A; /* loudness */
+    
+    /* FPA */
+    double beta; /* used to compute the step based on Levy Flight */
+    double p; /* switch probability (i.e. large-scale or local pollination) */
 
 
 }SearchSpace;
