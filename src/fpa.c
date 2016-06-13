@@ -20,6 +20,7 @@ void runFPA(SearchSpace *s, prtFun Evaluate, ...){
     }
         
     EvaluateSearchSpace(s, Evaluate, arg); /* Initial evaluation of the search space */
+    ShowSearchSpace(s);
         
     for(t = 1; t <= s->iterations; t++){
         fprintf(stderr,"\nRunning iteration %d/%d ... ", t, s->iterations);
@@ -30,7 +31,7 @@ void runFPA(SearchSpace *s, prtFun Evaluate, ...){
             tmp = CopyAgent(s->a[i], _FPA_);
             
             prob = GenerateUniformRandomNumber(0,1);
-            if(prob < s->p){ /* large-scale pollination */
+            if(s->p > prob){ /* large-scale pollination */
                 L = GenerateLevyDistribution(s->n, s->beta);
                 
                 /* Equation 1 */
@@ -67,7 +68,6 @@ void runFPA(SearchSpace *s, prtFun Evaluate, ...){
        }
        
        va_copy(arg, argtmp);
-       //EvaluateBats(s, Evaluate, arg);
        
        fprintf(stderr, "OK (minimum fitness value %lf)", s->gfit);
     }

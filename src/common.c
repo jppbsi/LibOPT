@@ -22,6 +22,7 @@ Agent *CreateAgent(int n, int opt_id){
     switch (opt_id){
         case _PSO_:
         case _BA_:
+        case _FPA_:
             a->v = (double *)calloc(n,sizeof(double));
             if(opt_id == _PSO_) a->xl = (double *)calloc(n,sizeof(double));
         break;
@@ -186,6 +187,7 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id){
     switch (opt_id){
         case _PSO_:
         case _BA_:
+        case _FPA_:        
             s->g = (double *)calloc(s->n,sizeof(double));
         break;
     }
@@ -220,6 +222,7 @@ void DestroySearchSpace(SearchSpace **s, int opt_id){
     switch (opt_id){
         case _PSO_:
         case _BA_:
+        case _FPA_:
             if(tmp->g) free(tmp->g);
         break;
         default:

@@ -49,7 +49,7 @@ typedef struct SearchSpace_{
     
     /* FPA */
     double beta; /* used to compute the step based on Levy Flight */
-    double p; /* switch probability (i.e. large-scale or local pollination) */
+    double p; /* probability of large-scale local pollination */
 
 
 }SearchSpace;
