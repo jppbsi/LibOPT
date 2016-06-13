@@ -41,8 +41,8 @@ void runFPA(SearchSpace *s, prtFun Evaluate, ...){
                 free(L);
             }else{ /* local pollination */
                 epsilon = GenerateUniformRandomNumber(0,1);
-                flower_j = GenerateUniformRandomNumber(0, s->n-1);
-                flower_k = GenerateUniformRandomNumber(0, s->n-1);
+                flower_j = GenerateUniformRandomNumber(0, s->m-1);
+                flower_k = GenerateUniformRandomNumber(0, s->m-1);
                 
                 /* Equation 3 */
                 for(j = 0; j < s->n; j++)

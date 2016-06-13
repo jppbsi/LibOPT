@@ -2,7 +2,6 @@
 #include "common.h"
 #include "function.h"
 #include "pso.h"
-#include "ba.h"
 
 int main(){
     
