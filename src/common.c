@@ -23,6 +23,7 @@ Agent *CreateAgent(int n, int opt_id){
         case _PSO_:
         case _BA_:
         case _FPA_:
+            a->x = (double *)calloc(n,sizeof(double));
             a->v = (double *)calloc(n,sizeof(double));
             if(opt_id == _PSO_) a->xl = (double *)calloc(n,sizeof(double));
         break;
@@ -30,9 +31,8 @@ Agent *CreateAgent(int n, int opt_id){
             free(a);
             fprintf(stderr,"\nInvalid optimization identifier @CreateAgent\n");
         return NULL;
+        break;
     }
-    
-    a->x = (double *)malloc(n*sizeof(double));
     
     return a;
 }
@@ -50,12 +50,11 @@ void DestroyAgent(Agent **a, int opt_id){
         exit(-1);
     }
     
-    if(tmp->x) free(tmp->x);
-    
     switch (opt_id){
         case _PSO_:
-        case _BA_  :
+        case _BA_:
         case _FPA_:
+            if(tmp->x) free(tmp->x);
             if(tmp->v) free(tmp->v);
             if(opt_id == _PSO_) if(tmp->xl) free(tmp->xl);
         break;
@@ -118,10 +117,11 @@ Agent *CopyAgent(Agent *a, int opt_id){
 
 /* It generates a new agent according to each technique
 Paremeters:
-s: search space */
+s: search space
+opt_id: identifier of the optimization technique */
 Agent *GenerateNewAgent(SearchSpace *s, int opt_id){
     if(!s){
-        fprintf(stderr,"\nSearch space not allocated @GenerateNewBatNearBest.\n");
+        fprintf(stderr,"\nSearch space not allocated @GenerateNewAgent.\n");
         exit(-1);
     }
     
@@ -130,6 +130,7 @@ Agent *GenerateNewAgent(SearchSpace *s, int opt_id){
         
     switch (opt_id){
         case _PSO_:
+        break;
         case _BA_:
             a = CreateAgent(s->n, _BA_);
             
@@ -137,8 +138,10 @@ Agent *GenerateNewAgent(SearchSpace *s, int opt_id){
             for(j = 0; j < s->n; j++)
                 a->x[j] = s->g[j]+0.001*GenerateUniformRandomNumber(0,1); 
         break;
+        case _FPA_:
+        break;
         default:
-            fprintf(stderr,"\nInvalid optimization identifier @CopyAgent.\n");
+            fprintf(stderr,"\nInvalid optimization identifier @GenerateNewAgent.\n");
             return NULL;
         break;
     }
@@ -402,6 +405,7 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
             WaiveComment(fp);
             fscanf(fp, "%lf %lf", &(s->A), &(s->r));
             WaiveComment(fp);
+        break;
         case _FPA_:
             s = CreateSearchSpace(m, n, _FPA_);
             s->iterations = iterations;
