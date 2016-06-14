@@ -349,7 +349,7 @@ double *GenerateLevyDistribution(int n, double beta){
     }
     
     for(i = 0; i < n; i++)
-        L[i] = 0.01*(u[i]/pow(abs(v[i]), 1/beta)); /* It computes Equation 14 (part of it) */
+        L[i] = 0.01*(u[i]/pow(fabs(v[i]), 1/beta)); /* It computes Equation 14 (part of it) */
     
     free(u);
     free(v);
