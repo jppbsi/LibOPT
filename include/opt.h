@@ -8,7 +8,8 @@ extern "C" {
 /* Meta-heuristics */
 #define _PSO_ 1 /* Particle Swarm Optimization */
 #define _BA_ 2 /* Bat Algorithm */
-#define _FPA_ 3 /* Flowe Pollination Algorithm */
+#define _FPA_ 3 /* Flower Pollination Algorithm */
+#define _FA_ 4 /* Firefly Algorithm */
 /**************************/
     
 #include <stdio.h>

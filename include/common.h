@@ -50,7 +50,11 @@ typedef struct SearchSpace_{
     /* FPA */
     double beta; /* used to compute the step based on Levy Flight */
     double p; /* probability of local pollination */
-
+    
+    /* FA */
+    double alpha; /* randomized parameter */
+    double beta_0; /* attractiveness */
+    double gamma; /* light absorption */
 
 }SearchSpace;
 
@@ -76,6 +80,8 @@ void EvaluateSearchSpace(SearchSpace *s, prtFun Evaluate, va_list arg); /* It ev
 double GenerateUniformRandomNumber(double low, double high); /* It generates a random number drawn from a uniform distribution whithin [low,high] */
 double GenerateGaussianRandomNumber(double mean, double variance); /* It generates a random number drawn from a Gaussian (normal) distribution */
 double *GenerateLevyDistribution(int n, double beta); /* It generates an n-dimensional array drawn from a Levy distribution */
+double EuclideanDistance(double *x, double *y, int n); /* It computes the Euclidean distance between two n-dimensional arrays */
+int CompareForQSort(const void *a, const void *b); /* It computes the compare function used on Quick Sort (qsort) */
 void WaiveComment(FILE *fp); /* It waives a comment in a model file */
 SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id); /* It loads a search space with parameters specified in a file */
 /**************************/

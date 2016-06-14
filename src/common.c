@@ -23,6 +23,7 @@ Agent *CreateAgent(int n, int opt_id){
         case _PSO_:
         case _BA_:
         case _FPA_:
+        case _FA_:
             a->x = (double *)calloc(n,sizeof(double));
             a->v = (double *)calloc(n,sizeof(double));
             if(opt_id == _PSO_) a->xl = (double *)calloc(n,sizeof(double));
@@ -54,6 +55,7 @@ void DestroyAgent(Agent **a, int opt_id){
         case _PSO_:
         case _BA_:
         case _FPA_:
+        case _FA_:
             if(tmp->x) free(tmp->x);
             if(tmp->v) free(tmp->v);
             if(opt_id == _PSO_) if(tmp->xl) free(tmp->xl);
@@ -101,6 +103,7 @@ Agent *CopyAgent(Agent *a, int opt_id){
         case _PSO_:
         case _BA_:
         case _FPA_:
+        case _FA_:
             memcpy(cpy->x, a->x, a->n*sizeof(double));
             memcpy(cpy->v, a->v, a->n*sizeof(double));
             if(opt_id == _PSO_) memcpy(cpy->xl, a->xl, a->n*sizeof(double));
@@ -139,6 +142,8 @@ Agent *GenerateNewAgent(SearchSpace *s, int opt_id){
                 a->x[j] = s->g[j]+0.001*GenerateUniformRandomNumber(0,1); 
         break;
         case _FPA_:
+        break;
+        case _FA_:
         break;
         default:
             fprintf(stderr,"\nInvalid optimization identifier @GenerateNewAgent.\n");
@@ -190,7 +195,8 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id){
     switch (opt_id){
         case _PSO_:
         case _BA_:
-        case _FPA_:        
+        case _FPA_:
+        case _FA_:
             s->g = (double *)calloc(s->n,sizeof(double));
         break;
     }
@@ -226,6 +232,7 @@ void DestroySearchSpace(SearchSpace **s, int opt_id){
         case _PSO_:
         case _BA_:
         case _FPA_:
+        case _FA_:
             if(tmp->g) free(tmp->g);
         break;
         default:
@@ -360,6 +367,31 @@ double *GenerateLevyDistribution(int n, double beta){
     return L;
 }
 
+/* It computes the Euclidean distance between two n-dimensional arrays
+Parameters:
+x: n-dimension array
+y: n-dimension array */
+double EuclideanDistance(double *x, double *y, int n){
+    double sum = 0.0;
+    int i;
+    
+    for(i = 0; i < n; i++)
+        sum+=pow(x[i]-y[i],2);
+    
+    return sqrt(sum);
+}
+
+/* It computes the compare function used on Quick Sort (qsort) */
+int CompareForQSort(const void *a, const void *b){
+    const Agent *ap = *(Agent **)a, *bp = *(Agent **)b;
+    if (ap->fit < bp->fit) {
+        return -1;
+    }
+    if (ap->fit > bp->fit)
+        return 1;
+    return 0;
+}
+
 /* It waives a comment in a model file
 Parameters:
 fp = file pointer */
@@ -410,6 +442,12 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
             s = CreateSearchSpace(m, n, _FPA_);
             s->iterations = iterations;
             fscanf(fp, "%lf %lf", &(s->beta), &(s->p));
+            WaiveComment(fp);
+        break;
+        case _FA_:
+            s = CreateSearchSpace(m, n, _FA_);
+            s->iterations = iterations;
+            fscanf(fp, "%lf %lf %lf", &(s->alpha), &(s->beta_0), &(s->gamma));
             WaiveComment(fp);
         break;
         default:
