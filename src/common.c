@@ -402,6 +402,11 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
             WaiveComment(fp);
             fscanf(fp, "%lf %lf", &(s->A), &(s->r));
             WaiveComment(fp);
+        case _FPA_:
+            s = CreateSearchSpace(m, n, _FPA_);
+            s->iterations = iterations;
+            fscanf(fp, "%lf %lf", &(s->beta), &(s->p));
+            WaiveComment(fp);
         break;
         default:
             fprintf(stderr,"\nInvalid optimization identifier @ReadSearchSpaceFromFile.\n");
