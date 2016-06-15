@@ -206,17 +206,9 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...){
         if(opt_id == _GP_){
             s->min_depth = va_arg(arg, int);
             s->max_depth = va_arg(arg, int);
-            s->n_terminals = va_arg(arg, int);
-            
-            s->terminal = (char **)malloc(s->n_terminals*sizeof(char *));
-            for(i = 0; i < s->n_terminals; i++)
-                s->terminal[i] = (char *)malloc(TERMINAL_LENGHT*sizeof(char));
+            s->n_terminals = va_arg(arg, int);            
             s->terminal = va_arg(arg, char **);
-
-            fprintf(stderr,"\ns->min_depth: %d", s->min_depth);
-            fprintf(stderr,"\ns->max_depth: %d", s->max_depth);
-            fprintf(stderr,"\ns->n_terminals: %d", s->n_terminals);
-            
+    
             s->T = (Node **)malloc(s->m*sizeof(Node *));
             for(i = 0; i < s->m; i++)
                 s->T[i] = GROW(s, s->min_depth, s->max_depth);       
@@ -545,7 +537,6 @@ Node *GROW(SearchSpace *s, int min_depth, int max_depth){
     
     if(min_depth == max_depth){
         aux = GenerateUniformRandomNumber(0, s->n_terminals-1);
-        fprintf(stderr,"\naux: %d", aux);
 	if(!strcmp(s->terminal[aux], "CONST")){
 	    const_id = GenerateUniformRandomNumber(0, s->n_constants-1);
 	    return CreateNode(s->terminal[aux], aux, CONSTANT);
