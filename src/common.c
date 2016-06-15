@@ -175,30 +175,34 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id){
     s->m = m;
     s->n = n;
     s->gfit = DBL_MAX;
-    s->w = 0;
-    s->w_min = 0;
-    s->w_max = 0;
-    s->c1 = 0;
-    s->c2 = 0;
     
-    s->a = (Agent **)malloc(s->m*sizeof(Agent *));
-    s->a[0] = CreateAgent(s->n, opt_id);
-    if(s->a[0]){ /* Here, we verify whether opt_id is valid or not. In the latter case, function CreateAgent returns NULL. */
-        for(i = 1; i < s->m; i++)
-            s->a[i] = CreateAgent(s->n, opt_id);
+    if(opt_id != _GP_){ /* GP uses a different structure than that of others */
+        s->a = (Agent **)malloc(s->m*sizeof(Agent *));
+        s->a[0] = CreateAgent(s->n, opt_id);
+        if(s->a[0]){ /* Here, we verify whether opt_id is valid or not. In the latter case, function CreateAgent returns NULL. */
+            for(i = 1; i < s->m; i++)
+                s->a[i] = CreateAgent(s->n, opt_id);
+        }else{
+            free(s->a);
+            free(s);
+            return NULL;
+        }
+    
+        switch (opt_id){
+            case _PSO_:
+            case _BA_:
+            case _FPA_:
+            case _FA_:
+                s->g = (double *)calloc(s->n,sizeof(double));
+            break;
+        }
     }else{
-        free(s->a);
-        free(s);
-        return NULL;
-    }
-    
-    switch (opt_id){
-        case _PSO_:
-        case _BA_:
-        case _FPA_:
-        case _FA_:
-            s->g = (double *)calloc(s->n,sizeof(double));
-        break;
+        if(opt_id == _GP_){
+            s->T = (Node **)malloc(s->m*sizeof(Node *));
+            for(i = 0; i < s->m; i++)
+                s->T[i] = NULL;
+        }
+        
     }
     
     s->LB = (double *)malloc(s->n*sizeof(double));
@@ -221,24 +225,34 @@ void DestroySearchSpace(SearchSpace **s, int opt_id){
         exit(-1);
     }
     
-    for(i = 0; i < tmp->m; i++)
-        if(tmp->a[i]) DestroyAgent(&(tmp->a[i]), opt_id);
-    free(tmp->a);
+    if(opt_id != _GP_){ /* GP uses a different structure than that of others */
+    
+        for(i = 0; i < tmp->m; i++)
+            if(tmp->a[i]) DestroyAgent(&(tmp->a[i]), opt_id);
+        free(tmp->a);
+    
+        switch (opt_id){
+            case _PSO_:
+            case _BA_:
+            case _FPA_:
+            case _FA_:
+                if(tmp->g) free(tmp->g);
+            break;
+            default:
+                fprintf(stderr,"\nInvalid optimization identifier @DestroySearchSpace.\n");
+            break;       
+        }
+    }
+    else{
+        if(opt_id == _GP_){
+            for(i = 0; i < tmp->m; i++)
+                if(tmp->T[i]) DestroyTree(&(tmp->T[i]));
+            free(tmp->T);
+        }
+    }
     
     if(tmp->LB) free(tmp->LB);
     if(tmp->UB) free(tmp->UB);
-    
-    switch (opt_id){
-        case _PSO_:
-        case _BA_:
-        case _FPA_:
-        case _FA_:
-            if(tmp->g) free(tmp->g);
-        break;
-        default:
-            fprintf(stderr,"\nInvalid optimization identifier @DestroySearchSpace.\n");
-        break;       
-    }
     
     free(tmp);
 }
@@ -464,3 +478,18 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
     return s;
 }
 /**************************/
+
+/* Tree-like functions */
+/* It deallocates a tree
+Parameters:
+T: pointer to the tree */
+void DestroyTree(Node **T){
+    if(*T){
+        DestroyTree(&(*T)->left);
+        DestroyTree(&(*T)->right);
+	free((*T)->elem);
+        free(*T);
+        *T = NULL;
+    }
+}
+/***********************/

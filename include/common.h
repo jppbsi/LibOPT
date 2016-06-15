@@ -76,6 +76,7 @@ typedef struct SearchSpace_{
     char **function; /* matrix with the functions' names */
     char **terminal; /* matrix with the terminals' names */
     double *constant; /* array with the random constants */
+    Node **T; /* pointer to the agent (tree) */
 
 }SearchSpace;
 
@@ -106,5 +107,9 @@ int CompareForQSort(const void *a, const void *b); /* It computes the compare fu
 void WaiveComment(FILE *fp); /* It waives a comment in a model file */
 SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id); /* It loads a search space with parameters specified in a file */
 /**************************/
+
+/* Tree-like functions */
+void DestroyTree(Node **T); /* It deallocates a tree */
+/***********************/
 
 #endif

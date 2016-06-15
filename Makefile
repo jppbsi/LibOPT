@@ -8,7 +8,7 @@ CC=gcc
 FLAGS=  -g -O0
 CFLAGS=''
 
-all: libopt-plus sphere rosenbrock dixon_price
+all: libopt-plus sphere rosenbrock dixon_price tmp
 
 libopt-plus: $(LIB)/libopt-plus.a
 	echo "libopt-plus.a built..."
@@ -65,6 +65,9 @@ rosenbrock: examples/rosenbrock.c
 
 dixon_price: examples/dixon_price.c
 	$(CC) $(FLAGS) examples/dixon_price.c -o examples/bin/dixon_price -I $(INCLUDE) -L $(LIB) -lopt-plus -lm;
+
+tmp: examples/tmp.c
+	$(CC) $(FLAGS) examples/tmp.c -o examples/bin/tmp -I $(INCLUDE) -L $(LIB) -lopt-plus -lm;
 
 clean:
 	rm -f $(LIB)/lib*.a; rm -f $(OBJ)/*.o; rm -rf examples/bin/*
