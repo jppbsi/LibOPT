@@ -69,9 +69,10 @@ int srandinter(int seed){
     return seed;		/* return seed in case we need to repeat */
 }
 
-/* It returns a random number uniformly distributed between a and b */
+/* It returns a random number uniformly distributed within [a,b] */
 double randinter(double a, double b){	
     if (randx == 0) srandinter(0);
+    b++;
     return a + (b-a)*((double)ran2(&randx));
 }
 

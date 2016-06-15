@@ -9,7 +9,7 @@ typedef struct _Node{
     char *elem; /* Content of the node */
     int status; /* It defines the status of a given node (TERMINAL|FUNCTION|CONSTANT) */
     int id; /* Identifier of the node (its position in the array of nodes -- it depends on its status) */
-    char son_esq; /* Flag to identify whether the node is a son placed on the left or on the right */
+    char left_son; /* Flag to identify whether the node is a son placed on the left or on the right */
     struct _Node *right, *left, *parent; /* Pointers to the subtrees on the right, left and parent */
 }Node;
 
@@ -107,6 +107,7 @@ double EuclideanDistance(double *x, double *y, int n); /* It computes the Euclid
 int CompareForQSort(const void *a, const void *b); /* It computes the compare function used on Quick Sort (qsort) */
 void WaiveComment(FILE *fp); /* It waives a comment in a model file */
 SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id); /* It loads a search space with parameters specified in a file */
+int getFUNCTIONid(char *s); /* It returns the identifier of the function used as input */
 /**************************/
 
 /* Tree-related functions */

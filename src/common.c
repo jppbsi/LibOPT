@@ -1,5 +1,9 @@
 #include "common.h"
 
+/* number of arguments (descendants) required by each terminal function in GP in the following order:
+SUM, SUB, MUL, DIV, EXP, SQRT, LOG and ABS */
+const int N_ARGS_FUNCTION[] =  {2,2,2,2,1,1,1,1};
+
 /* Agent-related functions */
 /* It creates an agent
 Parameters:
@@ -206,8 +210,12 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...){
         if(opt_id == _GP_){
             s->min_depth = va_arg(arg, int);
             s->max_depth = va_arg(arg, int);
-            s->n_terminals = va_arg(arg, int);            
+            s->n_terminals = va_arg(arg, int);
+            s->n_constants = va_arg(arg, int);
+            s->n_functions = va_arg(arg, int);            
             s->terminal = va_arg(arg, char **);
+            s->constant = va_arg(arg, double *);
+            s->function = va_arg(arg, char **);
     
             s->T = (Node **)malloc(s->m*sizeof(Node *));
             for(i = 0; i < s->m; i++)
@@ -265,6 +273,12 @@ void DestroySearchSpace(SearchSpace **s, int opt_id){
             for(i = 0; i < tmp->n_terminals; i++)
                 if(tmp->terminal[i]) free(tmp->terminal[i]);
             free(tmp->terminal);
+            
+            for(i = 0; i < tmp->n_functions; i++)
+                if(tmp->function[i]) free(tmp->function[i]);
+            free(tmp->function);
+            
+            if(tmp->constant) free(tmp->constant);
         }
     }
     
@@ -494,6 +508,24 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
     
     return s;
 }
+
+/* It returns the identifier of the function used as input
+Parameters:
+s: string with the function node description */
+int getFUNCTIONid(char *s){
+    if(!strcmp(s,"SUM")) return _SUM_;
+    else if(!strcmp(s,"SUB")) return _SUB_;
+        else if(!strcmp(s,"MUL")) return _MUL_;
+            else if(!strcmp(s,"DIV")) return _DIV_;
+                else if(!strcmp(s,"EXP")) return _EXP_;
+                    else if(!strcmp(s,"SQRT")) return _SQRT_;
+			else if(!strcmp(s,"LOG")) return _LOG_;
+			    else if(!strcmp(s,"ABS")) return _ABS_;
+			    else{
+				fprintf(stderr,"\nUndefined function @getFUNCTIONid.");
+				exit(-1);
+			    }
+}
 /**************************/
 
 /* Tree-related functions */
@@ -514,20 +546,20 @@ Node *CreateNode(char *value, int node_id, char status){
     tmp->id = node_id;
     tmp->left = tmp->right = tmp->parent = NULL;
     tmp->status = status;
-    tmp->son_esq = 1; /* by default, every node is a left node */
+    tmp->left_son = 1; /* by default, every node is a left node */
     tmp->elem = (char *)malloc((strlen(value)+1)*sizeof(char));
     strcpy(tmp->elem, value);
     
     return tmp;
 }
-    
+
 /* It creates a random tree based on the GROW algorithm described in "Two Fast Tree-Creation Algorithms for Genetic Programming", S. Lukw, IEEE Transactions on Evolutionary Computation, 2000.
 Parameters:
 s: search space
 dmin: minimum depth
 dmax: maximum depth */
 Node *GROW(SearchSpace *s, int min_depth, int max_depth){
-    int it, aux, const_id;
+    int i, aux, const_id;
     Node *tmp = NULL, *node = NULL;
     
     if(!s){
@@ -539,42 +571,35 @@ Node *GROW(SearchSpace *s, int min_depth, int max_depth){
         aux = GenerateUniformRandomNumber(0, s->n_terminals-1);
 	if(!strcmp(s->terminal[aux], "CONST")){
 	    const_id = GenerateUniformRandomNumber(0, s->n_constants-1);
-	    return CreateNode(s->terminal[aux], aux, CONSTANT);
+	    return CreateNode(s->terminal[aux], const_id, CONSTANT);
 	}
         return CreateNode(s->terminal[aux], aux, TERMINAL);
     }
-    /*else{
-        aux = rand()%(gp->n_functions+gp->n_terminals);
-        if(aux >= gp->n_functions){ // if tmp is a terminal
-            aux = aux-gp->n_functions;
-	    if(!strcmp(gp->terminal[aux], "CONST")){
-		srand(time(NULL));
-		T = gsl_rng_default;
-		r = gsl_rng_alloc(T);
-		gsl_rng_set(r, random_seed());
-	    
-		const_id = gsl_rng_uniform_int(r, gp->constant->size);
-		gsl_rng_free(r);
-		tmp = CreateNode(gp->terminal[aux], aux, 1, 1, const_id);
+    else{
+        aux = GenerateUniformRandomNumber(0, s->n_functions+s->n_terminals-1);
+        if(aux >= s->n_functions){ /* If aux is a terminal node */
+            aux = aux-s->n_functions;
+	    if(!strcmp(s->terminal[aux], "CONST")){
+                const_id = GenerateUniformRandomNumber(0, s->n_constants-1);
+		tmp = CreateNode(s->terminal[aux], const_id, CONSTANT);
 	    }
-            else tmp = CreateNode(gp->terminal[aux], aux, 1, 0, -1);
+            else tmp = CreateNode(s->terminal[aux], aux, TERMINAL);
             return tmp;
         }
-        else{
-            node = CreateNode(gp->function[aux], aux, 0, 0, -1);
-            for(it = 0; it < N_ARGS_FUNCTION[getFUNCTIONid(gp->function[aux])]; it++){
-                tmp = GROW(gp, d+1,dmax);
-                if(!it)
-                    node->esq = tmp;
+        else{ /* The new node is function one */
+            node = CreateNode(s->function[aux], aux, FUNCTION);
+            for(i = 0; i < N_ARGS_FUNCTION[getFUNCTIONid(s->function[aux])]; i++){
+                tmp = GROW(s, min_depth+1, max_depth);
+                if(!i) node->left = tmp;
                 else{
-                    node->dir = tmp;
-                    tmp->son_esq = 0;
+                    node->right = tmp;
+                    tmp->left_son = 0;
                 }
                 tmp->parent = node;
             }
             return node;
         }
-    }*/
+    }
 }
 
 /* It deallocates a tree
@@ -603,8 +628,9 @@ void PrintTree2File(SearchSpace *s, Node *T, char *fileName){
         exit(-1);
     }
     
-    fp = fopen(fileName, "w");
+    fp = fopen(fileName, "a");
     PreFixPrintTree4File(s, T, fp);
+    fprintf(fp,"\n");
     fclose(fp);
 }
 

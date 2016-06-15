@@ -1,4 +1,3 @@
-#include "opt.h"
 #include "common.h"
 #include "function.h"
 #include "pso.h"

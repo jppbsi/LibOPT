@@ -17,8 +17,19 @@ extern "C" {
 #define TERMINAL 0
 #define FUNCTION 1
 #define CONSTANT 2
-#define TERMINAL_LENGHT 16
+#define TERMINAL_LENGTH 16
 /*****************/
+
+/* GP function-type nodes */
+#define _SUM_ 0
+#define _SUB_ 1
+#define _MUL_ 2
+#define _DIV_ 3
+#define _EXP_ 4
+#define _SQRT_ 5
+#define _LOG_ 6
+#define _ABS_ 7
+/**************************/
 
 #include <stdio.h>
 #include <stdlib.h>
