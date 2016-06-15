@@ -4,6 +4,14 @@
 #include "opt.h"
 #include "random.h"
 
+/* It defines the node of the tree used to implement GP */
+typedef struct _Node{
+    char *elem;
+    int terminal_id, const_id;
+    char son_esq, is_terminal, is_const;
+    struct _Node *dir, *esq, *parent;
+}Node;
+
 /* It defines the agent (solution) to be used for all optimization techniques */
 typedef struct Agent_{
     /* common definitions */
@@ -55,6 +63,18 @@ typedef struct SearchSpace_{
     double alpha; /* randomized parameter */
     double beta_0; /* attractiveness */
     double gamma; /* light absorption */
+    
+    /* GP */
+    double pReproduction; /* probability of reproduction */
+    double pMutation; /* probability of mutation */
+    double pSelection; /* probability of selection */
+    int max_depth; /* maximum depth of a tree */
+    int n_terminals; /* number of terminals */
+    int n_functions; /* number of functions */
+    int n_constants; /* number of constants */
+    char **function; /* matrix with the functions' names */
+    char **terminal; /* matrix with the terminals' names */
+    double *constant; /* array with the random constants */
 
 }SearchSpace;
 
