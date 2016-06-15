@@ -69,6 +69,7 @@ typedef struct SearchSpace_{
     double pReproduction; /* probability of reproduction */
     double pMutation; /* probability of mutation */
     double pSelection; /* probability of selection */
+    int min_depth; /* minimum depth of a tree */
     int max_depth; /* maximum depth of a tree */
     int n_terminals; /* number of terminals */
     int n_functions; /* number of functions */
@@ -91,7 +92,7 @@ Agent *GenerateNewAgent(SearchSpace *s, int opt_id); /* It generates a new agent
 /**************************/
 
 /* Search Space-related functions */
-SearchSpace *CreateSearchSpace(int m, int n, int opt_id); /* It creates a search space */
+SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...); /* It creates a search space */
 void DestroySearchSpace(SearchSpace **s, int opt_id); /* It deallocates a search space */
 void InitializeSearchSpace(SearchSpace *s); /* It initializes an allocated search space */
 void ShowSearchSpace(SearchSpace *s); /* It shows a search space */
@@ -108,7 +109,9 @@ void WaiveComment(FILE *fp); /* It waives a comment in a model file */
 SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id); /* It loads a search space with parameters specified in a file */
 /**************************/
 
-/* Tree-like functions */
+/* Tree-related functions */
+Node *CreateNode(char *value, int node_id, char status); /* It creates a tree node */
+Node *GROW(SearchSpace *s, int min_depth, int max_depth); /* It creates a random tree based on the GROW algorithm */
 void DestroyTree(Node **T); /* It deallocates a tree */
 /***********************/
 

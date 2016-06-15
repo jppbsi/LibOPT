@@ -161,16 +161,21 @@ Agent *GenerateNewAgent(SearchSpace *s, int opt_id){
 Parameters:
 m: number of agents
 n: number of decision variables
-opt_id: identifier of the optimization technique */
-SearchSpace *CreateSearchSpace(int m, int n, int opt_id){
+opt_id: identifier of the optimization technique
+additional parameters: related to each technique
+PSO, BA, FPA and FA: do not require additional parameters
+GP: it requires the minimum and maximum depth of a tree, number of terminals and a matrix (char **) with the terminals' names  */
+SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...){
     SearchSpace *s = NULL;
+    va_list arg;
     
     if((m < 1) || (n < 1) || (opt_id < 1)){
         fprintf(stderr,"\nInvalid parameters @CreateSearchSpace.\n");
         return NULL;
     }
-    int i;
+    int i, n_terminals;
     
+    va_start(arg, opt_id);
     s = (SearchSpace *)malloc(sizeof(SearchSpace));
     s->m = m;
     s->n = n;
@@ -185,6 +190,7 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id){
         }else{
             free(s->a);
             free(s);
+            fprintf(stderr,"\nInvalid optimization identifier @CreateSearchSpace.\n");
             return NULL;
         }
     
@@ -198,15 +204,30 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id){
         }
     }else{
         if(opt_id == _GP_){
+            s->min_depth = va_arg(arg, int);
+            s->max_depth = va_arg(arg, int);
+            s->n_terminals = va_arg(arg, int);
+            
+            s->terminal = (char **)malloc(s->n_terminals*sizeof(char *));
+            for(i = 0; i < s->n_terminals; i++)
+                s->terminal[i] = (char *)malloc(TERMINAL_LENGHT*sizeof(char));
+            s->terminal = va_arg(arg, char **);
+
+            fprintf(stderr,"\ns->min_depth: %d", s->min_depth);
+            fprintf(stderr,"\ns->max_depth: %d", s->max_depth);
+            fprintf(stderr,"\ns->n_terminals: %d", s->n_terminals);
+            
             s->T = (Node **)malloc(s->m*sizeof(Node *));
             for(i = 0; i < s->m; i++)
-                s->T[i] = NULL;
+                s->T[i] = GROW(s, s->min_depth, s->max_depth);       
         }
         
     }
     
     s->LB = (double *)malloc(s->n*sizeof(double));
     s->UB = (double *)malloc(s->n*sizeof(double));
+    
+    va_end(arg);
     
     return s;
 }
@@ -248,6 +269,10 @@ void DestroySearchSpace(SearchSpace **s, int opt_id){
             for(i = 0; i < tmp->m; i++)
                 if(tmp->T[i]) DestroyTree(&(tmp->T[i]));
             free(tmp->T);
+            
+            for(i = 0; i < tmp->n_terminals; i++)
+                if(tmp->terminal[i]) free(tmp->terminal[i]);
+            free(tmp->terminal);
         }
     }
     
@@ -479,7 +504,88 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
 }
 /**************************/
 
-/* Tree-like functions */
+/* Tree-related functions */
+/* It creates a tree node
+Parameters:
+value: content of the node
+node_id: identifier of the node id, i.e. its position in the array of terminals, functions or constants
+status: TERMINAL|FUNCTION/CONSTANT */
+Node *CreateNode(char *value, int node_id, char status){
+    Node *tmp = NULL;
+   tmp = (Node *)malloc(sizeof(Node));
+    
+    if(!value){
+        fprintf(stderr,"\nInvalid input @CreateNode.\n");
+        return NULL;
+    }
+
+    tmp->id = node_id;
+    tmp->left = tmp->right = tmp->parent = NULL;
+    tmp->status = status;
+    tmp->son_esq = 1; /* by default, every node is a left node */
+    tmp->elem = (char *)malloc((strlen(value)+1)*sizeof(char));
+    strcpy(tmp->elem, value);
+    
+    return tmp;
+}
+    
+/* It creates a random tree based on the GROW algorithm described in "Two Fast Tree-Creation Algorithms for Genetic Programming", S. Lukw, IEEE Transactions on Evolutionary Computation, 2000.
+Parameters:
+s: search space
+dmin: minimum depth
+dmax: maximum depth */
+Node *GROW(SearchSpace *s, int min_depth, int max_depth){
+    int it, aux, const_id;
+    Node *tmp = NULL, *node = NULL;
+    
+    if(!s){
+        fprintf(stderr,"\nSearch space not allocated @GROW.\n");
+        return NULL;
+    }
+    
+    if(min_depth == max_depth){
+        aux = GenerateUniformRandomNumber(0, s->n_terminals-1);
+        fprintf(stderr,"\naux: %d", aux);
+	if(!strcmp(s->terminal[aux], "CONST")){
+	    const_id = GenerateUniformRandomNumber(0, s->n_constants-1);
+	    return CreateNode(s->terminal[aux], aux, CONSTANT);
+	}
+        return CreateNode(s->terminal[aux], aux, TERMINAL);
+    }
+    /*else{
+        aux = rand()%(gp->n_functions+gp->n_terminals);
+        if(aux >= gp->n_functions){ // if tmp is a terminal
+            aux = aux-gp->n_functions;
+	    if(!strcmp(gp->terminal[aux], "CONST")){
+		srand(time(NULL));
+		T = gsl_rng_default;
+		r = gsl_rng_alloc(T);
+		gsl_rng_set(r, random_seed());
+	    
+		const_id = gsl_rng_uniform_int(r, gp->constant->size);
+		gsl_rng_free(r);
+		tmp = CreateNode(gp->terminal[aux], aux, 1, 1, const_id);
+	    }
+            else tmp = CreateNode(gp->terminal[aux], aux, 1, 0, -1);
+            return tmp;
+        }
+        else{
+            node = CreateNode(gp->function[aux], aux, 0, 0, -1);
+            for(it = 0; it < N_ARGS_FUNCTION[getFUNCTIONid(gp->function[aux])]; it++){
+                tmp = GROW(gp, d+1,dmax);
+                if(!it)
+                    node->esq = tmp;
+                else{
+                    node->dir = tmp;
+                    tmp->son_esq = 0;
+                }
+                tmp->parent = node;
+            }
+            return node;
+        }
+    }*/
+}
+
 /* It deallocates a tree
 Parameters:
 T: pointer to the tree */

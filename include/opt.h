@@ -12,7 +12,14 @@ extern "C" {
 #define _FA_ 4 /* Firefly Algorithm */
 #define _GP_ 5 /* Genetic Programming */
 /**************************/
-    
+
+/* GP type nodes */
+#define TERMINAL 0
+#define FUNCTION 1
+#define CONSTANT 2
+#define TERMINAL_LENGHT 16
+/*****************/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
