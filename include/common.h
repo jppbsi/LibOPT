@@ -6,10 +6,11 @@
 
 /* It defines the node of the tree used to implement GP */
 typedef struct _Node{
-    char *elem;
-    int terminal_id, const_id;
-    char son_esq, is_terminal, is_const;
-    struct _Node *dir, *esq, *parent;
+    char *elem; /* Content of the node */
+    int status; /* It defines the status of a given node (TERMINAL|FUNCTION|CONSTANT) */
+    int id; /* Identifier of the node (its position in the array of nodes -- it depends on its status) */
+    char son_esq; /* Flag to identify whether the node is a son placed on the left or on the right */
+    struct _Node *right, *left, *parent; /* Pointers to the subtrees on the right, left and parent */
 }Node;
 
 /* It defines the agent (solution) to be used for all optimization techniques */

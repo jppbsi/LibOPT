@@ -11,12 +11,12 @@ Node *GROW(SearchSpace *s, int dmin, int dmax){
     Node *tmp = NULL, *node = NULL;
     
     if(!s){
-        fprintf(stderr,"\nSearch space not allocated @EvaluateSwarm.\n");
+        fprintf(stderr,"\nSearch space not allocated @GROW.\n");
         return NULL;
     }
     
     if(dmin == dmax){
-        aux = GenerateUniformRandomNumber(1, s->n_terminals-1);
+        aux = GenerateUniformRandomNumber(0, s->n_terminals-1);
 	if(!strcmp(s->terminal[aux], "CONST")){
 	    const_id = GenerateUniformRandomNumber(0, s->n_constants-1);
 	    return CreateNode(s->terminal[aux], aux, 1, 1, const_id);

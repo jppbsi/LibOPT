@@ -10,6 +10,7 @@ extern "C" {
 #define _BA_ 2 /* Bat Algorithm */
 #define _FPA_ 3 /* Flower Pollination Algorithm */
 #define _FA_ 4 /* Firefly Algorithm */
+#define _GP_ 5 /* Genetic Programming */
 /**************************/
     
 #include <stdio.h>
