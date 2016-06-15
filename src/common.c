@@ -589,4 +589,38 @@ void DestroyTree(Node **T){
         *T = NULL;
     }
 }
+
+/* It stores a tree in a text file (prefix mode)
+Parameters:
+s: search space
+T: pointer to the tree
+fileName: output file name */
+void PrintTree2File(SearchSpace *s, Node *T, char *fileName){
+    FILE *fp = NULL;
+    
+    if(!T){
+        fprintf(stderr,"\nTree not allocated @PrintTree2File.\n");
+        exit(-1);
+    }
+    
+    fp = fopen(fileName, "w");
+    PreFixPrintTree4File(s, T, fp);
+    fclose(fp);
+}
+
+/* It performs a prefix search in tree and saves the nodes in a text file
+Parameters:
+s: search space
+T: pointer to the tree
+fileName: output file name */
+void PreFixPrintTree4File(SearchSpace *s, Node *T, FILE *fp){
+    if(T){
+        if(T->status != TERMINAL) fprintf(fp,"(");
+        if(T->status == CONSTANT) fprintf(fp,"%lf ", s->constant[T->id]);
+	else fprintf(fp,"%s ", T->elem);
+        PreFixPrintTree4File(s, T->left, fp);
+        PreFixPrintTree4File(s, T->right, fp);
+        if(T->status != TERMINAL) fprintf(fp,")");
+    }
+}
 /***********************/

@@ -113,6 +113,8 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id); /* It loads a 
 Node *CreateNode(char *value, int node_id, char status); /* It creates a tree node */
 Node *GROW(SearchSpace *s, int min_depth, int max_depth); /* It creates a random tree based on the GROW algorithm */
 void DestroyTree(Node **T); /* It deallocates a tree */
+void PrintTree2File(SearchSpace *s, Node *T, char *fileName); /* It stores a tree in a text file */
+void PreFixPrintTree4File(SearchSpace *s, Node *T, FILE *fp); /* It performs a prefix search in tree and saves the nodes in a text file */
 /***********************/
 
 #endif
