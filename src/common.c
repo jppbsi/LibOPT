@@ -568,19 +568,19 @@ Node *GROW(SearchSpace *s, int min_depth, int max_depth){
     }
     
     if(min_depth == max_depth){
-        aux = GenerateUniformRandomNumber(0, s->n_terminals-1);
+        aux = round(GenerateUniformRandomNumber(0, s->n_terminals-1));
 	if(!strcmp(s->terminal[aux], "CONST")){
-	    const_id = GenerateUniformRandomNumber(0, s->n_constants-1);
+	    const_id = round(GenerateUniformRandomNumber(0, s->n_constants-1));
 	    return CreateNode(s->terminal[aux], const_id, CONSTANT);
 	}
         return CreateNode(s->terminal[aux], aux, TERMINAL);
     }
     else{
-        aux = GenerateUniformRandomNumber(0, s->n_functions+s->n_terminals-1);
+        aux = round(GenerateUniformRandomNumber(0, s->n_functions+s->n_terminals-1));
         if(aux >= s->n_functions){ /* If aux is a terminal node */
             aux = aux-s->n_functions;
 	    if(!strcmp(s->terminal[aux], "CONST")){
-                const_id = GenerateUniformRandomNumber(0, s->n_constants-1);
+                const_id = round(GenerateUniformRandomNumber(0, s->n_constants-1));
 		tmp = CreateNode(s->terminal[aux], const_id, CONSTANT);
 	    }
             else tmp = CreateNode(s->terminal[aux], aux, TERMINAL);
