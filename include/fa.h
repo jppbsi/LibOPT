@@ -7,5 +7,6 @@
 void UpdateFireflyPosition(SearchSpace *s, int firefly_id); /* It updates the position of an agent (firefly) */
 void UpdateBestFireflyPosition(SearchSpace *s, int best_firefly_id); /* It updates the position of the best agent (firefly) */
 void runFA(SearchSpace *s, prtFun Evaluate, ...); /* It executes the Firefly Algorithm for function minimization */
+void runAFA(SearchSpace *s, prtFun Evaluate, ...); /* It executes the Adaptative Firefly Algorithm for function minimization */
 
 #endif
