@@ -1,3 +1,5 @@
+/* BA implementation is based on the paper available at https://arxiv.org/ftp/arxiv/papers/1211/1211.6663.pdf */
+
 #ifndef BA_H
 #define BA_H
 

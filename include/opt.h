@@ -11,6 +11,7 @@ extern "C" {
 #define _FPA_ 3 /* Flower Pollination Algorithm */
 #define _FA_ 4 /* Firefly Algorithm */
 #define _GP_ 5 /* Genetic Programming */
+#define _GA_ 6 /* Genetic Algorithm */
 /**************************/
 
 /* GP type nodes */

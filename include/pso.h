@@ -1,3 +1,6 @@
+/* PSO implementation is based on the paper available at http://www.cs.tufts.edu/comp/150GA/homeworks/hw3/_reading6%201995%20particle%20swarming.pdf
+AIWPSO implementation is based on the paper available at http://ceit.aut.ac.ir/~ebadzadeh/PSO.htm */
+
 #ifndef PSO_H
 #define PSO_H
 

@@ -1,3 +1,5 @@
+/* FA implementation is based on the paper available at https://arxiv.org/pdf/1003.1466.pdf */
+
 #ifndef FA_H
 #define FA_H
 

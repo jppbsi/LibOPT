@@ -28,6 +28,7 @@ Agent *CreateAgent(int n, int opt_id){
         case _BA_:
         case _FPA_:
         case _FA_:
+        case _GA_:
             a->x = (double *)calloc(n,sizeof(double));
             a->v = (double *)calloc(n,sizeof(double));
             if(opt_id == _PSO_) a->xl = (double *)calloc(n,sizeof(double));
@@ -60,6 +61,7 @@ void DestroyAgent(Agent **a, int opt_id){
         case _BA_:
         case _FPA_:
         case _FA_:
+        case _GA_:
             if(tmp->x) free(tmp->x);
             if(tmp->v) free(tmp->v);
             if(opt_id == _PSO_) if(tmp->xl) free(tmp->xl);
@@ -108,6 +110,7 @@ Agent *CopyAgent(Agent *a, int opt_id){
         case _BA_:
         case _FPA_:
         case _FA_:
+        case _GA_:
             memcpy(cpy->x, a->x, a->n*sizeof(double));
             memcpy(cpy->v, a->v, a->n*sizeof(double));
             if(opt_id == _PSO_) memcpy(cpy->xl, a->xl, a->n*sizeof(double));
@@ -148,6 +151,8 @@ Agent *GenerateNewAgent(SearchSpace *s, int opt_id){
         case _FPA_:
         break;
         case _FA_:
+        break;
+        case _GA_:
         break;
         default:
             fprintf(stderr,"\nInvalid optimization identifier @GenerateNewAgent.\n");
@@ -203,6 +208,7 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...){
             case _BA_:
             case _FPA_:
             case _FA_:
+            case _GA_:
                 s->g = (double *)calloc(s->n,sizeof(double));
             break;
         }
@@ -257,6 +263,7 @@ void DestroySearchSpace(SearchSpace **s, int opt_id){
             case _BA_:
             case _FPA_:
             case _FA_:
+            case _GA_:
                 if(tmp->g) free(tmp->g);
             break;
             default:
@@ -426,7 +433,7 @@ double EuclideanDistance(double *x, double *y, int n){
     return sqrt(sum);
 }
 
-/* It computes the compare function used on Quick Sort (qsort) */
+/* It computes the compare function by agent's fitness, which is used on Quick Sort (qsort) */
 int CompareForQSort(const void *a, const void *b){
     const Agent *ap = *(Agent **)a, *bp = *(Agent **)b;
     if (ap->fit < bp->fit) {
@@ -493,6 +500,12 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
             s = CreateSearchSpace(m, n, _FA_);
             s->iterations = iterations;
             fscanf(fp, "%lf %lf %lf", &(s->alpha), &(s->beta_0), &(s->gamma));
+            WaiveComment(fp);
+        break;
+        case _GA_:
+            s = CreateSearchSpace(m, n, _GA_);
+            s->iterations = iterations;
+            fscanf(fp, "%lf %lf", &(s->pCrossOver), &(s->pMutate));
             WaiveComment(fp);
         break;
         default:

@@ -8,7 +8,7 @@ CC=gcc
 FLAGS=  -g -O0
 CFLAGS=''
 
-all: libopt-plus PSO AIWPSO BA FPA FA tmp
+all: libopt-plus PSO AIWPSO BA FPA FA GA tmp
 
 libopt-plus: $(LIB)/libopt-plus.a
 	echo "libopt-plus.a built..."
@@ -22,6 +22,7 @@ $(OBJ)/ba.o \
 $(OBJ)/fpa.o \
 $(OBJ)/fa.o \
 $(OBJ)/gp.o \
+$(OBJ)/ga.o \
 
 	ar csr $(LIB)/libopt-plus.a \
 $(OBJ)/common.o \
@@ -32,6 +33,7 @@ $(OBJ)/ba.o \
 $(OBJ)/fpa.o \
 $(OBJ)/fa.o \
 $(OBJ)/gp.o \
+$(OBJ)/ga.o \
 
 $(OBJ)/common.o: $(SRC)/common.c
 	$(CC) $(FLAGS) -I $(INCLUDE) -c $(SRC)/common.c -o $(OBJ)/common.o
@@ -57,6 +59,9 @@ $(OBJ)/fa.o: $(SRC)/fa.c
 $(OBJ)/gp.o: $(SRC)/gp.c
 	$(CC) $(FLAGS) -I $(INCLUDE) -c $(SRC)/gp.c -o $(OBJ)/gp.o
 
+$(OBJ)/ga.o: $(SRC)/ga.c
+	$(CC) $(FLAGS) -I $(INCLUDE) -c $(SRC)/ga.c -o $(OBJ)/ga.o
+
 PSO: examples/PSO.c
 	$(CC) $(FLAGS) examples/PSO.c -o examples/bin/PSO -I $(INCLUDE) -L $(LIB) -lopt-plus -lm;
 
@@ -71,6 +76,9 @@ FPA: examples/FPA.c
 
 FA: examples/FA.c
 	$(CC) $(FLAGS) examples/FA.c -o examples/bin/FA -I $(INCLUDE) -L $(LIB) -lopt-plus -lm;
+
+GA: examples/GA.c
+	$(CC) $(FLAGS) examples/GA.c -o examples/bin/GA -I $(INCLUDE) -L $(LIB) -lopt-plus -lm;
 
 tmp: examples/tmp.c
 	$(CC) $(FLAGS) examples/tmp.c -o examples/bin/tmp -I $(INCLUDE) -L $(LIB) -lopt-plus -lm;
