@@ -52,7 +52,7 @@ Evaluate: pointer to the function used to evaluate particles
 arg: list of additional arguments */
 void runFA(SearchSpace *s, prtFun Evaluate, ...){
     va_list arg, argtmp;
-    int t, i, j;
+    int i, t;
     Agent *tmp = NULL;
     		
     va_start(arg, Evaluate);
@@ -95,7 +95,7 @@ Evaluate: pointer to the function used to evaluate particles
 arg: list of additional arguments */
 void runAFA(SearchSpace *s, prtFun Evaluate, ...){
     va_list arg, argtmp;
-    int t, i, j;
+    int i, t;
     double delta;
     Agent *tmp = NULL;
     		
