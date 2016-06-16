@@ -72,7 +72,6 @@ int srandinter(int seed){
 /* It returns a random number uniformly distributed within [a,b] */
 double randinter(double a, double b){	
     if (randx == 0) srandinter(0);
-    b++;
     return a + (b-a)*((double)ran2(&randx));
 }
 
