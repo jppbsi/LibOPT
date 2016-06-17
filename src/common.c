@@ -797,4 +797,42 @@ double *RunTree(SearchSpace *s, Node *T){
 	}
     }else return NULL;
 }
+
+/* It copies a given tree
+Parameters:
+T: tree */
+Node *CopyTree(Node *T){
+    Node *root = NULL;
+    
+    if(!T){
+        fprintf(stderr,"\nThere is no tree allocated @CopyTree.\n");
+        return NULL;
+    }else{
+        root = CreateNode(T->elem, T->id, T->status);
+        root->left_son = T->left_son;
+        PreFixTravel4Copy(T->left, root);
+        PreFixTravel4Copy(T->right, root);
+        
+        return root;
+    }
+}
+
+/* It performs a prefix travel on a tree
+Parameters:
+T: pointer to the subtree on the left
+Parent: pointer to the subtree on the right */
+void PreFixTravel4Copy(Node *T, Node *Parent){
+    Node *aux = NULL;
+    if(T){
+        aux = CreateNode(T->elem, T->id, T->status);
+        aux->left_son = T->left_son;
+        aux->left = NULL; aux->right = NULL;
+        if(T->left_son) Parent->left = aux;
+        else Parent->right = aux;
+        aux->parent = Parent;
+        
+        PreFixTravel4Copy(T->left, aux);
+        PreFixTravel4Copy(T->left, aux);
+    }
+}
 /***********************/

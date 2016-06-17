@@ -1,5 +1,6 @@
 #include "common.h"
 #include "function.h"
+#include "gp.h"
 
 int main(){
     SearchSpace *s = NULL;
@@ -49,8 +50,7 @@ int main(){
         PrintTree2File(s, s->T[i], "trees.txt");
         
     runGP(s, Sphere); /* It minimizes function Sphere */
-    ShowSearchSpace(s, _GP_);
-    
+
     DestroySearchSpace(&s, _GP_);
     
     return 0;
