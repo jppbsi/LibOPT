@@ -524,16 +524,24 @@ double EuclideanDistance(double *x, double *y, int n){
 
 /* It is used to sort by agent's fitness (asceding order of fitness) */
 int SortAgent(const void *a, const void *b){
-    const Agent *ap = *(Agent **)a, *bp = *(Agent **)b;
+    const Agent *x = *(Agent **)a, *y = *(Agent **)b;
     
-    return ap->fit-bp->fit;
+    if(x->fit != y->fit)
+        if(x->fit > y->fit)
+            return 1;
+        else return -1;
+    else return 0;
 }
 
 /* It is used to sort an array of Data by asceding order of the variable val */
 int SortDataByVal(const void *a, const void *b){
-    const Data *x = *(Data **)a, *y = *(Data **)b;
+    const Data *x = (Data *)a, *y = (Data *)b;
     
-    return x->val-y->val; 
+    if(x->val != y->val)
+        if(x->val > y->val)
+            return 1;
+        else return -1;
+    else return 0;
 }
 
 /* It waives a comment in a model file
@@ -673,7 +681,7 @@ int *RouletteSelection(SearchSpace *s, int k){
     qsort(D, s->m, sizeof(Data), SortDataByVal);
     fprintf(stderr,"\n-------\n");
     for(i = 0; i < s->m; i++)
-        fprintf(stderr,"\nD[%d].id: %d   D[%d].val: %lf\n", i, D[i].id, i, D[i].val);
+        fprintf(stderr,"\nD[%d].id: %d   D[%d].val: %lf", i, D[i].id, i, D[i].val);
     
     /* It computes the accumulate normalized fitness */
     accum = (double *)calloc(s->m,sizeof(double));
