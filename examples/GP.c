@@ -47,6 +47,8 @@ int main(){
     
     InitializeSearchSpace(s, _GP_); /* It initalizes the search space */
     
+    fprintf(stderr,"\nSize of tree %d: %d", 0, getSizeTree(s->T[0]));
+    
     for(i = 0; i < s->m; i++)
         PrintTree2File(s, s->T[i], "trees.txt");
         

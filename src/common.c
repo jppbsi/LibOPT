@@ -906,4 +906,12 @@ void PreFixTravel4Copy(Node *T, Node *Parent){
         PreFixTravel4Copy(T->left, aux);
     }
 }
+
+/* It returns the size of a tree (number of nodes)
+Parameters:
+T: pointer to the tree */
+int getSizeTree(Node *T){
+    if(T) return 1+getSizeTree(T->left)+getSizeTree(T->right);
+    else return 0;
+}
 /***********************/

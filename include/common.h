@@ -132,6 +132,7 @@ void PreFixPrintTree4File(SearchSpace *s, Node *T, FILE *fp); /* It performs a p
 double *RunTree(SearchSpace *s, Node *T); /* It runs a given tree and outputs its solution array */
 Node *CopyTree(Node *T); /* It copies a given tree */
 void PreFixTravel4Copy(Node *T, Node *Parent); /* It performs a prefix travel on a tree */
+int getSizeTree(Node *T); /* It returns the size of a tree (number of nodes) */
 /***********************/
 
 #endif
