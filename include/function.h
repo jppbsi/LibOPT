@@ -123,5 +123,9 @@ double *f_SUM_(double *x, double *y, int n); /* It computes the pointwise sum of
 double *f_SUB_(double *x, double *y, int n); /* It computes the pointwise subtraction of two n-dimensional arrays */
 double *f_MUL_(double *x, double *y, int n); /* It computes the pointwise multiplication of two n-dimensional arrays */
 double *f_DIV_(double *x, double *y, int n); /* It computes the pointwise division of two n-dimensional arrays */
+double *f_ABS_(double *x, int n); /* It computes the absolute value of each element from an n-dimensional array */
+double *f_SQRT_(double *x, int n); /* It computes the squared root of each element from a two n-dimensional array */
+double *f_EXP_(double *x, int n); /* It computes the exponential (e) of each element from an n-dimensional array */
+double *f_LOG_(double *x, int n); /* It computes the natural logarithm (base-e logarithm) of each element from an n-dimensional array */
 /*****************************/
 #endif

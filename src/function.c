@@ -2894,7 +2894,7 @@ x, y: arrays
 n: dimension */
 double *f_SUB_(double *x, double *y, int n){
     if(!x || !y){
-        fprintf(stderr,"\nInvalid input parametsrs @f_SUB_.\n");
+        fprintf(stderr,"\nInvalid input parameters @f_SUB_.\n");
         exit(-1);
     }
     
@@ -2914,7 +2914,7 @@ x, y: arrays
 n: dimension */
 double *f_MUL_(double *x, double *y, int n){
     if(!x || !y){
-        fprintf(stderr,"\nInvalid input parametsrs @f_MUL_.\n");
+        fprintf(stderr,"\nInvalid input parameters @f_MUL_.\n");
         exit(-1);
     }
     
@@ -2934,7 +2934,7 @@ x, y: arrays
 n: dimension */
 double *f_DIV_(double *x, double *y, int n){
     if(!x || !y){
-        fprintf(stderr,"\nInvalid input parametsrs @f_DIV_.\n");
+        fprintf(stderr,"\nInvalid input parameters @f_DIV_.\n");
         exit(-1);
     }
     
@@ -2944,6 +2944,66 @@ double *f_DIV_(double *x, double *y, int n){
     out = (double *)malloc(n*sizeof(double));
     for(i = 0; i < n; i++)
         out[i] = x[i]/(y[i]+0.00001); /* It avoids division by 0 */
+    
+    return out;
+}
+
+/* It computes the absolute value of each element from an n-dimensional array
+Parameters:
+x: array
+n: dimension */
+double *f_ABS_(double *x, int n){
+    if(!x){
+        fprintf(stderr,"\nInvalid input parameters @f_ABS_.\n");
+        exit(-1);
+    }
+    
+    int i;
+    double *out = NULL;
+    
+    out = (double *)malloc(n*sizeof(double));
+    for(i = 0; i < n; i++)
+        out[i] = fabs(x[i]);
+    
+    return out;
+}
+
+/* It computes the exponential (e) of each element from an n-dimensional array
+Parameters:
+x: array
+n: dimension */
+double *f_EXP_(double *x, int n){
+    if(!x){
+        fprintf(stderr,"\nInvalid input parameters @f_EXP_.\n");
+        exit(-1);
+    }
+    
+    int i;
+    double *out = NULL;
+    
+    out = (double *)malloc(n*sizeof(double));
+    for(i = 0; i < n; i++)
+        out[i] = exp(x[i]);
+    
+    return out;
+}
+
+/* It computes the natural logarithm (base-e logarithm) of each element from an n-dimensional array
+Parameters:
+x: array
+n: dimension */
+double *f_LOG_(double *x, int n){
+    if(!x){
+        fprintf(stderr,"\nInvalid input parameters @f_LOG_.\n");
+        exit(-1);
+    }
+    
+    int i;
+    double *out = NULL;
+    
+    out = (double *)malloc(n*sizeof(double));
+    for(i = 0; i < n; i++)
+        out[i] = log(x[i]+0.00001);
     
     return out;
 }
