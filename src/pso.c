@@ -37,41 +37,6 @@ void UpdateParticlePosition(SearchSpace *s, int i){
         s->a[i]->x[j] = s->a[i]->x[j]+s->a[i]->v[j];
 }
 
-/* It evaluates the entire search space
-Parameters:
-s: search space
-EvaluateFun: pointer to the function used to evaluate particles (agents)
-arg: list of additional arguments */
-void EvaluateSwarm(SearchSpace *s, prtFun Evaluate, va_list arg){
-    va_list argtmp;
-    int i, j;
-    double fitValue;
-    
-    if(!s){
-        fprintf(stderr,"\nSearch space not allocated @EvaluateSwarm.\n");
-        exit(-1);
-    }
-    
-    va_copy(argtmp, arg);
-    for(i = 0; i < s->m; i++){
-        fitValue = Evaluate(s->a[i], arg); /* It executes the fitness function for agent i */
-        
-        if(fitValue < s->a[i]->fit){ /* It updates the local best value and position */
-            s->a[i]->fit = fitValue;    
-            for(j = 0; j < s->n; j++) 
-                s->a[i]->xl[j] = s->a[i]->x[j];
-        }
-            
-        if(s->a[i]->fit < s->gfit){ /* It updates the global best value and position */
-            s->gfit = s->a[i]->fit;
-            for(j = 0; j < s->n; j++)
-                s->g[j] = s->a[i]->x[j];
-        }
-        
-        va_copy(arg, argtmp);
-    }
-}
-
 /* It executes the Particle Swarm Optimization for function minimization
 Parameters:
 s: search space
@@ -90,7 +55,7 @@ void runPSO(SearchSpace *s, prtFun Evaluate, ...){
         exit(-1);
     }
         
-    EvaluateSwarm(s, Evaluate, arg); /* Initial evaluation */
+    EvaluateSearchSpace(s, _PSO_, Evaluate, arg); /* Initial evaluation */
         
     for(t = 1; t <= s->iterations; t++){
         fprintf(stderr,"\nRunning iteration %d/%d ... ", t, s->iterations);
@@ -103,7 +68,7 @@ void runPSO(SearchSpace *s, prtFun Evaluate, ...){
             CheckAgentLimits(s, s->a[i]);
         }
 	        			
-	EvaluateSwarm(s, Evaluate, arg);
+	EvaluateSearchSpace(s, _PSO_, Evaluate, arg);
         va_copy(arg, argtmp);            
 	        
 	fprintf(stderr, "OK (minimum fitness value %lf)", s->gfit);
@@ -132,7 +97,7 @@ void runAIWPSO(SearchSpace *s, prtFun Evaluate, ...){
         exit(-1);
     }
         
-    EvaluateSwarm(s, Evaluate, arg); /* Initial evaluation */
+    EvaluateSearchSpace(s, _PSO_, Evaluate, arg); /* Initial evaluation */
     
     for(i = 0; i < s->m; i++)
         s->a[i]->pfit = s->a[i]->fit;
@@ -148,7 +113,7 @@ void runAIWPSO(SearchSpace *s, prtFun Evaluate, ...){
             CheckAgentLimits(s, s->a[i]);
         }
 	        			
-	EvaluateSwarm(s, Evaluate, arg);
+	EvaluateSearchSpace(s, _PSO_, Evaluate, arg);
         prob = ComputeSuccess(s); /* Equations 17 and 18 */
         s->w = (s->w_max-s->w_min)*prob+s->w_min; /* Equation 20 */
         

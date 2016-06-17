@@ -348,8 +348,8 @@ void EvaluateSearchSpace(SearchSpace *s, int opt_id, prtFun Evaluate, va_list ar
     double f;
     va_list argtmp;
     
+    va_copy(argtmp, arg);
     switch (opt_id){
-        case _PSO_:
         case _BA_:
         case _FPA_:
         case _FA_:
@@ -368,6 +368,29 @@ void EvaluateSearchSpace(SearchSpace *s, int opt_id, prtFun Evaluate, va_list ar
         
                 va_copy(arg, argtmp);
             }
+        break;
+        case _PSO_:
+            for(i = 0; i < s->m; i++){
+                f = Evaluate(s->a[i], arg); /* It executes the fitness function for agent i */
+        
+                if(f < s->a[i]->fit){ /* It updates the local best value and position */
+                    s->a[i]->fit = f;    
+                    for(j = 0; j < s->n; j++) 
+                    s->a[i]->xl[j] = s->a[i]->x[j];
+                }
+            
+                if(s->a[i]->fit < s->gfit){ /* It updates the global best value and position */
+                    s->gfit = s->a[i]->fit;
+                    for(j = 0; j < s->n; j++)
+                        s->g[j] = s->a[i]->x[j];
+                }
+        
+                va_copy(arg, argtmp);
+            }
+        break;
+        default:
+            fprintf(stderr,"\n Invalid optimization identifier @EvaluateSearchSpace.\n");
+                     
         break;
     }
 }
