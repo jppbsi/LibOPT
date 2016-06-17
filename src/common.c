@@ -230,7 +230,8 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...){
             for(i = 0; i < s->m; i++)
                 s->T[i] = GROW(s, s->min_depth, s->max_depth);
             
-            for(i = 0; i < s->m; i++)
+            s->a = (Agent **)malloc(s->n_terminals*sizeof(Agent *));
+            for(i = 0; i < s->n_terminals; i++)
                 s->a[i] = CreateAgent(s->n, _GP_);
         }
         
@@ -279,16 +280,16 @@ void DestroySearchSpace(SearchSpace **s, int opt_id){
     }
     else{
         if(opt_id == _GP_){
-            for(i = 0; i < tmp->m; i++){
+            for(i = 0; i < tmp->m; i++)
                 if(tmp->T[i]) DestroyTree(&(tmp->T[i]));
-                if(tmp->a[i]) DestroyAgent(&(tmp->a[i]), opt_id);
-            }
             if(tmp->T) free(tmp->T);
-            if(tmp->a) free(tmp->a);
             
-            for(i = 0; i < tmp->n_terminals; i++)
+            for(i = 0; i < tmp->n_terminals; i++){
+                if(tmp->a[i]) DestroyAgent(&(tmp->a[i]), opt_id);
                 if(tmp->terminal[i]) free(tmp->terminal[i]);
-            free(tmp->terminal);
+            }
+            if(tmp->a) free(tmp->a);
+            if(tmp->terminal) free(tmp->terminal);
             
             for(i = 0; i < tmp->n_functions; i++)
                 if(tmp->function[i]) free(tmp->function[i]);

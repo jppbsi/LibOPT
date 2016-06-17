@@ -15,7 +15,7 @@ int main(){
         terminal[i] = (char *)malloc(TERMINAL_LENGTH*sizeof(char));
     strcpy(terminal[0], "x");
     strcpy(terminal[1], "y");
-    strcpy(terminal[1], "CONST");
+    strcpy(terminal[2], "CONST");
     /****************************/
     
     /* loading set of functions */
