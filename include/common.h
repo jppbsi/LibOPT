@@ -13,6 +13,12 @@ typedef struct _Node{
     struct _Node *right, *left, *parent; /* Pointers to the subtrees on the right, left and parent */
 }Node;
 
+/* It defines a general-purpose structure */
+typedef struct _Data{
+    int id;
+    double val;
+}Data;
+
 /* It defines the agent (solution) to be used for all optimization techniques */
 typedef struct Agent_{
     /* common definitions */
@@ -109,10 +115,12 @@ double GenerateUniformRandomNumber(double low, double high); /* It generates a r
 double GenerateGaussianRandomNumber(double mean, double variance); /* It generates a random number drawn from a Gaussian (normal) distribution */
 double *GenerateLevyDistribution(int n, double beta); /* It generates an n-dimensional array drawn from a Levy distribution */
 double EuclideanDistance(double *x, double *y, int n); /* It computes the Euclidean distance between two n-dimensional arrays */
-int CompareForQSort(const void *a, const void *b); /* It computes the compare function by agent's fitness, which is used on Quick Sort (qsort) */
+int SortAgent(const void *a, const void *b); /* It is used to sort by agent's fitness (asceding order of fitness) */
+int SortDataByVal(const void *a, const void *b); /* It is used to sort an array of Data by asceding order of the variable val */
 void WaiveComment(FILE *fp); /* It waives a comment in a model file */
 SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id); /* It loads a search space with parameters specified in a file */
 int getFUNCTIONid(char *s); /* It returns the identifier of the function used as input */
+int *RouletteSelection(SearchSpace *s, int k); /* It selects k elements based on the roulette selection method */
 /**************************/
 
 /* Tree-related functions */

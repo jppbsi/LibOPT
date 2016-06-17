@@ -19,7 +19,12 @@ void runGP(SearchSpace *s, prtFun Evaluate, ...){
     }
         
     EvaluateSearchSpace(s, _GP_, Evaluate, arg); /* Initial evaluation */
-        
+    
+    ShowSearchSpace(s, _GP_);
+    int *tmp = RouletteSelection(s, 5);
+    free(tmp);
+    
+    
     for(t = 1; t <= s->iterations; t++){
         fprintf(stderr,"\nRunning iteration %d/%d ... ", t, s->iterations);
         va_copy(arg, argtmp);

@@ -64,7 +64,7 @@ void runFA(SearchSpace *s, prtFun Evaluate, ...){
     }
         
     EvaluateSearchSpace(s, _FA_, Evaluate, arg); /* Initial evaluation of the search space */
-    qsort(s->a, s->m, sizeof(Agent**), CompareForQSort); /* Sorts all fireflies according to their fitness. First position gets the best firefly. */
+    qsort(s->a, s->m, sizeof(Agent**), SortAgent); /* Sorts all fireflies according to their fitness. First position gets the best firefly. */
     
     for(t = 1; t <= s->iterations; t++){
         fprintf(stderr,"\nRunning iteration %d/%d ... ", t, s->iterations);
@@ -78,7 +78,7 @@ void runFA(SearchSpace *s, prtFun Evaluate, ...){
 	CheckAgentLimits(s, s->a[0]);
 	
 	EvaluateSearchSpace(s, _FA_, Evaluate, arg); /* Evaluates the new search space */
-	qsort(s->a, s->m, sizeof(Agent**), CompareForQSort); /* Sorts all fireflies according to their fitness. First position gets the best firefly. */
+	qsort(s->a, s->m, sizeof(Agent**), SortAgent); /* Sorts all fireflies according to their fitness. First position gets the best firefly. */
        
 	va_copy(arg, argtmp);
        
@@ -108,7 +108,7 @@ void runAFA(SearchSpace *s, prtFun Evaluate, ...){
     }
         
     EvaluateSearchSpace(s, _FA_, Evaluate, arg); /* Initial evaluation of the search space */
-    qsort(s->a, s->m, sizeof(Agent**), CompareForQSort); /* Sorts all fireflies according to their fitness. First position gets the best firefly. */
+    qsort(s->a, s->m, sizeof(Agent**), SortAgent); /* Sorts all fireflies according to their fitness. First position gets the best firefly. */
     
     for(t = 1; t <= s->iterations; t++){
         fprintf(stderr,"\nRunning iteration %d/%d ... ", t, s->iterations);
@@ -125,7 +125,7 @@ void runAFA(SearchSpace *s, prtFun Evaluate, ...){
 	CheckAgentLimits(s, s->a[0]);
 	
 	EvaluateSearchSpace(s, _FA_, Evaluate, arg); /* Evaluates the new search space */
-	qsort(s->a, s->m, sizeof(Agent**), CompareForQSort); /* Sorts all fireflies according to their fitness. First position gets the best firefly. */
+	qsort(s->a, s->m, sizeof(Agent**), SortAgent); /* Sorts all fireflies according to their fitness. First position gets the best firefly. */
 	       
 	va_copy(arg, argtmp);
        

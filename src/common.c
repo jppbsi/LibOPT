@@ -522,15 +522,18 @@ double EuclideanDistance(double *x, double *y, int n){
     return sqrt(sum);
 }
 
-/* It computes the compare function by agent's fitness, which is used on Quick Sort (qsort) */
-int CompareForQSort(const void *a, const void *b){
+/* It is used to sort by agent's fitness (asceding order of fitness) */
+int SortAgent(const void *a, const void *b){
     const Agent *ap = *(Agent **)a, *bp = *(Agent **)b;
-    if (ap->fit < bp->fit) {
-        return -1;
-    }
-    if (ap->fit > bp->fit)
-        return 1;
-    return 0;
+    
+    return ap->fit-bp->fit;
+}
+
+/* It is used to sort an array of Data by asceding order of the variable val */
+int SortDataByVal(const void *a, const void *b){
+    const Data *x = *(Data **)a, *y = *(Data **)b;
+    
+    return x->val-y->val; 
 }
 
 /* It waives a comment in a model file
@@ -627,6 +630,73 @@ int getFUNCTIONid(char *s){
 				fprintf(stderr,"\nUndefined function @getFUNCTIONid.");
 				exit(-1);
 			    }
+}
+
+/* It selects k elements based on the roulette selection method.
+ * The output is an array with the indices of the selected elements.
+Parameters:
+s: search space
+k: number of elements to be selected */
+int *RouletteSelection(SearchSpace *s, int k){
+    if(!s){
+        fprintf(stderr,"\nSearch space not allocated @RouletteSelection.\n");
+        return NULL;
+    }
+    
+    if(k < 1){
+        fprintf(stderr,"\nInvalid input @RouletteSelection.\n");
+        return NULL;
+    }
+    
+    int *elem = NULL, i, j;
+    double sum, *accum = NULL, prob;
+    Data *D = NULL;
+    
+    elem = (int *)malloc(k*sizeof(int));
+    D = (Data *)malloc(s->m*sizeof(Data));
+    
+    /* It normalizes the fitness of each agent ***/
+    sum = 0;
+    for(i = 0; i < s->m; i++){
+        D[i].id = i;
+        D[i].val = s->tree_fit[i];
+        sum+=D[i].val;
+        
+    }
+    for(i = 0; i < s->m; i++)
+        D[i].val/=sum;
+        
+    for(i = 0; i < s->m; i++)
+        fprintf(stderr,"\nD[%d].id: %d   D[%d].val: %lf", i, D[i].id, i, D[i].val);
+        
+    /* It sorts the population by ascending values of fitness */
+    qsort(D, s->m, sizeof(Data), SortDataByVal);
+    fprintf(stderr,"\n-------\n");
+    for(i = 0; i < s->m; i++)
+        fprintf(stderr,"\nD[%d].id: %d   D[%d].val: %lf\n", i, D[i].id, i, D[i].val);
+    
+    /* It computes the accumulate normalized fitness */
+    accum = (double *)calloc(s->m,sizeof(double));
+    for(i = 0; i < s->m; i++){
+        for(j = i; j >= 0; j--)
+            accum[i]+=D[j].val;
+    }
+    
+    for(j = 0; j < k; j++){
+        
+        /* It picks up the selected individual */
+        prob = GenerateUniformRandomNumber(0,1);
+        i = 0;
+        while((accum[i] < prob) && (i < s->m))
+            i++;
+        if(i) elem[j] = D[i-1].id;
+        else elem[j] = D[i].id;
+    }
+    
+    free(D);
+    free(accum);
+    
+    return NULL;
 }
 /**************************/
 
