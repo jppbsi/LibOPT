@@ -19,6 +19,7 @@ extern "C" {
 #define FUNCTION 1
 #define CONSTANT 2
 #define TERMINAL_LENGTH 16
+#define N_CONSTANTS 1000 /* number of constants generated at random to populate a GP agent */
 /*****************/
 
 /* GP function-type nodes */
