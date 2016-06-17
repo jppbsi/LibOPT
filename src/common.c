@@ -1,4 +1,5 @@
 #include "common.h"
+#include "function.h"
 
 /* number of arguments (descendants) required by each terminal function in GP in the following order:
 SUM, SUB, MUL, DIV, EXP, SQRT, LOG and ABS */
@@ -692,5 +693,52 @@ void PreFixPrintTree4File(SearchSpace *s, Node *T, FILE *fp){
         PreFixPrintTree4File(s, T->right, fp);
         if(T->status != TERMINAL) fprintf(fp,")");
     }
+}
+
+/* It runs a given tree and outputs its solution array
+Parameters:
+s: search space
+T: current tree */
+double *RunTree(SearchSpace *s, Node *T){
+    double *x = NULL, *y = NULL, *out = NULL;
+    int i;
+    
+    if(T){
+	x = RunTree(s, T->left); /* It runs over the subtree on the left */
+	y = RunTree(s, T->right); /* It runs over the subtree on the right */
+	
+	if(T->status == TERMINAL || T->status == CONSTANT){
+	    if(T->status == CONSTANT){
+		out = (double *)calloc(s->n,sizeof(double));
+                for(i = 0; i < s->n; i++)
+                    out[i] = s->constant[T->id];
+	    }else{
+		//row = gsl_matrix_row(gp->vector, T->terminal_id);
+		//out = gsl_vector_calloc((&row.vector)->size);
+		//gsl_vector_memcpy(out, &row.vector);
+	    }
+	    return out;
+	}else{
+	    if(!strcmp(T->elem,"SUM")) out = f_SUM_(x, y, s->n);
+            else if(!strcmp(T->elem,"SUB")) out = f_SUB_(x, y, s->n);
+                else if(!strcmp(T->elem,"MUL")) out = f_MUL_(x, y, s->n);
+                    else if(!strcmp(T->elem,"DIV")) out = f_DIV_(x, y, s->n);
+                        else if(!strcmp(T->elem,"EXP")){
+                            if(x) out = f_EXP_(x, s->n);
+                            else out = f_EXP_(y, s->n);
+                        }
+                        else if(!strcmp(T->elem,"SQRT")){
+                            if(x) out = f_SQRT_(x, s->n);
+                            else out = f_SQRT_(y, s->n);
+                        }else if(!strcmp(T->elem,"LOG")){
+                            if(x) out = f_LOG_(x, s->n);
+                            else out = f_LOG_(y, s->n);
+                        }
+	    /* it deallocates the sons of the current one, since they have been used already */
+	    if (x) free(x); 
+	    if (y) free(y);
+	    return out;
+	}
+    }else return NULL;
 }
 /***********************/

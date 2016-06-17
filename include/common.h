@@ -120,6 +120,7 @@ Node *GROW(SearchSpace *s, int min_depth, int max_depth); /* It creates a random
 void DestroyTree(Node **T); /* It deallocates a tree */
 void PrintTree2File(SearchSpace *s, Node *T, char *fileName); /* It stores a tree in a text file */
 void PreFixPrintTree4File(SearchSpace *s, Node *T, FILE *fp); /* It performs a prefix search in tree and saves the nodes in a text file */
+double *RunTree(SearchSpace *s, Node *T); /* It runs a given tree and outputs its solution array */
 /***********************/
 
 #endif

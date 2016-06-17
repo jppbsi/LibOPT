@@ -2968,6 +2968,26 @@ double *f_ABS_(double *x, int n){
     return out;
 }
 
+/* It computes the squared root of each element from a two n-dimensional array
+Parameters:
+x: array
+n: dimension */
+double *f_SQRT_(double *x, int n){
+    if(!x){
+        fprintf(stderr,"\nInvalid input parameters @f_ABS_.\n");
+        exit(-1);
+    }
+    
+    int i;
+    double *out = NULL;
+    
+    out = (double *)malloc(n*sizeof(double));
+    for(i = 0; i < n; i++)
+        out[i] = sqrt(fabs(x[i]));
+    
+    return out;
+}
+
 /* It computes the exponential (e) of each element from an n-dimensional array
 Parameters:
 x: array
