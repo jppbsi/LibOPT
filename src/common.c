@@ -926,16 +926,18 @@ Node *Mutation(SearchSpace *s, Node *T, float p){
         return NULL;
     }
     
-    Node *MutatedTree = NULL;
-    int mutation_point, size_tree = getSizeTree(T), ctr;
+    Node *NewTree = NULL, *MutatedTree = NULL;
+    int mutation_point, size_tree = getSizeTree(T), ctr = 0;
     double r;
+    char left_son;
     
     MutatedTree = CopyTree(T);
     mutation_point = round(GenerateUniformRandomNumber(2, size_tree)); /* Mutation point cannot be the root */
     
-    r = GenerateUniformRandomNumber(0,1); ctr = 0;
-    //if(p > r) NewTree = PreFixPositioningTree(MutatedTree, mutation_point, &FLAG, FUNCTION, &ctr); /* the mutation point is a function node */
-    //else NewTree = PreFixPositioningTree(MutatedTree, mutation_point, &FLAG, TERMINAL, &ctr); /* the mutation point is a terminal node */
+    r = GenerateUniformRandomNumber(0,1);
+    if(p > r) NewTree = PreFixPositioningTree(MutatedTree, mutation_point, &left_son, FUNCTION, &ctr); /* the mutation point is a function node */
+    else NewTree = PreFixPositioningTree(MutatedTree, mutation_point, &left_son, TERMINAL, &ctr); /* the mutation point is a terminal node */
+    
     return MutatedTree;
 }
 
@@ -959,20 +961,20 @@ Node *PreFixPositioningTree(Node *T, int pos, char *left_son, int status, int *c
         
             /* If the node is a terminal and status = FUNCTION, thus the breakpoint will be its father (if this last is not a root),
              which is certainly a function node */            
-           /* else if((T->parent)->parent){
-                    *FLAG = (T->parent)->son_esq;
+            else if((T->parent)->parent){
+                    *left_son = (T->parent)->left_son;
                     return (T->parent)->parent;
-            }else return NULL;*/
+            }else return NULL;
         }
-        /*else{
-            Aux = PreFixPositioningTree(T->esq,pos,FLAG, isTerminal);
+        else{
+            Aux = PreFixPositioningTree(T->left, pos, left_son, status, ctr);
             if(Aux) return Aux;
             else {
-                Aux = PreFixPositioningTree(T->dir,pos,FLAG, isTerminal);
+                Aux = PreFixPositioningTree(T->right, pos, left_son, status, ctr);
                 if(Aux) return Aux;
                 else return NULL;
             }
-        }*/
+        }
     }else return NULL;
 }
 /***********************/
