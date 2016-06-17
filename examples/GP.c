@@ -38,7 +38,7 @@ int main(){
     at random within [0,10]*/
     s = CreateSearchSpace(m, n, _GP_, min_depth, max_depth, n_terminals, N_CONSTANTS, n_functions, terminal, constant, function);
     
-    //InitializeSearchSpace(s); /* It initalizes the search space */
+    InitializeSearchSpace(s, _GP_); /* It initalizes the search space */
     
     for(i = 0; i < s->m; i++)
         PrintTree2File(s, s->T[i], "trees.txt");

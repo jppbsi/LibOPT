@@ -98,7 +98,7 @@ Agent *GenerateNewAgent(SearchSpace *s, int opt_id); /* It generates a new agent
 /* Search Space-related functions */
 SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...); /* It creates a search space */
 void DestroySearchSpace(SearchSpace **s, int opt_id); /* It deallocates a search space */
-void InitializeSearchSpace(SearchSpace *s); /* It initializes an allocated search space */
+void InitializeSearchSpace(SearchSpace *s, int opt_id); /* It initializes an allocated search space */
 void ShowSearchSpace(SearchSpace *s); /* It shows a search space */
 void EvaluateSearchSpace(SearchSpace *s, int opt_id, prtFun Evaluate, va_list arg); /* It evaluates a search space */
 /**************************/

@@ -9,7 +9,7 @@ int main(){
     
     s = ReadSearchSpaceFromFile("examples/model_files/fpa_model.txt", _FPA_); /* It reads the model file and creates a search space. We are going to use FPA to solve our problem. */
     
-    InitializeSearchSpace(s); /* It initalizes the search space */
+    InitializeSearchSpace(s, _FPA_); /* It initalizes the search space */
     
     runFPA(s, Rosenbrock); /* It minimizes function Rosenbrock */
     

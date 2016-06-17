@@ -9,7 +9,7 @@ int main(){
     
     s = ReadSearchSpaceFromFile("examples/model_files/fa_model.txt", _FA_); /* It reads the model file and creates a search space. We are going to use FA to solve our problem. */
     
-    InitializeSearchSpace(s); /* It initalizes the search space */
+    InitializeSearchSpace(s, _FA_); /* It initalizes the search space */
             
     runFA(s, Levy); /* It minimizes function Levy */
     

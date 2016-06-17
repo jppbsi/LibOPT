@@ -308,16 +308,32 @@ void DestroySearchSpace(SearchSpace **s, int opt_id){
 /* It initializes an allocated search space
 Parameters:
 s: search space */
-void InitializeSearchSpace(SearchSpace *s){
+void InitializeSearchSpace(SearchSpace *s, int opt_id){
     if(!s){
         fprintf(stderr,"\nSearch space not allocated @InitializeSearchSpace.\n");
         exit(-1);
     }
     
     int i, j;
-    for(i = 0; i < s->m; i++){
-        for(j = 0; j < s->n; j++)
-            s->a[i]->x[j] = (double)randinter((float)s->LB[j],(float) s->UB[j]);
+    
+    switch (opt_id){
+        case _PSO_:
+        case _BA_:
+        case _FPA_:
+        case _FA_:
+        case _GA_:
+            for(i = 0; i < s->m; i++){
+                for(j = 0; j < s->n; j++)
+                s->a[i]->x[j] = (double)randinter((float)s->LB[j],(float) s->UB[j]);
+            }
+            
+        break;
+        case _GP_:
+            for(i = 0; i < s->n_terminals; i++){
+                for(j = 0; j < s->n; j++)
+                s->a[i]->x[j] = (double)randinter((float)s->LB[j],(float) s->UB[j]);
+            }
+        break;
     }
 }
 
@@ -722,9 +738,8 @@ double *RunTree(SearchSpace *s, Node *T){
                 for(i = 0; i < s->n; i++)
                     out[i] = s->constant[T->id];
 	    }else{
-		//row = gsl_matrix_row(gp->vector, T->terminal_id);
-		//out = gsl_vector_calloc((&row.vector)->size);
-		//gsl_vector_memcpy(out, &row.vector);
+                for(i = 0; i < s->n; i++)
+                    out[i] = s->a[T->id]->x[i];
 	    }
 	    return out;
 	}else{
