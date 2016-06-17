@@ -673,15 +673,9 @@ int *RouletteSelection(SearchSpace *s, int k){
     }
     for(i = 0; i < s->m; i++)
         D[i].val/=sum;
-        
-    for(i = 0; i < s->m; i++)
-        fprintf(stderr,"\nD[%d].id: %d   D[%d].val: %lf", i, D[i].id, i, D[i].val);
-        
+            
     /* It sorts the population by ascending values of fitness */
     qsort(D, s->m, sizeof(Data), SortDataByVal);
-    fprintf(stderr,"\n-------\n");
-    for(i = 0; i < s->m; i++)
-        fprintf(stderr,"\nD[%d].id: %d   D[%d].val: %lf", i, D[i].id, i, D[i].val);
     
     /* It computes the accumulate normalized fitness */
     accum = (double *)calloc(s->m,sizeof(double));
@@ -690,8 +684,7 @@ int *RouletteSelection(SearchSpace *s, int k){
             accum[i]+=D[j].val;
     }
     
-    for(j = 0; j < k; j++){
-        
+    for(j = 0; j < k; j++){        
         /* It picks up the selected individual */
         prob = GenerateUniformRandomNumber(0,1);
         i = 0;
@@ -704,7 +697,7 @@ int *RouletteSelection(SearchSpace *s, int k){
     free(D);
     free(accum);
     
-    return NULL;
+    return elem;
 }
 /**************************/
 
