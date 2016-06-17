@@ -133,6 +133,8 @@ double *RunTree(SearchSpace *s, Node *T); /* It runs a given tree and outputs it
 Node *CopyTree(Node *T); /* It copies a given tree */
 void PreFixTravel4Copy(Node *T, Node *Parent); /* It performs a prefix travel on a tree */
 int getSizeTree(Node *T); /* It returns the size of a tree (number of nodes) */
+Node *Mutation(SearchSpace *s, Node *T, float p); /* It performs the mutation of a tree T at the p-th node */
+Node *PreFixPositioningTree(Node *T, int pos, char *left_son, int status, int *ctr); /* It returns the parent of the pos-th node using a prefix travel */
 /***********************/
 
 #endif

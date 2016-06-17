@@ -914,4 +914,65 @@ int getSizeTree(Node *T){
     if(T) return 1+getSizeTree(T->left)+getSizeTree(T->right);
     else return 0;
 }
+
+/* It performs the mutation of a tree T at the p-th node
+Paremeters:
+s: search space
+T: pointer to the node to be mutated
+p: probability of mutation at a function node */
+Node *Mutation(SearchSpace *s, Node *T, float p){
+    if(!s || !T){
+        fprintf(stderr,"\nThere is no tree or search space allocated @Mutation.\n");
+        return NULL;
+    }
+    
+    Node *MutatedTree = NULL;
+    int mutation_point, size_tree = getSizeTree(T), ctr;
+    double r;
+    
+    MutatedTree = CopyTree(T);
+    mutation_point = round(GenerateUniformRandomNumber(2, size_tree)); /* Mutation point cannot be the root */
+    
+    r = GenerateUniformRandomNumber(0,1); ctr = 0;
+    //if(p > r) NewTree = PreFixPositioningTree(MutatedTree, mutation_point, &FLAG, FUNCTION, &ctr); /* the mutation point is a function node */
+    //else NewTree = PreFixPositioningTree(MutatedTree, mutation_point, &FLAG, TERMINAL, &ctr); /* the mutation point is a terminal node */
+    return MutatedTree;
+}
+
+/* It returns the parent of the pos-th node using a prefix travel
+Paremeters:
+T: pointer to the tree
+pos: position of the node to be retrieved
+left_son: flag to identify whether the pos-th node is a left-son or not
+status: status of the node (FUNCTION|TERMINAL)
+ctr: pointer to the integer used to count nodes through the previx travel */
+Node *PreFixPositioningTree(Node *T, int pos, char *left_son, int status, int *ctr){
+    Node *Aux = NULL;
+    
+    if(T){
+        (*ctr)++;
+        if(*ctr == pos){
+            *left_son = T->left_son;
+            *ctr = 0;
+
+            if(status == TERMINAL) return T->parent;
+        
+            /* If the node is a terminal and status = FUNCTION, thus the breakpoint will be its father (if this last is not a root),
+             which is certainly a function node */            
+           /* else if((T->parent)->parent){
+                    *FLAG = (T->parent)->son_esq;
+                    return (T->parent)->parent;
+            }else return NULL;*/
+        }
+        /*else{
+            Aux = PreFixPositioningTree(T->esq,pos,FLAG, isTerminal);
+            if(Aux) return Aux;
+            else {
+                Aux = PreFixPositioningTree(T->dir,pos,FLAG, isTerminal);
+                if(Aux) return Aux;
+                else return NULL;
+            }
+        }*/
+    }else return NULL;
+}
 /***********************/
