@@ -185,7 +185,7 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...){
         fprintf(stderr,"\nInvalid parameters @CreateSearchSpace.\n");
         return NULL;
     }
-    int i, n_terminals;
+    int i;
     
     va_start(arg, opt_id);
     s = (SearchSpace *)malloc(sizeof(SearchSpace));
@@ -206,15 +206,7 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...){
             return NULL;
         }
     
-        switch (opt_id){
-            case _PSO_:
-            case _BA_:
-            case _FPA_:
-            case _FA_:
-            case _GA_:
-                s->g = (double *)calloc(s->n,sizeof(double));
-            break;
-        }
+        s->g = (double *)calloc(s->n,sizeof(double));
     }else{
         if(opt_id == _GP_){
             s->min_depth = va_arg(arg, int);
@@ -232,7 +224,11 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...){
             
             s->a = (Agent **)malloc(s->n_terminals*sizeof(Agent *));
             for(i = 0; i < s->n_terminals; i++)
-                s->a[i] = CreateAgent(s->n, _GP_);
+                s->a[i] = CreateAgent(s->n, opt_id);
+            
+            s->tree_fit = (double *)malloc(s->m*sizeof(double));
+            for(i = 0; i < s->m; i++)
+                s->tree_fit[i] = DBL_MAX;
         }
         
     }
@@ -296,6 +292,7 @@ void DestroySearchSpace(SearchSpace **s, int opt_id){
             free(tmp->function);
             
             if(tmp->constant) free(tmp->constant);
+            if(tmp->tree_fit) free(tmp->tree_fit);
         }
     }
     
@@ -324,14 +321,14 @@ void InitializeSearchSpace(SearchSpace *s, int opt_id){
         case _GA_:
             for(i = 0; i < s->m; i++){
                 for(j = 0; j < s->n; j++)
-                s->a[i]->x[j] = (double)randinter((float)s->LB[j],(float) s->UB[j]);
+                    s->a[i]->x[j] = GenerateUniformRandomNumber(s->LB[j], s->UB[j]);
             }
             
         break;
         case _GP_:
             for(i = 0; i < s->n_terminals; i++){
                 for(j = 0; j < s->n; j++)
-                s->a[i]->x[j] = (double)randinter((float)s->LB[j],(float) s->UB[j]);
+                    s->a[i]->x[j] = GenerateUniformRandomNumber(s->LB[j], s->UB[j]);
             }
         break;
     }
@@ -340,7 +337,7 @@ void InitializeSearchSpace(SearchSpace *s, int opt_id){
 /* It shows a search space
 Parameters:
 s: search space */
-void ShowSearchSpace(SearchSpace *s){
+void ShowSearchSpace(SearchSpace *s, int opt_id){
     if(!s){
         fprintf(stderr,"\nSearch space not allocated @ShowSearchSpace.\n");
         exit(-1);
@@ -348,11 +345,27 @@ void ShowSearchSpace(SearchSpace *s){
     
     int i, j;
     fprintf(stderr,"\nSearch space with %d agents and %d decision variables\n", s->m, s->n);
-    for(i = 0; i < s->m; i++){
-        fprintf(stderr,"\nAgent %d-> ", i);
-        for(j = 0; j < s->n; j++)
-            fprintf(stderr,"x[%d]: %f   ", j, s->a[i]->x[j]);
-        fprintf(stderr,"fitness value: %f", s->a[i]->fit);
+    
+    switch (opt_id){
+        case _PSO_:
+        case _BA_:
+        case _FPA_:
+        case _FA_:
+        case _GA_:
+            for(i = 0; i < s->m; i++){
+                fprintf(stderr,"\nAgent %d-> ", i);
+                for(j = 0; j < s->n; j++)
+                    fprintf(stderr,"x[%d]: %f   ", j, s->a[i]->x[j]);
+                fprintf(stderr,"fitness value: %f", s->a[i]->fit);
+            }
+        break;
+        case _GP_:
+            for(i = 0; i < s->m; i++)
+                fprintf(stderr,"\nAgent %d-> fitness value %lf", i, s->tree_fit[i]);
+        break;
+        default:
+            fprintf(stderr,"\n Invalid optimization identifier @ShowSearchSpace.\n");
+        break;
     }
     fprintf(stderr,"\n-----------------------------------------------------\n");
 }
@@ -371,7 +384,8 @@ void EvaluateSearchSpace(SearchSpace *s, int opt_id, prtFun Evaluate, va_list ar
     }
     
     int i, j;
-    double f;
+    double f, *tmp = NULL;
+    Agent *individual = NULL;
     va_list argtmp;
     
     va_copy(argtmp, arg);
@@ -414,9 +428,27 @@ void EvaluateSearchSpace(SearchSpace *s, int opt_id, prtFun Evaluate, va_list ar
                 va_copy(arg, argtmp);
             }
         break;
+        case _GP_:
+            individual = CreateAgent(s->n, _GP_);
+            for(i = 0; i < s->m; i++){
+                tmp = RunTree(s, s->T[i]);
+                memcpy(individual->x, tmp, s->n*sizeof(double)); /* It runs over a tree computing the output individual (current solution) */
+                free(tmp);
+        
+                f = Evaluate(individual, arg); /* It executes the fitness function for agent i */
+                
+                if(f < s->tree_fit[i]) /* It updates the fitness value */
+                    s->tree_fit[i] = f;
+                    
+                if(s->tree_fit[i] < s->gfit) /* It updates the global best value */
+                    s->gfit = s->tree_fit[i];
+                
+                va_copy(arg, argtmp);
+            }
+            DestroyAgent(&individual, _GP_);
+        break;
         default:
             fprintf(stderr,"\n Invalid optimization identifier @EvaluateSearchSpace.\n");
-                     
         break;
     }
 }
@@ -733,8 +765,8 @@ double *RunTree(SearchSpace *s, Node *T){
 	y = RunTree(s, T->right); /* It runs over the subtree on the right */
 	
 	if(T->status == TERMINAL || T->status == CONSTANT){
+            out = (double *)calloc(s->n,sizeof(double));
 	    if(T->status == CONSTANT){
-		out = (double *)calloc(s->n,sizeof(double));
                 for(i = 0; i < s->n; i++)
                     out[i] = s->constant[T->id];
 	    }else{

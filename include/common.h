@@ -77,7 +77,8 @@ typedef struct SearchSpace_{
     char **function; /* matrix with the functions' names */
     char **terminal; /* matrix with the terminals' names */
     double *constant; /* array with the random constants */
-    Node **T; /* pointer to the agent (tree) */
+    Node **T; /* pointer to the tree */
+    double *tree_fit; /* fitness of each tree (in GP, the number of agents is different from the number of trees) */
     
     /* GA */
     double pCrossOver; /* probability of crossover */
@@ -99,7 +100,7 @@ Agent *GenerateNewAgent(SearchSpace *s, int opt_id); /* It generates a new agent
 SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...); /* It creates a search space */
 void DestroySearchSpace(SearchSpace **s, int opt_id); /* It deallocates a search space */
 void InitializeSearchSpace(SearchSpace *s, int opt_id); /* It initializes an allocated search space */
-void ShowSearchSpace(SearchSpace *s); /* It shows a search space */
+void ShowSearchSpace(SearchSpace *s, int opt_id); /* It shows a search space */
 void EvaluateSearchSpace(SearchSpace *s, int opt_id, prtFun Evaluate, va_list arg); /* It evaluates a search space */
 /**************************/
 

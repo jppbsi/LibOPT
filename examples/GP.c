@@ -4,7 +4,7 @@
 int main(){
     SearchSpace *s = NULL;
     
-    int min_depth = 1, max_depth = 3, n_terminals = 3, i;
+    int min_depth = 1, max_depth = 3, n_terminals = 2, i;
     int n_functions = 3, m = 10, n = 2;
     char **terminal = NULL, **function = NULL;
     double *constant = NULL;
@@ -13,9 +13,8 @@ int main(){
     terminal = (char **)malloc(n_terminals*sizeof(char *));
     for(i = 0; i < n_terminals; i++)
         terminal[i] = (char *)malloc(TERMINAL_LENGTH*sizeof(char));
-    strcpy(terminal[0], "x");
-    strcpy(terminal[1], "y");
-    strcpy(terminal[2], "CONST");
+    strcpy(terminal[0], "(x,y)");
+    strcpy(terminal[1], "CONST");
     /****************************/
     
     /* loading set of functions */
@@ -38,10 +37,19 @@ int main(){
     at random within [0,10]*/
     s = CreateSearchSpace(m, n, _GP_, min_depth, max_depth, n_terminals, N_CONSTANTS, n_functions, terminal, constant, function);
     
+    /* Initializing lower and upper bounds */
+    for(i = 0; i < s->n; i++){
+        s->LB[i] = -5.0;
+        s->UB[i] = 5.0;
+    }
+    
     InitializeSearchSpace(s, _GP_); /* It initalizes the search space */
     
     for(i = 0; i < s->m; i++)
         PrintTree2File(s, s->T[i], "trees.txt");
+        
+    runGP(s, Sphere); /* It minimizes function Sphere */
+    ShowSearchSpace(s, _GP_);
     
     DestroySearchSpace(&s, _GP_);
     
