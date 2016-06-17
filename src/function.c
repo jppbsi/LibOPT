@@ -1,5 +1,6 @@
 #include "function.h"
 
+/* Benchmark functions */
 /* It computes the 1st Ackley's function
 Parameters:
 a: agent
@@ -2864,3 +2865,86 @@ double Zirilli(Agent *a, ...){
 
     return sum;
 }
+/***********************/
+
+/* General-purpose functions */
+/* It computes the pointwise sum of two n-dimensional arrays
+Parameters:
+x, y: arrays
+n: dimension */
+double *f_SUM_(double *x, double *y, int n){
+    if(!x || !y){
+        fprintf(stderr,"\nInvalid input parametsrs @f_SUM_.\n");
+        exit(-1);
+    }
+    
+    int i;
+    double *out = NULL;
+    
+    out = (double *)malloc(n*sizeof(double));
+    for(i = 0; i < n; i++)
+        out[i] = x[i]+y[i];
+    
+    return out;
+}
+
+/* It computes the pointwise subtraction of two n-dimensional arrays
+Parameters:
+x, y: arrays
+n: dimension */
+double *f_SUB_(double *x, double *y, int n){
+    if(!x || !y){
+        fprintf(stderr,"\nInvalid input parametsrs @f_SUB_.\n");
+        exit(-1);
+    }
+    
+    int i;
+    double *out = NULL;
+    
+    out = (double *)malloc(n*sizeof(double));
+    for(i = 0; i < n; i++)
+        out[i] = x[i]-y[i];
+    
+    return out;
+}
+
+/* It computes the pointwise multiplication of two n-dimensional arrays
+Parameters:
+x, y: arrays
+n: dimension */
+double *f_MUL_(double *x, double *y, int n){
+    if(!x || !y){
+        fprintf(stderr,"\nInvalid input parametsrs @f_MUL_.\n");
+        exit(-1);
+    }
+    
+    int i;
+    double *out = NULL;
+    
+    out = (double *)malloc(n*sizeof(double));
+    for(i = 0; i < n; i++)
+        out[i] = x[i]*y[i];
+    
+    return out;
+}
+
+/* It computes the pointwise vision of two n-dimensional arrays
+Parameters:
+x, y: arrays
+n: dimension */
+double *f_DIV_(double *x, double *y, int n){
+    if(!x || !y){
+        fprintf(stderr,"\nInvalid input parametsrs @f_DIV_.\n");
+        exit(-1);
+    }
+    
+    int i;
+    double *out = NULL;
+    
+    out = (double *)malloc(n*sizeof(double));
+    for(i = 0; i < n; i++)
+        out[i] = x[i]/(y[i]+0.00001); /* It avoids division by 0 */
+    
+    return out;
+}
+/*****************************/

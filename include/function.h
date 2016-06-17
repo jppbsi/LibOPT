@@ -3,6 +3,7 @@
 
 #include "common.h"
 
+/* Benchmark functions */
 double Ackley_First(Agent *a, ...); /* It computes the 1st Ackley's function */
 double Ackley_Second(Agent *a, ...); /* It computes the 2nd Ackley's function */
 double Ackley_Third(Agent *a, ...); /* It computes the 3rd Ackley's function */
@@ -115,5 +116,12 @@ double XinShe_Yang_4(Agent *a, ...); /* It computes the Xin-She Yang's 4 functio
 double Zakharov(Agent *a, ...); /* It computes the Zakharov's function */
 double Zettl(Agent *a, ...); /* It computes the Zettl's function */
 double Zirilli(Agent *a, ...); /* It computes the Zirilli's function */
+/***********************/
 
+/* General-purpose functions */
+double *f_SUM_(double *x, double *y, int n); /* It computes the pointwise sum of two n-dimensional arrays */
+double *f_SUB_(double *x, double *y, int n); /* It computes the pointwise subtraction of two n-dimensional arrays */
+double *f_MUL_(double *x, double *y, int n); /* It computes the pointwise multiplication of two n-dimensional arrays */
+double *f_DIV_(double *x, double *y, int n); /* It computes the pointwise division of two n-dimensional arrays */
+/*****************************/
 #endif
