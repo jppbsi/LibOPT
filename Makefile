@@ -80,8 +80,8 @@ FA: examples/FA.c
 GA: examples/GA.c
 	$(CC) $(FLAGS) examples/GA.c -o examples/bin/GA -I $(INCLUDE) -L $(LIB) -lopt-plus -lm;
 
-tmp: examples/tmp.c
-	$(CC) $(FLAGS) examples/tmp.c -o examples/bin/tmp -I $(INCLUDE) -L $(LIB) -lopt-plus -lm;
+tmp: examples/GP.c
+	$(CC) $(FLAGS) examples/GP.c -o examples/bin/GP -I $(INCLUDE) -L $(LIB) -lopt-plus -lm;
 
 clean:
 	rm -f $(LIB)/lib*.a; rm -f $(OBJ)/*.o; rm -rf examples/bin/*

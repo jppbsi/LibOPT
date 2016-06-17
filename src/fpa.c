@@ -19,7 +19,7 @@ void runFPA(SearchSpace *s, prtFun Evaluate, ...){
         exit(-1);
     }
         
-    EvaluateSearchSpace(s, Evaluate, arg); /* Initial evaluation of the search space */
+    EvaluateSearchSpace(s, _FPA_, Evaluate, arg); /* Initial evaluation of the search space */
         
     for(t = 1; t <= s->iterations; t++){
         fprintf(stderr,"\nRunning iteration %d/%d ... ", t, s->iterations);

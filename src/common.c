@@ -338,7 +338,7 @@ Parameters:
 s: search space
 EvaluateFun: pointer to the function used to evaluate particles (agents)
 arg: list of additional arguments */
-void EvaluateSearchSpace(SearchSpace *s, prtFun Evaluate, va_list arg){
+void EvaluateSearchSpace(SearchSpace *s, int opt_id, prtFun Evaluate, va_list arg){
     if(!s){
         fprintf(stderr,"\nSearch space not allocated @EvaluateSearchSpace.\n");
         exit(-1);
@@ -348,19 +348,27 @@ void EvaluateSearchSpace(SearchSpace *s, prtFun Evaluate, va_list arg){
     double f;
     va_list argtmp;
     
-    for(i = 0; i < s->m; i++){
-        f = Evaluate(s->a[i], arg); /* It executes the fitness function for agent i */
+    switch (opt_id){
+        case _PSO_:
+        case _BA_:
+        case _FPA_:
+        case _FA_:
+        case _GA_:
+            for(i = 0; i < s->m; i++){
+                f = Evaluate(s->a[i], arg); /* It executes the fitness function for agent i */
         
-        if(f < s->a[i]->fit) /* It updates the fitness value */
-            s->a[i]->fit = f;
+                if(f < s->a[i]->fit) /* It updates the fitness value */
+                    s->a[i]->fit = f;
         
-        if(s->a[i]->fit < s->gfit){ /* It updates the global best value and position */
-            s->gfit = s->a[i]->fit;
-            for(j = 0; j < s->n; j++)
-                s->g[j] = s->a[i]->x[j];
-        }
+                if(s->a[i]->fit < s->gfit){ /* It updates the global best value and position */
+                    s->gfit = s->a[i]->fit;
+                    for(j = 0; j < s->n; j++)
+                        s->g[j] = s->a[i]->x[j];
+                }
         
-        va_copy(arg, argtmp);
+                va_copy(arg, argtmp);
+            }
+        break;
     }
 }
 /**************************/

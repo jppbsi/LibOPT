@@ -63,7 +63,7 @@ void runFA(SearchSpace *s, prtFun Evaluate, ...){
         exit(-1);
     }
         
-    EvaluateSearchSpace(s, Evaluate, arg); /* Initial evaluation of the search space */
+    EvaluateSearchSpace(s, _FA_, Evaluate, arg); /* Initial evaluation of the search space */
     qsort(s->a, s->m, sizeof(Agent**), CompareForQSort); /* Sorts all fireflies according to their fitness. First position gets the best firefly. */
     
     for(t = 1; t <= s->iterations; t++){
@@ -77,7 +77,7 @@ void runFA(SearchSpace *s, prtFun Evaluate, ...){
 	UpdateBestFireflyPosition(s, 0); /* It updates the best firefly position with a random controlled walk in order to avoid local optimum */
 	CheckAgentLimits(s, s->a[0]);
 	
-	EvaluateSearchSpace(s, Evaluate, arg); /* Evaluates the new search space */
+	EvaluateSearchSpace(s, _FA_, Evaluate, arg); /* Evaluates the new search space */
 	qsort(s->a, s->m, sizeof(Agent**), CompareForQSort); /* Sorts all fireflies according to their fitness. First position gets the best firefly. */
        
 	va_copy(arg, argtmp);
@@ -107,7 +107,7 @@ void runAFA(SearchSpace *s, prtFun Evaluate, ...){
         exit(-1);
     }
         
-    EvaluateSearchSpace(s, Evaluate, arg); /* Initial evaluation of the search space */
+    EvaluateSearchSpace(s, _FA_, Evaluate, arg); /* Initial evaluation of the search space */
     qsort(s->a, s->m, sizeof(Agent**), CompareForQSort); /* Sorts all fireflies according to their fitness. First position gets the best firefly. */
     
     for(t = 1; t <= s->iterations; t++){
@@ -124,7 +124,7 @@ void runAFA(SearchSpace *s, prtFun Evaluate, ...){
 	UpdateBestFireflyPosition(s, 0); /* It updates the best firefly position with a random controlled walk in order to avoid local optimum */
 	CheckAgentLimits(s, s->a[0]);
 	
-	EvaluateSearchSpace(s, Evaluate, arg); /* Evaluates the new search space */
+	EvaluateSearchSpace(s, _FA_, Evaluate, arg); /* Evaluates the new search space */
 	qsort(s->a, s->m, sizeof(Agent**), CompareForQSort); /* Sorts all fireflies according to their fitness. First position gets the best firefly. */
 	       
 	va_copy(arg, argtmp);

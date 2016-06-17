@@ -100,7 +100,7 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...); /* It creates a s
 void DestroySearchSpace(SearchSpace **s, int opt_id); /* It deallocates a search space */
 void InitializeSearchSpace(SearchSpace *s); /* It initializes an allocated search space */
 void ShowSearchSpace(SearchSpace *s); /* It shows a search space */
-void EvaluateSearchSpace(SearchSpace *s, prtFun Evaluate, va_list arg); /* It evaluates a search space */
+void EvaluateSearchSpace(SearchSpace *s, int opt_id, prtFun Evaluate, va_list arg); /* It evaluates a search space */
 /**************************/
 
 /* General-purpose functions */
