@@ -72,14 +72,23 @@ void runGP(SearchSpace *s, prtFun Evaluate, ...){
 	    if((getSizeTree(tmpTree[crossover[father_cross_point]]) > 1) && (getSizeTree(tmpTree[crossover[mother_crosspoint]]) > 1)){
 		aux = Crossover(tmpTree[crossover[father_cross_point]],
 				tmpTree[crossover[mother_crosspoint]], PROB_CROSSOVER_FUNCTION);
+		DestroyTree(&(s->T[j]));
 		s->T[j] = CopyTree(aux[0]);
-		if(j+1 < n_reproduction+n_mutation+n_crossover) s->T[j+1] = CopyTree(aux[1]); /* in case of an odd number of samples to do crossover */
+		if(j+1 < n_reproduction+n_mutation+n_crossover){
+		    DestroyTree(&(s->T[j+1]));
+		    s->T[j+1] = CopyTree(aux[1]); /* in case of an odd number of samples to do crossover */
+		}
 		DestroyTree(&aux[0]);
 		DestroyTree(&aux[1]);
 		free(aux);
-	    }else{
+	    }
+	    else{
+		DestroyTree(&(s->T[j]));
 		s->T[j] = CopyTree(tmpTree[crossover[father_cross_point]]);
-		if(j+1 < n_reproduction+n_mutation+n_crossover) s->T[j+1] = CopyTree(tmpTree[crossover[mother_crosspoint]]); /* in case of an odd number of samples to do crossover */
+		if(j+1 < n_reproduction+n_mutation+n_crossover){
+		    DestroyTree(&(s->T[j+1]));
+		    s->T[j+1] = CopyTree(tmpTree[crossover[mother_crosspoint]]); /* in case of an odd number of samples to do crossover */
+		}
 	    }
 	    z++;
 	}
