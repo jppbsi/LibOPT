@@ -37,7 +37,7 @@ int main(){
     trees with minimum depth of min_depth and maximum depth of max_depth, 2 functions (+ and -), 2 terminals (x and y) and 100 constants chosen
     at random within [0,10]*/
     s = CreateSearchSpace(m, n, _GP_, min_depth, max_depth, n_terminals, N_CONSTANTS, n_functions, terminal, constant, function);
-    s->iterations = 10;
+    s->iterations = 1;
     
     /* Initializing lower and upper bounds */
     for(i = 0; i < s->n; i++){

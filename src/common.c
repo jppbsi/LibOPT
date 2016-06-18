@@ -709,7 +709,7 @@ node_id: identifier of the node id, i.e. its position in the array of terminals,
 status: TERMINAL|FUNCTION/CONSTANT */
 Node *CreateNode(char *value, int node_id, char status){
     Node *tmp = NULL;
-   tmp = (Node *)malloc(sizeof(Node));
+    tmp = (Node *)malloc(sizeof(Node));
     
     if(!value){
         fprintf(stderr,"\nInvalid input @CreateNode.\n");
@@ -903,7 +903,7 @@ void PreFixTravel4Copy(Node *T, Node *Parent){
         aux->parent = Parent;
         
         PreFixTravel4Copy(T->left, aux);
-        PreFixTravel4Copy(T->left, aux);
+        PreFixTravel4Copy(T->right, aux);
     }
 }
 
