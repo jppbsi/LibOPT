@@ -46,15 +46,14 @@ int main(){
     }
     
     InitializeSearchSpace(s, _GP_); /* It initalizes the search space */
-    
-    for(i = 0; i < s->m; i++)
-        PrintTree2File(s, s->T[i], "trees.txt");
-     
+         
     s->pReproduction = 0.3; /* Setting up the probability of reproduction */
     s->pMutation = 0.4; /* Setting up the probability of mutation */
     s->pCrossover = 1-s->pReproduction+s->pMutation; /* Setting up the probability of crossover */
     
     runGP(s, Sphere); /* It minimizes function Sphere */
+
+    PrintTree2File(s, s->T[s->best], "best_tree.txt");
 
     DestroySearchSpace(&s, _GP_);
     

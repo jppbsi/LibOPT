@@ -102,7 +102,7 @@ void runGP(SearchSpace *s, prtFun Evaluate, ...){
 	
 	EvaluateSearchSpace(s, _GP_, Evaluate, arg);
 	
-	fprintf(stderr, "OK (minimum fitness value %lf)", s->gfit);
+	fprintf(stderr, "OK (minimum fitness value %lf) -> Best tree: %d.", s->gfit, s->best);
 	va_copy(arg, argtmp);
     }
     
