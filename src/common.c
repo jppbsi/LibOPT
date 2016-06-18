@@ -966,6 +966,13 @@ Node *Mutation(SearchSpace *s, Node *T, float p){
     return MutatedTree;
 }
 
+/* It performs the crossover between father and mother trees
+Parameters:
+Father: pointer to the father tree
+Mother: pointer to the mother tree
+p: probability of mutation on a function node */
+Node **Crossover(Node *Father, Node *Mother, float p);
+
 /* It returns the parent of the pos-th node using a prefix travel
 Paremeters:
 T: pointer to the tree

@@ -21,8 +21,10 @@ extern "C" {
 #define TERMINAL_LENGTH 16
 /*****************/
 
+/* GP variables */
 #define N_CONSTANTS 1000 /* number of constants generated at random to populate a GP agent */
 #define PROB_MUTATION_FUNCTION 0.9 /* probability of mutation on a function node */
+#define PROB_CROSSOVER_FUNCTION 0.7 /* probability of crossover on a function node */
 
 /* GP function-type nodes */
 #define _SUM_ 0
