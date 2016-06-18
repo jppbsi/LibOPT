@@ -440,8 +440,10 @@ void EvaluateSearchSpace(SearchSpace *s, int opt_id, prtFun Evaluate, va_list ar
                 if(f < s->tree_fit[i]) /* It updates the fitness value */
                     s->tree_fit[i] = f;
                     
-                if(s->tree_fit[i] < s->gfit) /* It updates the global best value */
+                if(s->tree_fit[i] < s->gfit){ /* It updates the global best value */
+                    s->best = i;
                     s->gfit = s->tree_fit[i];
+                }
                 
                 va_copy(arg, argtmp);
             }
