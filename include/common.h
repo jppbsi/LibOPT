@@ -47,6 +47,7 @@ typedef struct SearchSpace_{
     double *LB; /* lower boundaries of each decision variable */
     double *UB; /* upper boundaries of each decision variable */
     double *g; /* global best agent */
+    int best; /* index of the best agent */
     
     /* PSO */
     double w; /* inertia weight */
