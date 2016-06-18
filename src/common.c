@@ -971,7 +971,29 @@ Parameters:
 Father: pointer to the father tree
 Mother: pointer to the mother tree
 p: probability of mutation on a function node */
-Node **Crossover(Node *Father, Node *Mother, float p);
+Node **Crossover(Node *Father, Node *Mother, float p){
+    Node **offspring = NULL, *aux_father = NULL, *aux_mother = NULL;
+    int ctr = 0, crossover_point, size_tree;
+    double r;
+    char left_son;
+    
+    if(!Father || !Mother){
+        fprintf(stderr,"\nInvalid input data @Crossover.\n");
+        return NULL;
+    }
+    
+    offspring = (Node **)malloc(2*sizeof(Node *));
+    
+    /* It generates the offsprings */
+    size_tree = getSizeTree(Father);
+    crossover_point = round(GenerateUniformRandomNumber(2, size_tree)); /* Crossover point cannot be the root (min=2) */
+    offspring[0] = CopyTree(Father); 
+    r = GenerateUniformRandomNumber(0,1);
+    if(p >= r) aux_father = PreFixPositioningTree(offspring[0], crossover_point, &left_son, FUNCTION, &ctr); /* the mutation point is a function node */
+    else aux_father = PreFixPositioningTree(offspring[0], crossover_point, &left_son, TERMINAL, &ctr); /* the mutation point is a terminal node */
+    
+    return offspring;
+}
 
 /* It returns the parent of the pos-th node using a prefix travel
 Paremeters:
