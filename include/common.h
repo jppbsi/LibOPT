@@ -74,7 +74,7 @@ typedef struct SearchSpace_{
     /* GP */
     double pReproduction; /* probability of reproduction */
     double pMutation; /* probability of mutation */
-    double pSelection; /* probability of selection */
+    double pCrossover; /* probability of crossover */
     int min_depth; /* minimum depth of a tree */
     int max_depth; /* maximum depth of a tree */
     int n_terminals; /* number of terminals */
