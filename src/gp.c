@@ -7,7 +7,7 @@ Evaluate: pointer to the function used to evaluate particles
 arg: list of additional arguments */
 void runGP(SearchSpace *s, prtFun Evaluate, ...){
     va_list arg, argtmp;
-    int t, i, n_reproduction, n_mutation, n_crossover;
+    int t, i, j, z, n_reproduction, n_mutation, n_crossover;
     int *reproduction = NULL, *mutation = NULL, *crossover = NULL;
     double beta, prob;
     Node **tmpTree = NULL;
@@ -22,6 +22,7 @@ void runGP(SearchSpace *s, prtFun Evaluate, ...){
         
     EvaluateSearchSpace(s, _GP_, Evaluate, arg); /* Initial evaluation */
     tmpTree = (Node **)malloc(s->m*sizeof(Node *));
+    ShowSearchSpace(s, _GP_);
     
     for(t = 1; t <= s->iterations; t++){
         fprintf(stderr,"\nRunning iteration %d/%d ... ", t, s->iterations);
@@ -42,13 +43,21 @@ void runGP(SearchSpace *s, prtFun Evaluate, ...){
 	crossover = RouletteSelection(s, n_crossover);
 	
 	/* It performs the reproduction */
-	//for(i = 0; i < n_reproduction; i++)
-	  //  s->T[i] = CopyTree(tmp_T[reproduction, i]);
-		    
-	//for(i = 0; i < s->m; i++){
-	  //  va_copy(arg, argtmp);
-	//}
+	for(i = 0; i < n_reproduction; i++){
+	    DestroyTree(&s->T[i]);
+	    s->T[i] = CopyTree(tmpTree[reproduction[i]]);
+	}
 	
+	/* It performs the mutation */
+	z = 0;
+	for(j = n_reproduction; j < n_reproduction+n_mutation; j++){
+	    DestroyTree(&s->T[j]);
+	    if(getSizeTree(tmpTree[mutation[z]]) > 1)
+		s->T[j]= Mutation(s, tmpTree[mutation[z]], PROB_MUTATION_FUNCTION);
+	    else s->T[j] = GROW(s, s->min_depth, s->max_depth);
+	    z++;
+	}
+    	    
 	free(reproduction);
 	free(mutation);
 	free(crossover);
@@ -56,7 +65,10 @@ void runGP(SearchSpace *s, prtFun Evaluate, ...){
 	for(i = 0; i < s->m; i++)
 	    DestroyTree(&tmpTree[i]);
 	
+	EvaluateSearchSpace(s, _GP_, Evaluate, arg);
+	
 	fprintf(stderr, "OK (minimum fitness value %lf)", s->gfit);
+	va_copy(arg, argtmp);
     }
     
     free(tmpTree);
