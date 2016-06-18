@@ -926,7 +926,7 @@ Node *Mutation(SearchSpace *s, Node *T, float p){
         return NULL;
     }
     
-    Node *NewTree = NULL, *MutatedTree = NULL;
+    Node *NewTree = NULL, *tmp = NULL, *aux = NULL, *MutatedTree = NULL;
     int mutation_point, size_tree = getSizeTree(T), ctr = 0;
     double r;
     char left_son;
@@ -937,6 +937,31 @@ Node *Mutation(SearchSpace *s, Node *T, float p){
     r = GenerateUniformRandomNumber(0,1);
     if(p > r) NewTree = PreFixPositioningTree(MutatedTree, mutation_point, &left_son, FUNCTION, &ctr); /* the mutation point is a function node */
     else NewTree = PreFixPositioningTree(MutatedTree, mutation_point, &left_son, TERMINAL, &ctr); /* the mutation point is a terminal node */
+    
+    /* if the mutation point's parent is not a root (this may happen when the mutation point is a function, \
+     and PreFixPositioningTree stops at a terminal node whose father is a root */
+    if(NewTree){
+        aux = GROW(s, s->min_depth, s->max_depth); /* It creates the new subtree */
+    
+        /* It deletes the old subtree */
+	if(left_son) tmp = NewTree->left;
+        else tmp = NewTree->right;
+        DestroyTree(&tmp);
+
+        /* it connects the new subtree to the mutated tree */
+        if(left_son){    
+            NewTree->left = aux;
+            aux->left_son = 1;
+        }else{
+            NewTree->right = aux;
+            aux->left_son = 0;
+        }
+        aux->parent = NewTree;
+        
+    }else{
+        DestroyTree(&MutatedTree);
+        MutatedTree = GROW(s, s->min_depth, s->max_depth);
+    }
     
     return MutatedTree;
 }
