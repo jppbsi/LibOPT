@@ -972,10 +972,10 @@ Father: pointer to the father tree
 Mother: pointer to the mother tree
 p: probability of mutation on a function node */
 Node **Crossover(Node *Father, Node *Mother, float p){
-    Node **offspring = NULL, *aux_father = NULL, *aux_mother = NULL;
+    Node **offspring = NULL, *aux_father = NULL, *aux_mother = NULL, *tmp = NULL;
     int ctr = 0, crossover_point, size_tree;
     double r;
-    char left_son;
+    char left_son_father, left_son_mother;
     
     if(!Father || !Mother){
         fprintf(stderr,"\nInvalid input data @Crossover.\n");
@@ -986,11 +986,55 @@ Node **Crossover(Node *Father, Node *Mother, float p){
     
     /* It generates the offsprings */
     size_tree = getSizeTree(Father);
-    crossover_point = round(GenerateUniformRandomNumber(2, size_tree)); /* Crossover point cannot be the root (min=2) */
+    crossover_point = round(GenerateUniformRandomNumber(2, size_tree)); /* Crossover point cannot be the root */
     offspring[0] = CopyTree(Father); 
     r = GenerateUniformRandomNumber(0,1);
-    if(p >= r) aux_father = PreFixPositioningTree(offspring[0], crossover_point, &left_son, FUNCTION, &ctr); /* the mutation point is a function node */
-    else aux_father = PreFixPositioningTree(offspring[0], crossover_point, &left_son, TERMINAL, &ctr); /* the mutation point is a terminal node */
+    if(p >= r) aux_father = PreFixPositioningTree(offspring[0], crossover_point, &left_son_father, FUNCTION, &ctr); /* the mutation point is a function node */
+    else aux_father = PreFixPositioningTree(offspring[0], crossover_point, &left_son_father, TERMINAL, &ctr); /* the mutation point is a terminal node */
+    
+    
+    size_tree = getSizeTree(Mother);
+    crossover_point = round(GenerateUniformRandomNumber(2, size_tree)); /* Crossover point cannot be the root */
+    offspring[1] = CopyTree(Mother); ctr = 0;
+    r = GenerateUniformRandomNumber(0,1);
+    if(p >= r) aux_mother = PreFixPositioningTree(offspring[1], crossover_point, &left_son_mother, FUNCTION, &ctr); /* the mutation point is a function node */
+    else aux_mother = PreFixPositioningTree(offspring[1], crossover_point, &left_son_mother, TERMINAL, &ctr); /* the mutation point is a terminal node */
+    
+    
+    /* If the crossover points have been properly found */
+    if((aux_father) && (aux_mother)){
+        /* It performs the crossover for offspring #1 */
+        if(left_son_father){
+            tmp = aux_father->left;
+            if(left_son_mother){
+                aux_father->left = aux_mother->left;
+                (aux_mother->left)->left_son = 1;
+            }else{
+                aux_father->left = aux_mother->right;
+                (aux_mother->right)->left_son = 1;
+            }
+        }else{
+            tmp = aux_father->right;
+            if(left_son_mother){
+                aux_father->right = aux_mother->left;
+                (aux_mother->left)->left_son = 0;
+            }else{
+                aux_father->right = aux_mother->right;
+                (aux_mother->right)->left_son = 0;
+            }
+        }
+        aux_mother->parent = aux_father;
+    
+        /* it performs the crossover for offspring #2 */
+        if(left_son_mother){
+            aux_mother->left = tmp;
+            tmp->left_son = 1;
+	}else{
+            aux_mother->right = tmp;
+            tmp->left_son = 0;
+        }
+        tmp->parent = aux_mother;
+    }
     
     return offspring;
 }
