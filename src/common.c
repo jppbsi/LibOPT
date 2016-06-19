@@ -158,9 +158,9 @@ Agent *GenerateNewAgent(SearchSpace *s, int opt_id){
         break;
         case _FA_:
         break;
-		case _CS_:
-			a = CreateAgent(s->n, _CS_);
-		break;
+	case _CS_:
+	    a = CreateAgent(s->n, _CS_);
+	break;
         case _GA_:
         break;
         default:
@@ -688,12 +688,12 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
             fscanf(fp, "%lf %lf %lf", &(s->alpha), &(s->beta_0), &(s->gamma));
             WaiveComment(fp);
         break;
-		case _CS_:
-			s = CreateSearchSpace(m, n, _CS_);
-			s->iterations = iterations;
-			fscanf(fp, "%lf %lf %lf", &(s->beta), &(s->p), &(s->alpha));
-			WaiveComment(fp);
-		break;
+	case _CS_:
+	    s = CreateSearchSpace(m, n, _CS_);
+	    s->iterations = iterations;
+	    fscanf(fp, "%lf %lf %lf", &(s->beta), &(s->p), &(s->alpha));
+	WaiveComment(fp);
+	break;
         case _GA_:
             s = CreateSearchSpace(m, n, _GA_);
             s->iterations = iterations;
