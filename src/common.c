@@ -763,7 +763,7 @@ int *RouletteSelection(SearchSpace *s, int k){
     sum = 0;
     for(i = 0; i < s->m; i++){
         D[i].id = i;
-        D[i].val = s->tree_fit[i];
+        D[i].val = 1/s->tree_fit[i];
         sum+=D[i].val;
         
     }
@@ -784,8 +784,7 @@ int *RouletteSelection(SearchSpace *s, int k){
         /* It picks up the selected individual */
         prob = GenerateUniformRandomNumber(0,1);
         i = 0;
-        while((accum[i] < prob) && (i < s->m))
-            i++;
+        while((accum[i] < prob) && (i < s->m)) i++;
         if(i) elem[j] = D[i-1].id;
         else elem[j] = D[i].id;
     }
