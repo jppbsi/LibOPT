@@ -29,6 +29,7 @@ Agent *CreateAgent(int n, int opt_id){
         case _BA_:
         case _FPA_:
         case _FA_:
+        case _CS_:
         case _GA_:
         case _GP_:
             a->x = (double *)calloc(n,sizeof(double));
@@ -63,6 +64,7 @@ void DestroyAgent(Agent **a, int opt_id){
         case _BA_:
         case _FPA_:
         case _FA_:
+        case _CS_:
         case _GA_:
         case _GP_:
             if(tmp->x) free(tmp->x);
@@ -113,6 +115,7 @@ Agent *CopyAgent(Agent *a, int opt_id){
         case _BA_:
         case _FPA_:
         case _FA_:
+        case _CS_:
         case _GA_:
             memcpy(cpy->x, a->x, a->n*sizeof(double));
             memcpy(cpy->v, a->v, a->n*sizeof(double));
@@ -155,6 +158,9 @@ Agent *GenerateNewAgent(SearchSpace *s, int opt_id){
         break;
         case _FA_:
         break;
+		case _CS_:
+			a = CreateAgent(s->n, _CS_);
+		break;
         case _GA_:
         break;
         default:
@@ -266,6 +272,7 @@ void DestroySearchSpace(SearchSpace **s, int opt_id){
             case _BA_:
             case _FPA_:
             case _FA_:
+            case _CS_:
             case _GA_:
                 if(tmp->g) free(tmp->g);
             break;
@@ -318,6 +325,7 @@ void InitializeSearchSpace(SearchSpace *s, int opt_id){
         case _BA_:
         case _FPA_:
         case _FA_:
+        case _CS_:
         case _GA_:
             for(i = 0; i < s->m; i++){
                 for(j = 0; j < s->n; j++)
@@ -351,6 +359,7 @@ void ShowSearchSpace(SearchSpace *s, int opt_id){
         case _BA_:
         case _FPA_:
         case _FA_:
+        case _CS_:
         case _GA_:
             for(i = 0; i < s->m; i++){
                 fprintf(stderr,"\nAgent %d-> ", i);
@@ -393,6 +402,7 @@ void EvaluateSearchSpace(SearchSpace *s, int opt_id, prtFun Evaluate, va_list ar
         case _BA_:
         case _FPA_:
         case _FA_:
+        case _CS_:
         case _GA_:
             for(i = 0; i < s->m; i++){
                 f = Evaluate(s->a[i], arg); /* It executes the fitness function for agent i */
@@ -604,6 +614,12 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
             fscanf(fp, "%lf %lf %lf", &(s->alpha), &(s->beta_0), &(s->gamma));
             WaiveComment(fp);
         break;
+		case _CS_:
+			s = CreateSearchSpace(m, n, _CS_);
+			s->iterations = iterations;
+			fscanf(fp, "%lf %lf %lf", &(s->beta), &(s->p), &(s->alpha));
+			WaiveComment(fp);
+		break;
         case _GA_:
             s = CreateSearchSpace(m, n, _GA_);
             s->iterations = iterations;

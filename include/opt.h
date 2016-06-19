@@ -10,8 +10,9 @@ extern "C" {
 #define _BA_ 2 /* Bat Algorithm */
 #define _FPA_ 3 /* Flower Pollination Algorithm */
 #define _FA_ 4 /* Firefly Algorithm */
-#define _GP_ 5 /* Genetic Programming */
-#define _GA_ 6 /* Genetic Algorithm */
+#define _CS_ 5 /* Cuckoo Search */
+#define _GP_ 6 /* Genetic Programming */
+#define _GA_ 7 /* Genetic Algorithm */
 /**************************/
 
 /* GP type nodes */
