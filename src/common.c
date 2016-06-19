@@ -199,6 +199,34 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...){
     s->n = n;
     s->gfit = DBL_MAX;
     
+    /* PSO */
+    s->w = NAN;
+    s->w_min = NAN;
+    s->w_max = NAN;
+    s->c1 = NAN;
+    s->c2 = NAN;
+    s->gfit = NAN;
+    
+    /* BA */
+    s->f_min = NAN;
+    s->f_max = NAN;
+    s->r = NAN;
+    s->A = NAN;
+    
+    /* FPA */
+    s->beta = NAN;
+    s->p = NAN;
+    
+    /* FA */
+    s->alpha = NAN;
+    s->beta_0 = NAN;
+    s->gamma = NAN;
+    
+    /* GP */
+    s->pReproduction = NAN;
+    s->pMutation = NAN;
+    s->pCrossover = NAN;
+    
     if(opt_id != _GP_){ /* GP uses a different structure than that of others */
         s->a = (Agent **)malloc(s->m*sizeof(Agent *));
         s->a[0] = CreateAgent(s->n, opt_id);
@@ -311,7 +339,8 @@ void DestroySearchSpace(SearchSpace **s, int opt_id){
 
 /* It initializes an allocated search space
 Parameters:
-s: search space */
+s: search space
+opt_id: identifier of the optimization technique */
 void InitializeSearchSpace(SearchSpace *s, int opt_id){
     if(!s){
         fprintf(stderr,"\nSearch space not allocated @InitializeSearchSpace.\n");
@@ -344,7 +373,8 @@ void InitializeSearchSpace(SearchSpace *s, int opt_id){
 
 /* It shows a search space
 Parameters:
-s: search space */
+s: search space
+opt_id: identifier of the optimization technique*/
 void ShowSearchSpace(SearchSpace *s, int opt_id){
     if(!s){
         fprintf(stderr,"\nSearch space not allocated @ShowSearchSpace.\n");
@@ -426,7 +456,7 @@ void EvaluateSearchSpace(SearchSpace *s, int opt_id, prtFun Evaluate, va_list ar
                 if(f < s->a[i]->fit){ /* It updates the local best value and position */
                     s->a[i]->fit = f;    
                     for(j = 0; j < s->n; j++) 
-                    s->a[i]->xl[j] = s->a[i]->x[j];
+                        s->a[i]->xl[j] = s->a[i]->x[j];
                 }
             
                 if(s->a[i]->fit < s->gfit){ /* It updates the global best value and position */
@@ -463,6 +493,50 @@ void EvaluateSearchSpace(SearchSpace *s, int opt_id, prtFun Evaluate, va_list ar
             fprintf(stderr,"\n Invalid optimization identifier @EvaluateSearchSpace.\n");
         break;
     }
+}
+
+/* It checks whether a search space has been properly set or not
+Parameters:
+s: initialized search space
+opt_id: identifier of the optimization technique */
+char CheckSearchSpace(SearchSpace *s, int opt_id){
+    if(!s){
+        fprintf(stderr,"\nSearch space not allocated @CheckSearchSpace.\n");
+        return 0;
+    }
+    
+    char OK = 1;
+    
+    fprintf(stderr,"\nError summary: ");
+    switch (opt_id){
+        case _GP_:
+            if(isnan(s->pReproduction)){
+                fprintf(stderr,"\n  -> Probability of reproduction undefined.\n");
+                OK = 0;
+            }
+            if(isnan(s->pMutation)){
+                fprintf(stderr,"\n  -> Probability of mutation undefined.\n");
+                OK = 0;
+            }
+            if(isnan(s->pCrossover)){
+                fprintf(stderr,"\n  -> Probability of crossover undefined.\n");
+                OK = 0;
+            }
+            
+            if(s->pReproduction+s->pMutation+s->pCrossover != 1){
+                fprintf(stderr,"\n  -> Summation of probabilites (reproduction, mutation and crossover) should be equal to 1.\n");
+                OK = 0;
+            }
+        break;
+        default:
+            fprintf(stderr,"\n Invalid optimization identifier @CheckSearchSpace.\n");
+            return 0;
+        break;
+    }
+    
+    if(OK) fprintf(stderr,"no errors were found! Enjoy it!\n");
+    
+    return OK;
 }
 /**************************/
 
@@ -623,7 +697,7 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
         case _GA_:
             s = CreateSearchSpace(m, n, _GA_);
             s->iterations = iterations;
-            fscanf(fp, "%lf %lf", &(s->pCrossOver), &(s->pMutate));
+            fscanf(fp, "%lf %lf", &(s->pCrossover), &(s->pMutation));
             WaiveComment(fp);
         break;
         default:

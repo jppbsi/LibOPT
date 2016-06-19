@@ -47,11 +47,12 @@ int main(){
     
     InitializeSearchSpace(s, _GP_); /* It initalizes the search space */
          
-    s->pReproduction = 0.3; /* Setting up the probability of reproduction */
+    //s->pReproduction = 0.3; /* Setting up the probability of reproduction */
     s->pMutation = 0.4; /* Setting up the probability of mutation */
-    s->pCrossover = 1-s->pReproduction+s->pMutation; /* Setting up the probability of crossover */
+    s->pCrossover = 1-(s->pReproduction+s->pMutation); /* Setting up the probability of crossover */
     
-    runGP(s, Sphere); /* It minimizes function Sphere */
+    if (CheckSearchSpace(s, _GP_)) runGP(s, Sphere); /* It minimizes function Sphere */
+    else fprintf(stderr,"\nPlease, check your GP configuration prior running it.\n");
 
     PrintTree2File(s, s->T[s->best], "best_tree.txt");
 

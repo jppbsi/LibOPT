@@ -72,10 +72,12 @@ typedef struct SearchSpace_{
     double beta_0; /* attractiveness */
     double gamma; /* light absorption */
     
-    /* GP */
+    /* GP and GA */
     double pReproduction; /* probability of reproduction */
     double pMutation; /* probability of mutation */
     double pCrossover; /* probability of crossover */
+    
+    /* GP */ 
     int min_depth; /* minimum depth of a tree */
     int max_depth; /* maximum depth of a tree */
     int n_terminals; /* number of terminals */
@@ -86,10 +88,6 @@ typedef struct SearchSpace_{
     double *constant; /* array with the random constants */
     Node **T; /* pointer to the tree */
     double *tree_fit; /* fitness of each tree (in GP, the number of agents is different from the number of trees) */
-    
-    /* GA */
-    double pCrossOver; /* probability of crossover */
-    double pMutate; /* probability of mutation */
 
 }SearchSpace;
 
@@ -109,6 +107,7 @@ void DestroySearchSpace(SearchSpace **s, int opt_id); /* It deallocates a search
 void InitializeSearchSpace(SearchSpace *s, int opt_id); /* It initializes an allocated search space */
 void ShowSearchSpace(SearchSpace *s, int opt_id); /* It shows a search space */
 void EvaluateSearchSpace(SearchSpace *s, int opt_id, prtFun Evaluate, va_list arg); /* It evaluates a search space */
+char CheckSearchSpace(SearchSpace *s, int opt_id); /* It checks whether a search space has been properly set or not */
 /**************************/
 
 /* General-purpose functions */
