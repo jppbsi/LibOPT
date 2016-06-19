@@ -787,6 +787,7 @@ int *RouletteSelection(SearchSpace *s, int k){
         while((accum[i] < prob) && (i < s->m)) i++;
         if(i) elem[j] = D[i-1].id;
         else elem[j] = D[i].id;
+        elem[j] = D[i].id;
     }
     
     free(D);
