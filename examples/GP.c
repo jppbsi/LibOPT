@@ -47,7 +47,7 @@ int main(){
     
     InitializeSearchSpace(s, _GP_); /* It initalizes the search space */
          
-    //s->pReproduction = 0.3; /* Setting up the probability of reproduction */
+    s->pReproduction = 0.3; /* Setting up the probability of reproduction */
     s->pMutation = 0.4; /* Setting up the probability of mutation */
     s->pCrossover = 1-(s->pReproduction+s->pMutation); /* Setting up the probability of crossover */
     

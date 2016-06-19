@@ -205,7 +205,6 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...){
     s->w_max = NAN;
     s->c1 = NAN;
     s->c2 = NAN;
-    s->gfit = NAN;
     
     /* BA */
     s->f_min = NAN;
