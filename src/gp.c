@@ -101,7 +101,7 @@ void runGP(SearchSpace *s, prtFun Evaluate, ...){
 	    DestroyTree(&tmpTree[i]);
 	
 	EvaluateSearchSpace(s, _GP_, Evaluate, arg);
-	ShowSearchSpace(s, _GP_);
+
 	fprintf(stderr, "OK (minimum fitness value %lf) -> Best tree: %d.", s->gfit, s->best);
 	va_copy(arg, argtmp);
     }

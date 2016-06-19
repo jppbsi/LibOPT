@@ -198,6 +198,7 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...){
     s->m = m;
     s->n = n;
     s->gfit = DBL_MAX;
+    s->iterations = 0;
     
     /* PSO */
     s->w = NAN;
@@ -510,20 +511,20 @@ char CheckSearchSpace(SearchSpace *s, int opt_id){
     switch (opt_id){
         case _GP_:
             if(isnan(s->pReproduction)){
-                fprintf(stderr,"\n  -> Probability of reproduction undefined.\n");
+                fprintf(stderr,"\n  -> Probability of reproduction undefined.");
                 OK = 0;
             }
             if(isnan(s->pMutation)){
-                fprintf(stderr,"\n  -> Probability of mutation undefined.\n");
+                fprintf(stderr,"\n  -> Probability of mutation undefined.");
                 OK = 0;
             }
             if(isnan(s->pCrossover)){
-                fprintf(stderr,"\n  -> Probability of crossover undefined.\n");
+                fprintf(stderr,"\n  -> Probability of crossover undefined.");
                 OK = 0;
             }
             
             if(s->pReproduction+s->pMutation+s->pCrossover != 1){
-                fprintf(stderr,"\n  -> Summation of probabilites (reproduction, mutation and crossover) should be equal to 1.\n");
+                fprintf(stderr,"\n  -> Summation of probabilites (reproduction, mutation and crossover) should be equal to 1.");
                 OK = 0;
             }
         break;
@@ -531,6 +532,10 @@ char CheckSearchSpace(SearchSpace *s, int opt_id){
             fprintf(stderr,"\n Invalid optimization identifier @CheckSearchSpace.\n");
             return 0;
         break;
+    }
+    if(s->iterations <= 0){
+        fprintf(stderr,"\n Number of iterations undefined or less than 0.\n");
+        OK = 0;
     }
     
     if(OK) fprintf(stderr,"no errors were found! Enjoy it!\n");
