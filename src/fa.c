@@ -53,49 +53,6 @@ arg: list of additional arguments */
 void runFA(SearchSpace *s, prtFun Evaluate, ...){
     va_list arg, argtmp;
     int i, t;
-    Agent *tmp = NULL;
-    		
-    va_start(arg, Evaluate);
-    va_copy(argtmp, arg);
-    
-    if(!s){
-        fprintf(stderr,"\nSearch space not allocated @runFA.\n");
-        exit(-1);
-    }
-        
-    EvaluateSearchSpace(s, _FA_, Evaluate, arg); /* Initial evaluation of the search space */
-    qsort(s->a, s->m, sizeof(Agent**), SortAgent); /* Sorts all fireflies according to their fitness. First position gets the best firefly. */
-    
-    for(t = 1; t <= s->iterations; t++){
-        fprintf(stderr,"\nRunning iteration %d/%d ... ", t, s->iterations);
-	       	
-	for (i = 0; i < s->m; i++){
-	    UpdateFireflyPosition(s, i); /* It updates all fireflies positions */
-	    CheckAgentLimits(s, s->a[i]);
-	}
-	
-	UpdateBestFireflyPosition(s, 0); /* It updates the best firefly position with a random controlled walk in order to avoid local optimum */
-	CheckAgentLimits(s, s->a[0]);
-	
-	EvaluateSearchSpace(s, _FA_, Evaluate, arg); /* Evaluates the new search space */
-	qsort(s->a, s->m, sizeof(Agent**), SortAgent); /* Sorts all fireflies according to their fitness. First position gets the best firefly. */
-       
-	va_copy(arg, argtmp);
-       
-	fprintf(stderr, "OK (minimum fitness value %lf)", s->gfit);
-    }
-    
-    va_end(arg);
-}
-
-/* It executes the Adaptative Firefly Algorithm for function minimization
-Parameters:
-s: search space
-Evaluate: pointer to the function used to evaluate particles
-arg: list of additional arguments */
-void runAFA(SearchSpace *s, prtFun Evaluate, ...){
-    va_list arg, argtmp;
-    int i, t;
     double delta;
     Agent *tmp = NULL;
     		
@@ -103,7 +60,7 @@ void runAFA(SearchSpace *s, prtFun Evaluate, ...){
     va_copy(argtmp, arg);
     
     if(!s){
-        fprintf(stderr,"\nSearch space not allocated @runAFA.\n");
+        fprintf(stderr,"\nSearch space not allocated @runFA.\n");
         exit(-1);
     }
         

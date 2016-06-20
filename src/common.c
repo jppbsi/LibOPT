@@ -534,11 +534,11 @@ char CheckSearchSpace(SearchSpace *s, int opt_id){
         break;
     }
     if(s->iterations <= 0){
-        fprintf(stderr,"\n Number of iterations undefined or less than 0.\n");
+        fprintf(stderr,"\nNumber of iterations undefined or less than 0.\n");
         OK = 0;
     }
     
-    if(OK) fprintf(stderr,"no errors were found! Enjoy it!\n");
+    if(OK) fprintf(stderr,"\nNo errors were found! Enjoy it!\n");
     
     return OK;
 }
