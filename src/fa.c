@@ -1,50 +1,5 @@
 #include "fa.h"
 
-/* It updates the position of an agent (firefly)
-Parameters:
-s: search space
-firefly_id: particle's index */ 
-void UpdateFireflyPosition(SearchSpace *s, int firefly_id){
-    int i, j;
-    double beta, distance, r;
-    
-    if(!s){
-        fprintf(stderr,"\nSearch space not allocated @UpdateFireflyPosition.\n");
-        exit(-1);
-    }
-
-    for(i = 0; i < s->m; i++){
-        if(s->a[firefly_id]->fit > s->a[i]->fit){ /* It moves firefly firefly_id towards i */
-            distance = EuclideanDistance(s->a[i]->x, s->a[firefly_id]->x, s->n); /* It obtains the euclidean distance by Equation 8 */
-	    distance *= distance;
-            beta = s->beta_0*exp(-s->gamma*distance); /* It obtains attractiveness by Equation 6 */
-	    r = GenerateUniformRandomNumber(0,1);
-	    r = 2 * (r - 0.5);
-            for(j = 0; j < s->n; j++)
-		s->a[firefly_id]->x[j] = s->a[firefly_id]->x[j] + beta * (s->a[i]->x[j] - s->a[firefly_id]->x[j]) + s->alpha * r; /* It updates the firefly position by Equation 9 */
-        }
-    }
-}
-
-/* It updates the position of the best agent (firefly)
-Parameters: 
-s: search space
-best_firefly_id: best particle's index */ 
-void UpdateBestFireflyPosition(SearchSpace *s, int best_firefly_id){
-    int j;
-    double r;
-    
-    if(!s){
-        fprintf(stderr,"\nSearch space not allocated @UpdateBestFireflyPosition.\n");
-        exit(-1);
-    }
-    
-    r = GenerateUniformRandomNumber(0,1);
-    r = 2 * (r - 0.5);
-    for(j = 0; j < s->n; j++)
-	s->a[best_firefly_id]->x[j] += (s->alpha * r);
-}
-
 /* It executes the Firefly Algorithm for function minimization
 Parameters:
 s: search space
@@ -52,9 +7,10 @@ Evaluate: pointer to the function used to evaluate particles
 arg: list of additional arguments */
 void runFA(SearchSpace *s, prtFun Evaluate, ...){
     va_list arg, argtmp;
-    int i, t;
-    double delta;
-    Agent *tmp = NULL;
+    int i, j, k, t;
+    double beta, delta = 0.97, distance;
+    double r;
+    Agent **tmp = NULL;
     		
     va_start(arg, Evaluate);
     va_copy(argtmp, arg);
@@ -63,32 +19,42 @@ void runFA(SearchSpace *s, prtFun Evaluate, ...){
         fprintf(stderr,"\nSearch space not allocated @runFA.\n");
         exit(-1);
     }
-        
-    EvaluateSearchSpace(s, _FA_, Evaluate, arg); /* Initial evaluation of the search space */
-    qsort(s->a, s->m, sizeof(Agent**), SortAgent); /* Sorts all fireflies according to their fitness. First position gets the best firefly. */
     
+    tmp = (Agent **)malloc(s->m*sizeof(Agent *));
+      
     for(t = 1; t <= s->iterations; t++){
         fprintf(stderr,"\nRunning iteration %d/%d ... ", t, s->iterations);
 	
-	delta = 1 - (0.0001 / (pow(0.9, (1/s->iterations)))); /* It controls the step size of the randomized parameter alpha */
-	s->alpha = 1 - (delta * s->alpha);
-       	
+	EvaluateSearchSpace(s, _FA_, Evaluate, arg); /* Initial evaluation of the search space */
+	for (i = 0; i < s->m; i++)
+	    tmp[i] = CopyAgent(s->a[i], _FA_);
+	qsort(tmp, s->m, sizeof(Agent**), SortAgent); /* Sorts all fireflies according to their fitness. First position gets the best firefly. */	
+	
 	for (i = 0; i < s->m; i++){
-	    UpdateFireflyPosition(s, i); /* It updates all fireflies positions */
-	    CheckAgentLimits(s, s->a[i]);
+	    for(j = 0; j < s->m; j++){
+		distance = EuclideanDistance(s->a[i]->x, tmp[j]->x, s->n); /* It obtains the euclidean distance by Equation 8 */
+		distance *= distance;
+		if(s->a[i]->fit > tmp[j]->fit){
+		    beta = s->beta_0*exp(-s->gamma*distance); /* It obtains attractiveness by Equation 6 */
+		    for(k = 0; k < s->n; k++){
+			r = GenerateUniformRandomNumber(0,1);
+			s->a[i]->x[k] = s->a[i]->x[k] + beta * (tmp[j]->x[k] - s->a[i]->x[k]) + s->alpha * (r - 0.5); /* It updates the firefly position by Equation 9 */
+		    }
+		}
+	    }
 	}
 	
-	UpdateBestFireflyPosition(s, 0); /* It updates the best firefly position with a random controlled walk in order to avoid local optimum */
-	CheckAgentLimits(s, s->a[0]);
+	for (i = 0; i < s->m; i++)
+	    CheckAgentLimits(s, s->a[i]);
 	
-	EvaluateSearchSpace(s, _FA_, Evaluate, arg); /* Evaluates the new search space */
-	qsort(s->a, s->m, sizeof(Agent**), SortAgent); /* Sorts all fireflies according to their fitness. First position gets the best firefly. */
-	       
+	s->alpha *= delta; /* It controls de step size of parameter alpha */
+	
 	va_copy(arg, argtmp);
        
 	fprintf(stderr, "OK (minimum fitness value %lf)", s->gfit);
     }
     
+    free(tmp);
     va_end(arg);
 }
 /*************************/

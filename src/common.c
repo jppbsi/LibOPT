@@ -120,6 +120,7 @@ Agent *CopyAgent(Agent *a, int opt_id){
             memcpy(cpy->x, a->x, a->n*sizeof(double));
             memcpy(cpy->v, a->v, a->n*sizeof(double));
             if(opt_id == _PSO_) memcpy(cpy->xl, a->xl, a->n*sizeof(double));
+            if(opt_id == _FA_) cpy->fit = a->fit;
         break;
         default:
             fprintf(stderr,"\nInvalid optimization identifier @CopyAgent.\n");
@@ -696,7 +697,7 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
 	    s = CreateSearchSpace(m, n, _CS_);
 	    s->iterations = iterations;
 	    fscanf(fp, "%lf %lf %lf", &(s->beta), &(s->p), &(s->alpha));
-	WaiveComment(fp);
+            WaiveComment(fp);
 	break;
         case _GA_:
             s = CreateSearchSpace(m, n, _GA_);
