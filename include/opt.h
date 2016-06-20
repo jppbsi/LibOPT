@@ -13,6 +13,7 @@ extern "C" {
 #define _CS_ 5 /* Cuckoo Search */
 #define _GP_ 6 /* Genetic Programming */
 #define _GA_ 7 /* Genetic Algorithm */
+#define _BHA_ 8 /* Black Hole Algorithm */
 /**************************/
 
 /* GP type nodes */
