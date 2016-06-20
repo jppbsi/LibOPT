@@ -32,13 +32,13 @@ void runFA(SearchSpace *s, prtFun Evaluate, ...){
 	
 	for (i = 0; i < s->m; i++){
 	    for(j = 0; j < s->m; j++){
-		distance = EuclideanDistance(s->a[i]->x, tmp[j]->x, s->n); /* It obtains the euclidean distance by Equation 8 */
+		distance = EuclideanDistance(s->a[i]->x, tmp[j]->x, s->n); /* It obtains the euclidean distance for further use */
 		distance *= distance;
 		if(s->a[i]->fit > tmp[j]->fit){
-		    beta = s->beta_0*exp(-s->gamma*distance); /* It obtains attractiveness by Equation 6 */
+		    beta = s->beta_0*exp(-s->gamma*distance); /* It obtains attractiveness by Equation 1 */
 		    for(k = 0; k < s->n; k++){
 			r = GenerateUniformRandomNumber(0,1);
-			s->a[i]->x[k] = s->a[i]->x[k] + beta * (tmp[j]->x[k] - s->a[i]->x[k]) + s->alpha * (r - 0.5); /* It updates the firefly position by Equation 9 */
+			s->a[i]->x[k] = s->a[i]->x[k] + beta * (tmp[j]->x[k] - s->a[i]->x[k]) + s->alpha * (r - 0.5); /* It updates the firefly position by Equation 2 */
 		    }
 		}
 	    }
@@ -47,7 +47,7 @@ void runFA(SearchSpace *s, prtFun Evaluate, ...){
 	for (i = 0; i < s->m; i++)
 	    CheckAgentLimits(s, s->a[i]);
 	
-	s->alpha *= delta; /* It controls de step size of parameter alpha */
+	s->alpha *= delta; /* It controls de step size of parameter alpha by Equation 3*/
 	
 	va_copy(arg, argtmp);
        
