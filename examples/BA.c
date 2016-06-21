@@ -11,7 +11,8 @@ int main(){
     
     InitializeSearchSpace(s, _BA_); /* It initalizes the search space */
     
-    runBA(s, Levy); /* It minimizes function Levy */
+    if (CheckSearchSpace(s, _BA_)) /* It checks wether the search space is valid or not */
+        runBA(s, Levy); /* It minimizes function Levy */
     
     DestroySearchSpace(&s, _BA_); /* It deallocates the search space */
         

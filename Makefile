@@ -8,7 +8,7 @@ CC=gcc
 FLAGS=  -g -O0
 CFLAGS=''
 
-all: libopt-plus PSO AIWPSO BA FPA FA CS GA GP BHA
+all: libopt-plus PSO AIWPSO BA FPA FA CS GP GA BHA
 
 libopt-plus: $(LIB)/libopt-plus.a
 	echo "libopt-plus.a built..."
@@ -90,11 +90,11 @@ FA: examples/FA.c
 CS: examples/CS.c
 	$(CC) $(FLAGS) examples/CS.c -o examples/bin/CS -I $(INCLUDE) -L $(LIB) -lopt-plus -lm;
 
-GA: examples/GA.c
-	$(CC) $(FLAGS) examples/GA.c -o examples/bin/GA -I $(INCLUDE) -L $(LIB) -lopt-plus -lm;
-
 GP: examples/GP.c
 	$(CC) $(FLAGS) examples/GP.c -o examples/bin/GP -I $(INCLUDE) -L $(LIB) -lopt-plus -lm;
+
+GA: examples/GA.c
+	$(CC) $(FLAGS) examples/GA.c -o examples/bin/GA -I $(INCLUDE) -L $(LIB) -lopt-plus -lm;
 
 BHA: examples/BHA.c
 	$(CC) $(FLAGS) examples/BHA.c -o examples/bin/BHA -I $(INCLUDE) -L $(LIB) -lopt-plus -lm;

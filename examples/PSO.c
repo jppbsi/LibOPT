@@ -11,7 +11,8 @@ int main(){
     
     InitializeSearchSpace(s, _PSO_); /* It initalizes the search space */
     
-    runPSO(s, Sphere); /* It minimizes function Sphere */
+    if (CheckSearchSpace(s, _PSO_)) /* It checks wether the search space is valid or not */
+        runPSO(s, Sphere); /* It minimizes function Sphere */
     
     DestroySearchSpace(&s, _PSO_); /* It deallocates the search space */
         

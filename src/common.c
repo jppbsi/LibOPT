@@ -30,9 +30,9 @@ Agent *CreateAgent(int n, int opt_id){
         case _FPA_:
         case _FA_:
         case _CS_:
+        case _GP_:
         case _GA_:
         case _BHA_:
-        case _GP_:
             a->x = (double *)calloc(n,sizeof(double));
             if(opt_id != _GP_) a->v = (double *)calloc(n,sizeof(double));
             if(opt_id == _PSO_) a->xl = (double *)calloc(n,sizeof(double));
@@ -66,9 +66,9 @@ void DestroyAgent(Agent **a, int opt_id){
         case _FPA_:
         case _FA_:
         case _CS_:
+        case _GP_:
         case _GA_:
         case _BHA_:
-        case _GP_:
             if(tmp->x) free(tmp->x);
             if(tmp->v) free(tmp->v);
             if(opt_id == _PSO_) if(tmp->xl) free(tmp->xl);
@@ -118,8 +118,8 @@ Agent *CopyAgent(Agent *a, int opt_id){
         case _FPA_:
         case _FA_:
         case _CS_:
-        case _BHA_:
         case _GA_:
+        case _BHA_:
             memcpy(cpy->x, a->x, a->n*sizeof(double));
             memcpy(cpy->v, a->v, a->n*sizeof(double));
             if(opt_id == _PSO_) memcpy(cpy->xl, a->xl, a->n*sizeof(double));
@@ -229,7 +229,7 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...){
     s->beta_0 = NAN;
     s->gamma = NAN;
     
-    /* GP */
+    /* GP and GA */
     s->pReproduction = NAN;
     s->pMutation = NAN;
     s->pCrossover = NAN;
@@ -308,8 +308,8 @@ void DestroySearchSpace(SearchSpace **s, int opt_id){
             case _FPA_:
             case _FA_:
             case _CS_:
-            case _BHA_:
             case _GA_:
+            case _BHA_:
                 if(tmp->g) free(tmp->g);
             break;
             default:
@@ -363,13 +363,12 @@ void InitializeSearchSpace(SearchSpace *s, int opt_id){
         case _FPA_:
         case _FA_:
         case _CS_:
-        case _BHA_:
         case _GA_:
+        case _BHA_:
             for(i = 0; i < s->m; i++){
                 for(j = 0; j < s->n; j++)
                     s->a[i]->x[j] = GenerateUniformRandomNumber(s->LB[j], s->UB[j]);
             }
-            
         break;
         case _GP_:
             for(i = 0; i < s->n_terminals; i++){
@@ -399,8 +398,8 @@ void ShowSearchSpace(SearchSpace *s, int opt_id){
         case _FPA_:
         case _FA_:
         case _CS_:
-        case _BHA_:
         case _GA_:
+        case _BHA_:
             for(i = 0; i < s->m; i++){
                 fprintf(stderr,"\nAgent %d-> ", i);
                 for(j = 0; j < s->n; j++)
@@ -442,8 +441,8 @@ void EvaluateSearchSpace(SearchSpace *s, int opt_id, prtFun Evaluate, va_list ar
         case _BA_:
         case _FPA_:
         case _CS_:
-        case _BHA_:
         case _GA_:
+        case _BHA_:
             for(i = 0; i < s->m; i++){
                 f = Evaluate(s->a[i], arg); /* It executes the fitness function for agent i */
         
@@ -482,7 +481,7 @@ void EvaluateSearchSpace(SearchSpace *s, int opt_id, prtFun Evaluate, va_list ar
             for(i = 0; i < s->m; i++){
                 f = Evaluate(s->a[i], arg); /* It executes the fitness function for agent i */
         
-                s->a[i]->fit = f; /* It updates the fitness value */
+                s->a[i]->fit = f; /* It updates the fitness value of actual agent i */
                     
                 if(s->a[i]->fit < s->gfit){ /* It updates the global best value and position */
                     s->gfit = s->a[i]->fit;
@@ -534,7 +533,86 @@ char CheckSearchSpace(SearchSpace *s, int opt_id){
     
     fprintf(stderr,"\nError summary: ");
     switch (opt_id){
+        case _PSO_:
+            if(isnan(s->w)){
+                fprintf(stderr,"\n  -> Inertia weight undefined.");
+                OK = 0;
+            }
+            if(isnan(s->w_min)){
+                fprintf(stderr,"\n  -> Minimum inertia weight undefined.");
+                OK = 0;
+            }
+            if(isnan(s->w_max)){
+                fprintf(stderr,"\n  -> Maximum inertia weight undefined.");
+                OK = 0;
+            }
+            if(isnan(s->c1)){
+                fprintf(stderr,"\n  -> C1 parameter undefined.");
+                OK = 0;
+            }
+            if(isnan(s->c2)){
+                fprintf(stderr,"\n  -> C2 parameter undefined.");
+                OK = 0;
+            }
+        break;
+        case _BA_:
+            if(isnan(s->f_min)){
+                fprintf(stderr,"\n  -> Minimum frequency undefined.");
+                OK = 0;
+            }
+            if(isnan(s->f_max)){
+                fprintf(stderr,"\n  -> Maximum frequency undefined.");
+                OK = 0;
+            }
+            if(isnan(s->r)){
+                fprintf(stderr,"\n  -> Pulse rate undefined.");
+                OK = 0;
+            }
+            if(isnan(s->A)){
+                fprintf(stderr,"\n  -> Loudness undefined.");
+                OK = 0;
+            }
+        break;
+        case _FPA_:
+            if(isnan(s->beta)){
+                fprintf(stderr,"\n  -> Beta parameter used to compute the step based on Levy Flight undefined.");
+                OK = 0;
+            }
+            if(isnan(s->p)){
+                fprintf(stderr,"\n  -> Probability of local pollination undefined.");
+                OK = 0;
+            }
+        break;
+        case _FA_:
+            if(isnan(s->alpha)){
+                fprintf(stderr,"\n  -> Randomized parameter undefined.");
+                OK = 0;
+            }
+            if(isnan(s->beta_0)){
+                fprintf(stderr,"\n  -> Attractiveness undefined.");
+                OK = 0;
+            }
+            if(isnan(s->gamma)){
+                fprintf(stderr,"\n  -> Light absorption undefined.");
+                OK = 0;
+            }
+        break;
+        case _CS_:
+            if(isnan(s->beta)){
+                fprintf(stderr,"\n  -> Beta parameter used to compute the step based on Levy Flight undefined.");
+                OK = 0;
+            }
+            if(isnan(s->p)){
+                fprintf(stderr,"\n  -> Switch probability undefined.");
+                OK = 0;
+            }
+            if(isnan(s->alpha)){
+                fprintf(stderr,"\n  -> Step size undefined.");
+                OK = 0;
+            }
+        break;
         case _GP_:
+        case _GA_:
             if(isnan(s->pReproduction)){
                 fprintf(stderr,"\n  -> Probability of reproduction undefined.");
                 OK = 0;
@@ -547,7 +625,6 @@ char CheckSearchSpace(SearchSpace *s, int opt_id){
                 fprintf(stderr,"\n  -> Probability of crossover undefined.");
                 OK = 0;
             }
-            
             if(s->pReproduction+s->pMutation+s->pCrossover != 1){
                 fprintf(stderr,"\n  -> Summation of probabilites (reproduction, mutation and crossover) should be equal to 1.");
                 OK = 0;
@@ -726,7 +803,7 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
         case _GA_:
             s = CreateSearchSpace(m, n, _GA_);
             s->iterations = iterations;
-            fscanf(fp, "%lf %lf", &(s->pCrossover), &(s->pMutation));
+            fscanf(fp, "%lf %lf %lf", &(s->pReproduction), &(s->pMutation), &(s->pCrossover));
             WaiveComment(fp);
         break;
         case _BHA_:
