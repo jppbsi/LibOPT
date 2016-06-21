@@ -168,6 +168,7 @@ Agent *GenerateNewAgent(SearchSpace *s, int opt_id){
         case _GA_:
         break;
         case _BHA_:
+        	a = CreateAgent(s->n, _CS_);
         break;
         default:
             fprintf(stderr,"\nInvalid optimization identifier @GenerateNewAgent.\n");
@@ -717,7 +718,6 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
         case _BHA_:
             s = CreateSearchSpace(m, n, _BHA_);
             s->iterations = iterations;
-            WaiveComment(fp);
         break;
         default:
             fprintf(stderr,"\nInvalid optimization identifier @ReadSearchSpaceFromFile.\n");
