@@ -49,7 +49,9 @@ void runCS(SearchSpace *s, prtFun Evaluate, ...){
         /**************/
 
         CheckAgentLimits(s, tmp);
-        nest_i = GenerateUniformRandomNumber(0, s->m-1);
+        do{
+        	nest_i = GenerateUniformRandomNumber(0, s->m-1);
+        }while(nest_i != 0);
 
         fitValue = Evaluate(tmp, arg); /* It executes the fitness function for agent i */
         if(fitValue < s->a[nest_i]->fit){ /* We accept the new solution */
@@ -66,8 +68,10 @@ void runCS(SearchSpace *s, prtFun Evaluate, ...){
             tmp = GenerateNewAgent(s, _CS_);
             /* Random walk */
             rand = GenerateUniformRandomNumber(0,1);
-            nest_i = GenerateUniformRandomNumber(0, s->m-1);
-            nest_j = GenerateUniformRandomNumber(0, s->m-1);
+            do{
+            	nest_i = GenerateUniformRandomNumber(0, s->m-1);
+            	nest_j = GenerateUniformRandomNumber(0, s->m-1);
+            }while(nest_i && nest_j != 0);
             for(j = 0; j < s->n; j++)
                 tmp->x[j] = tmp->x[j]+rand*(s->a[nest_i]->x[j]-s->a[nest_j]->x[j]);
             /**************/
