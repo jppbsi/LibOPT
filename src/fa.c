@@ -44,8 +44,10 @@ void runFA(SearchSpace *s, prtFun Evaluate, ...){
 	    }
 	}
 		
-	for (i = 0; i < s->m; i++)
+	for (i = 0; i < s->m; i++){
 	    CheckAgentLimits(s, s->a[i]);
+	    DestroyAgent(&tmp[i], _FA_);
+	}
 	
 	//s->alpha *= delta; /* It controls de step size of parameter alpha by Equation 3*/
 	
