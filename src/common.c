@@ -441,7 +441,6 @@ void EvaluateSearchSpace(SearchSpace *s, int opt_id, prtFun Evaluate, va_list ar
     switch (opt_id){
         case _BA_:
         case _FPA_:
-        case _FA_:
         case _CS_:
         case _BHA_:
         case _GA_:
@@ -470,6 +469,21 @@ void EvaluateSearchSpace(SearchSpace *s, int opt_id, prtFun Evaluate, va_list ar
                         s->a[i]->xl[j] = s->a[i]->x[j];
                 }
             
+                if(s->a[i]->fit < s->gfit){ /* It updates the global best value and position */
+                    s->gfit = s->a[i]->fit;
+                    for(j = 0; j < s->n; j++)
+                        s->g[j] = s->a[i]->x[j];
+                }
+        
+                va_copy(arg, argtmp);
+            }
+        break;
+        case _FA_:
+            for(i = 0; i < s->m; i++){
+                f = Evaluate(s->a[i], arg); /* It executes the fitness function for agent i */
+        
+                s->a[i]->fit = f; /* It updates the fitness value */
+                    
                 if(s->a[i]->fit < s->gfit){ /* It updates the global best value and position */
                     s->gfit = s->a[i]->fit;
                     for(j = 0; j < s->n; j++)

@@ -28,7 +28,7 @@ void runFA(SearchSpace *s, prtFun Evaluate, ...){
 	EvaluateSearchSpace(s, _FA_, Evaluate, arg); /* Initial evaluation of the search space */
 	for (i = 0; i < s->m; i++)
 	    tmp[i] = CopyAgent(s->a[i], _FA_);
-	qsort(tmp, s->m, sizeof(Agent**), SortAgent); /* Sorts all fireflies according to their fitness. First position gets the best firefly. */	
+	qsort(tmp, s->m, sizeof(Agent**), SortAgent); /* Sorts all fireflies according to their fitness. First position gets the best firefly. */
 	
 	for (i = 0; i < s->m; i++){
 	    for(j = 0; j < s->m; j++){
@@ -43,11 +43,11 @@ void runFA(SearchSpace *s, prtFun Evaluate, ...){
 		}
 	    }
 	}
-	
+		
 	for (i = 0; i < s->m; i++)
 	    CheckAgentLimits(s, s->a[i]);
 	
-	s->alpha *= delta; /* It controls de step size of parameter alpha by Equation 3*/
+	//s->alpha *= delta; /* It controls de step size of parameter alpha by Equation 3*/
 	
 	va_copy(arg, argtmp);
        
