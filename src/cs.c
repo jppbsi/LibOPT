@@ -2,13 +2,9 @@
 
 /* It computes the number of nests that will be replaced, taking into account a probability [0,1] */
 int NestLossParameter(int size, float probability){
-    int value, loss;
-    value = size*probability;
+    int loss;
 
-    if(value + 0.5 > (int)value + 1)
-        loss = (int)value;
-    else
-        loss = (int)value + 1;
+    loss = round(size * probability);
 
     return loss;
 }
@@ -20,7 +16,7 @@ Evaluate: pointer to the function used to evaluate nests
 arg: list of additional arguments */
 void runCS(SearchSpace *s, prtFun Evaluate, ...){
     va_list arg, argtmp;
-    int t, i, j, nest_i, nest_j, loss;
+    int t, i, j, k, nest_i, nest_j, loss;
     double rand, *L = NULL, fitValue;
     Agent *tmp = NULL;
     		
@@ -33,34 +29,36 @@ void runCS(SearchSpace *s, prtFun Evaluate, ...){
     }
         
     EvaluateSearchSpace(s, _CS_, Evaluate, arg); /* Initial evaluation of the search space */
-    qsort(s->a, s->m, sizeof(Agent**), SortAgent); /* Sorts all nests according to their fitness. First position gets the best nest. */
     
     for(t = 1; t <= s->iterations; t++){
         fprintf(stderr,"\nRunning iteration %d/%d ... ", t, s->iterations);
             
     	va_copy(arg, argtmp);
-        tmp = GenerateNewAgent(s, _CS_);
+	
+	nest_i = round(GenerateUniformRandomNumber(0, s->m-1));
+        tmp = CopyAgent(s->a[nest_i], _CS_);
 	
         /* Equation 1 */
         L = GenerateLevyDistribution(s->n, s->beta);
-        for(j = 0; j < s->n; j++)
-            tmp->x[j] = tmp->x[j]+s->alpha*L[j];
+        for(k = 0; k < s->n; k++)
+            tmp->x[k] += s->alpha * L[k];
         free(L);
         /**************/
 
         CheckAgentLimits(s, tmp);
-        do{
-        	nest_i = GenerateUniformRandomNumber(0, s->m-1);
-        }while(nest_i != 0);
-
+	
+        nest_j = round(GenerateUniformRandomNumber(0, s->m-1));
+		
         fitValue = Evaluate(tmp, arg); /* It executes the fitness function for agent i */
-        if(fitValue < s->a[nest_i]->fit){ /* We accept the new solution */
-            DestroyAgent(&(s->a[nest_i]), _CS_);
-            s->a[nest_i] = CopyAgent(tmp, _CS_);
-            s->a[nest_i]->fit = fitValue;
+        if(fitValue < s->a[nest_j]->fit){ /* We accept the new solution */
+            DestroyAgent(&(s->a[nest_j]), _CS_);
+            s->a[nest_j] = CopyAgent(tmp, _CS_);
+            s->a[nest_j]->fit = fitValue;
         }
 
         DestroyAgent(&tmp, _CS_);
+	
+	qsort(s->a, s->m, sizeof(Agent**), SortAgent); /* Sorts all nests according to their fitness. First position gets the best nest. */
         
         loss = NestLossParameter(s->m, s->p);
         
@@ -68,15 +66,13 @@ void runCS(SearchSpace *s, prtFun Evaluate, ...){
             tmp = GenerateNewAgent(s, _CS_);
             /* Random walk */
             rand = GenerateUniformRandomNumber(0,1);
-            do{
-            	nest_i = GenerateUniformRandomNumber(0, s->m-1);
-            	nest_j = GenerateUniformRandomNumber(0, s->m-1);
-            }while(nest_i && nest_j != 0);
-            for(j = 0; j < s->n; j++)
-                tmp->x[j] = tmp->x[j]+rand*(s->a[nest_i]->x[j]-s->a[nest_j]->x[j]);
+            nest_i = round(GenerateUniformRandomNumber(0, s->m-1));
+            nest_j = round(GenerateUniformRandomNumber(0, s->m-1));
+            for(k = 0; k < s->n; k++)
+                tmp->x[k] += rand * (s->a[nest_i]->x[k]-s->a[nest_j]->x[k]);
             /**************/
 			
-			CheckAgentLimits(s, tmp);
+	    CheckAgentLimits(s, tmp);
 			
             fitValue = Evaluate(tmp, arg); /* It executes the fitness function for agent i */
             if(fitValue < s->a[i]->fit){ /* We accept the new solution */
