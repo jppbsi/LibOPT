@@ -48,6 +48,7 @@ typedef struct SearchSpace_{
     double *UB; /* upper boundaries of each decision variable */
     double *g; /* global best agent */
     int best; /* index of the best agent */
+    double gfit; /* global best fitness */
     
     /* PSO */
     double w; /* inertia weight */
@@ -55,7 +56,6 @@ typedef struct SearchSpace_{
     double w_max; /* upper bound for w - used for adaptive inertia weight */
     double c1; /* c1 parameter */
     double c2; /* c2 parameter */
-    double gfit; /* global best fitness */
     
     /* BA */
     double f_min; /* minimum frequency */
