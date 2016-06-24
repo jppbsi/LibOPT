@@ -51,5 +51,7 @@ extern "C" {
 #include <time.h>
 #include <ctype.h>
 #include <stdarg.h>
+
+#include "common.h"
     
 #endif
