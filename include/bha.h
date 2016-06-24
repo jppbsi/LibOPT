@@ -4,7 +4,6 @@
 #define BHA_H
 
 #include "opt.h"
-#include "common.h"
 
 void runBHA(SearchSpace *s, prtFun Evaluate, ...); /* It executes the Black Hole Algorithm for function minimization */
 

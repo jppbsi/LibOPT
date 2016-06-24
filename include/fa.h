@@ -4,7 +4,6 @@
 #define FA_H
 
 #include "opt.h"
-#include "common.h"
 
 void runFA(SearchSpace *s, prtFun Evaluate, ...); /* It executes the Firefly Algorithm for function minimization */
 

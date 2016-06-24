@@ -53,5 +53,5 @@ extern "C" {
 #include <stdarg.h>
 
 #include "common.h"
-    
+
 #endif

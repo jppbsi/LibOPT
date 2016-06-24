@@ -1,7 +1,6 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-#include "opt.h"
 #include "random.h"
 
 /* It defines the node of the tree used to implement GP */

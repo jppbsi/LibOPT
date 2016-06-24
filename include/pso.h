@@ -4,7 +4,7 @@ AIWPSO implementation is based on the paper available at http://ceit.aut.ac.ir/~
 #ifndef PSO_H
 #define PSO_H
 
-#include "common.h"
+#include "opt.h"
 
 /* PSO-related functions */
 void UpdateParticleVelocity(SearchSpace *s, int i); /* It updates the velocity of an agent (particle) */
