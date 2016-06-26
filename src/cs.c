@@ -85,7 +85,6 @@ void runCS(SearchSpace *s, prtFun Evaluate, ...){
 
         qsort(s->a, s->m, sizeof(Agent**), SortAgent); /* Sorts all nests according to their fitness. First position gets the best nest. */
 	
-        va_copy(arg, argtmp);
         fprintf(stderr, "OK (minimum fitness value %lf)", s->a[0]->fit);
     }
 

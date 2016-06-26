@@ -64,8 +64,6 @@ void runBHA(SearchSpace *s, prtFun Evaluate, ...){
         
         EvaluateSearchSpace(s, _BHA_, Evaluate, arg);
         
-        va_copy(arg, argtmp);
-        
         fprintf(stderr, "OK (minimum fitness value %lf)", s->gfit);
     }
     va_end(arg);

@@ -92,8 +92,6 @@ void runBA(SearchSpace *s, prtFun Evaluate, ...){
 	    DestroyAgent(&tmp, _BA_);
        }
        
-       va_copy(arg, argtmp);
-       
        fprintf(stderr, "OK (minimum fitness value %lf)", s->gfit);
     }
 

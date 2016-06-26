@@ -69,7 +69,6 @@ void runPSO(SearchSpace *s, prtFun Evaluate, ...){
         }
 	        			
 	EvaluateSearchSpace(s, _PSO_, Evaluate, arg);
-        va_copy(arg, argtmp);            
 	        
 	fprintf(stderr, "OK (minimum fitness value %lf)", s->gfit);
     }

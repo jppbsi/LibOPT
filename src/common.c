@@ -437,6 +437,7 @@ void EvaluateSearchSpace(SearchSpace *s, int opt_id, prtFun Evaluate, va_list ar
     va_list argtmp;
     
     va_copy(argtmp, arg);
+    
     switch (opt_id){
         case _BA_:
         case _FPA_:

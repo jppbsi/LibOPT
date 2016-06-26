@@ -66,8 +66,6 @@ void runFPA(SearchSpace *s, prtFun Evaluate, ...){
             DestroyAgent(&tmp, _FPA_);
        }
        
-       va_copy(arg, argtmp);
-       
        fprintf(stderr, "OK (minimum fitness value %lf)", s->gfit);
     }
 
