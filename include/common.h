@@ -90,7 +90,7 @@ typedef struct SearchSpace_{
 
 }SearchSpace;
 
-typedef double (*prtFun)(Agent *, ...); /* Pointer to the function used to evaluate agents */
+typedef double (*prtFun)(Agent *, va_list arg); /* Pointer to the function used to evaluate agents */
 
 /* Agent-related functions */
 Agent *CreateAgent(int n, int opt_id); /* It creates an agent */
