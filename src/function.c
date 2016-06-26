@@ -5,9 +5,9 @@
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 0 at x* = (0, ..., 0)
+Minimum at f(x*) = 0 at x* = (0, va_list arg, 0)
 Domain: -35 <= x_i <= 35 */
-double Ackley_First(Agent *a, ...){
+double Ackley_First(Agent *a, va_list arg){
     int i;
     double alpha = 20, beta = 0.02, gamma = 2*M_PI;
     double sum = 0, sum_1 = 0, sum_2 = 0;
@@ -38,7 +38,7 @@ a: agent
 ---
 Minimum at f(x*) = -200 at x* = (0, 0)
 Domain: -32 <= x_i <= 32 */
-double Ackley_Second(Agent *a, ...){
+double Ackley_Second(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -62,7 +62,7 @@ a: agent
 ---
 Minimum at f(x*) = -219.1418 at x* = (0, -0.4)
 Domain: -32 <= x_i <= 32 */
-double Ackley_Third(Agent *a, ...){
+double Ackley_Third(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -86,7 +86,7 @@ a: agent
 ---
 Minimum at f(x*) = -2.02181 at x* = (2, 0.10578)
 Domain: -1 <= x_0 <= 2 and -1 <= x_1 <= 1 */
-double Adjiman(Agent *a, ...){
+double Adjiman(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -108,9 +108,9 @@ double Adjiman(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 0 at x* = (0, ..., 0)
+Minimum at f(x*) = 0 at x* = (0, va_list arg, 0)
 Domain: -10 <= x_i <= 10 */
-double Alpine_First(Agent *a, ...){
+double Alpine_First(Agent *a, va_list arg){
     int i;
     double sum = 0;
     
@@ -134,9 +134,9 @@ double Alpine_First(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 2.808^n at x* = (7.917, ..., 7.917)
+Minimum at f(x*) = 2.808^n at x* = (7.917, va_list arg, 7.917)
 Domain: 0 <= x_i <= 10 */
-double Alpine_Second(Agent *a, ...){
+double Alpine_Second(Agent *a, va_list arg){
     int i;
     double sum = 1;
     
@@ -162,7 +162,7 @@ a: agent
 ---
 Minimum at f(x*) = 1 at x* = (0, 0)
 Domain: -500 <= x_i <= 500 */
-double Bartels_Conn(Agent *a, ...){
+double Bartels_Conn(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -186,7 +186,7 @@ a: agent
 ---
 Minimum at f(x*) = 0 at x* = (3, 0.5)
 Domain: -4.5 <= x_i <= 4.5 */
-double Beale(Agent *a, ...){
+double Beale(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -210,7 +210,7 @@ a: agent
 ---
 Minimum at f(x*) = 0 at x* = (1, 10)
 Domain: 0 <= x_i <= 20 */
-double Biggs_EXP2(Agent *a, ...){
+double Biggs_EXP2(Agent *a, va_list arg){
     int i;
     double sum = 0;
     
@@ -236,7 +236,7 @@ a: agent
 ---
 Minimum at f(x*) = 0 at x* = (1, 10, 5)
 Domain: 0 <= x_i <= 20 */
-double Biggs_EXP3(Agent *a, ...){
+double Biggs_EXP3(Agent *a, va_list arg){
     int i;
     double sum = 0;
     
@@ -262,7 +262,7 @@ a: agent
 ---
 Minimum at f(x*) = 0 at x* = (1, 10, 1, 5)
 Domain: 0 <= x_i <= 20 */
-double Biggs_EXP4(Agent *a, ...){
+double Biggs_EXP4(Agent *a, va_list arg){
     int i;
     double sum = 0;
     
@@ -288,7 +288,7 @@ a: agent
 ---
 Minimum at f(x*) = 0 at x* = (1, 10, 1, 5, 4)
 Domain: 0 <= x_i <= 20 */
-double Biggs_EXP5(Agent *a, ...){
+double Biggs_EXP5(Agent *a, va_list arg){
     int i;
     double sum = 0;
     
@@ -314,7 +314,7 @@ a: agent
 ---
 Minimum at f(x*) = 0 at x* = (1, 10, 1, 5, 4, 3)
 Domain: -20 <= x_i <= 20 */
-double Biggs_EXP6(Agent *a, ...){
+double Biggs_EXP6(Agent *a, va_list arg){
     int i;
     double sum = 0;
     
@@ -340,7 +340,7 @@ a: agent
 ---
 Minimum at f(x*) = -106.764537 at x* = (4,70104, 3.15294) or (-1.58214, -3.13024)
 Domain: -2PI <= x_i <= 2PI */
-double Bird(Agent *a, ...){
+double Bird(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -364,7 +364,7 @@ a: agent
 ---
 Minimum at f(x*) = 0 at x* = (0, 0)
 Domain: -100 <= x_i <= 100 */
-double Bohachevsky_First(Agent *a, ...){
+double Bohachevsky_First(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -388,7 +388,7 @@ a: agent
 ---
 Minimum at f(x*) = 0 at x* = (0, 0)
 Domain: -100 <= x_i <= 100 */
-double Bohachevsky_Second(Agent *a, ...){
+double Bohachevsky_Second(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -412,7 +412,7 @@ a: agent
 ---
 Minimum at f(x*) = 0 at x* = (0, 0)
 Domain: -100 <= x_i <= 100 */
-double Bohachevsky_Third(Agent *a, ...){
+double Bohachevsky_Third(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -436,7 +436,7 @@ a: agent
 ---
 Minimum at f(x*) = 0 at x* = (1, 3)
 Domain: -10 <= x_i <= 10 */
-double Booth(Agent *a, ...){
+double Booth(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -460,7 +460,7 @@ a: agent
 ---
 Minimum at f(x*) = 0 at x* = (1, 10, 1)
 Domain: 0.9 <= x_0 <= 1.2, 9 <= x_1 <= 11.2 and 0.9 <= x_2 <= 1.2 */
-double Box_Betts(Agent *a, ...){
+double Box_Betts(Agent *a, va_list arg){
     int i;
     double sum = 0;
     
@@ -486,7 +486,7 @@ a: agent
 ---
 Minimum at f(x*) = 0 at x* = (10, 10)
 Domain: -10 <= x_i <= 10 */
-double Brent(Agent *a, ...){
+double Brent(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -508,9 +508,9 @@ double Brent(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 0 at x* = (0, ..., 0)
+Minimum at f(x*) = 0 at x* = (0, va_list arg, 0)
 Domain: -1 <= x_i <= 4 */
-double Brown(Agent *a, ...){
+double Brown(Agent *a, va_list arg){
     int i;
     double sum = 0;
     
@@ -536,7 +536,7 @@ a: agent
 ---
 Minimum at f(x*) = 0 at x* = (-10, 0)
 Domain: -15 <= x_0 <= -5 and -3 <= x_1 <= 3 */
-double Bukin_Second(Agent *a, ...){
+double Bukin_Second(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -560,7 +560,7 @@ a: agent
 ---
 Minimum at f(x*) = 0 at x* = (-10, 0)
 Domain: -15 <= x_0 <= -5 and -3 <= x_1 <= 3 */
-double Bukin_Forth(Agent *a, ...){
+double Bukin_Forth(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -584,7 +584,7 @@ a: agent
 ---
 Minimum at f(x*) = 0 at x* = (-10, 1)
 Domain: -15 <= x_0 <= -5 and -3 <= x_1 <= 3 */
-double Bukin_Sixth(Agent *a, ...){
+double Bukin_Sixth(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -608,7 +608,7 @@ a: agent
 ---
 Minimum at f(x*) = 0 at x* = (0, 0)
 Domain: -5 <= x_i <= 5 */
-double Three_HumpCamel(Agent *a, ...){
+double Three_HumpCamel(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -632,7 +632,7 @@ a: agent
 ---
 Minimum at f(x*) = -1.0316 at x* = (-0.0898, 0.7126) or (0.0898, -0.7126)
 Domain: -5 <= x_i <= 5 */
-double Six_HumpCamel(Agent *a, ...){
+double Six_HumpCamel(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -656,7 +656,7 @@ a: agent
 ---
 Minimum at f(x*) = -2000 at x* = (-7/18, -13/18)
 Domain: -500 <= x_i <= 500 */
-double Chen_Bird(Agent *a, ...){
+double Chen_Bird(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -680,7 +680,7 @@ a: agent
 ---
 Minimum at f(x*) = -2000 at x* = (-0.38889, 0.72222)
 Domain: -500 <= x_i <= 500 */
-double Chen_V(Agent *a, ...){
+double Chen_V(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -704,7 +704,7 @@ a: agent
 ---
 Minimum at f(x*) = -43.3159 at x* = (5.90133, 0.5)
 Domain: -30 <= x_i <= 30 */
-double Chichinadze(Agent *a, ...){
+double Chichinadze(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -726,9 +726,9 @@ double Chichinadze(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 0 at x* = (0, ..., 0)
+Minimum at f(x*) = 0 at x* = (0, va_list arg, 0)
 Domain: -100 <= x_i <= 100 */
-double Chung_Reynolds(Agent *a, ...){
+double Chung_Reynolds(Agent *a, va_list arg){
     int i;
     double sum = 0;
     
@@ -756,7 +756,7 @@ a: agent
 ---
 Minimum at f(x*) = 0 at x* = (1, 1, 1, 1)
 Domain: -10 <= x_i <= 10 */
-double Colville(Agent *a, ...){
+double Colville(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -780,7 +780,7 @@ a: agent
 ---
 Minimum at f(x*) = -2.06261 at x* = (1.3494, -1.3494), (1.3494, 1.3494), (-1.3494, 1.3494) or (-1.3494, -1.3494)
 Domain: -10 <= x_i < 10 */
-double Cross_Tray(Agent *a, ...){
+double Cross_Tray(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -802,9 +802,9 @@ double Cross_Tray(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 0 at x* = (0, ..., 0)
+Minimum at f(x*) = 0 at x* = (0, va_list arg, 0)
 Domain: -1 <= x_i <= 1 */
-double Csendes(Agent *a, ...){
+double Csendes(Agent *a, va_list arg){
     int i;
     double sum = 0;
     
@@ -830,7 +830,7 @@ a: agent
 ---
 Minimum at f(x*) = 0 at x* = (-1, 1)
 Domain: -10 <= x_i <= 10 */
-double Cube(Agent *a, ...){
+double Cube(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -854,7 +854,7 @@ a: agent
 ---
 Minimum at f(x*) = 0 at x* = (2, 2)
 Domain: 0 <= x_i <= 14 */
-double Damavandi(Agent *a, ...){
+double Damavandi(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -878,7 +878,7 @@ a: agent
 ---
 Minimum at f(x*) = -24777 at x* = (0, 15) or (0, -15)
 Domain: -20 <= x_i <= 20 */
-double Deckkers_Aarts(Agent *a, ...){
+double Deckkers_Aarts(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -902,7 +902,7 @@ a: agent
 ---
 Minimum at f(x*) = 0 at x_i = 2^{-/frac{2^i-2}{2^i}}
 Domain: -10 <= x_i <= 10 */
-double Dixon_Price(Agent *a, ...){
+double Dixon_Price(Agent *a, va_list arg){
     int i;
     double sum = 0;
     
@@ -930,7 +930,7 @@ a: agent
 ---
 Minimum at f(x*) = -1 at x* = (PI, PI)
 Domain: -100 <= x_i <= 100 */
-double Easom(Agent *a, ...){
+double Easom(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -954,7 +954,7 @@ a: agent
 ---
 Minimum at f(x*) = 0.470427 at x* = (2.842503, 1.920175)
 Domain: -500 <= x_i <= 500 */
-double ElAttar_VidyasagarDutta(Agent *a, ...){
+double ElAttar_VidyasagarDutta(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -978,7 +978,7 @@ a: agent
 ---
 Minimum at f(x*) = 0 at x* = (0, 0)
 Domain: -5 <= x_i <= 5 */
-double Eggcrate(Agent *a, ...){
+double Eggcrate(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -1002,7 +1002,7 @@ a: agent
 ---
 Minimum at f(x*) = 959.64 at x* = (512, 404.2319)
 Domain: -512 <= x_i <= 512 */
-double Eggholder(Agent *a, ...){
+double Eggholder(Agent *a, va_list arg){
     int i;
     double sum = 0;
     
@@ -1026,9 +1026,9 @@ double Eggholder(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 1 at x* = (0, ..., 0)
+Minimum at f(x*) = 1 at x* = (0, va_list arg, 0)
 Domain: -1 <= x_i <= 1 */
-double Exponential(Agent *a, ...){
+double Exponential(Agent *a, va_list arg){
     int i;
     double partial_sum = 0, sum;
     
@@ -1056,7 +1056,7 @@ a: agent
 ---
 Minimum at f(x*) = 0 at x* = (0, 10)
 Domain: 0 <= x_i <= 20 */
-double EXP_2(Agent *a, ...){
+double EXP_2(Agent *a, va_list arg){
     int i;
     double sum = 0;
     
@@ -1082,7 +1082,7 @@ a: agent
 ---
 Minimum at f(x*) = 0 at x* = (5, 4)
 Domain: -10 <= x_i <= 10 */
-double Freudenstein_Roth(Agent *a, ...){
+double Freudenstein_Roth(Agent *a, va_list arg){
     int i;
     double sum = 0;
     
@@ -1107,7 +1107,7 @@ a: agent
 ---
 Minimum at f(x*) = 0.060447 at x* = (0.45834282, 0.45834282)
 Domain: -1 <= x_i <= 1 */
-double Giunta(Agent *a, ...){
+double Giunta(Agent *a, va_list arg){
     int i;
     double sum = 0;
     
@@ -1135,7 +1135,7 @@ a: agent
 ---
 Minimum at f(x*) = 3 at x* = (0, -1)
 Domain: -2 <= x_i <= 2 */
-double Goldstein_Price(Agent *a, ...){
+double Goldstein_Price(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -1157,9 +1157,9 @@ double Goldstein_Price(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 0 at x* = (0, ..., 0)
+Minimum at f(x*) = 0 at x* = (0, va_list arg, 0)
 Domain: -100 <= x_i <= 100 */
-double Griewank(Agent *a, ...){
+double Griewank(Agent *a, va_list arg){
     int i;
     double partial_sum = 1, sum = 0;
     
@@ -1189,7 +1189,7 @@ a: agent
 ---
 Minimum at f(x*) = 0 at x* = (50, 25, 1.5)
 Domain: 0.1 <= x_0 <= 100, 0 <= x_1 <= 25.6 and 0 <= x_2 <= 5 */
-double Gulf_Research(Agent *a, ...){
+double Gulf_Research(Agent *a, va_list arg){
     int i;
     double sum = 0, u;
     
@@ -1217,7 +1217,7 @@ a: agent
 ---
 Minimum at f(x*) = 0 at x* = (1, 0, 0)
 Domain: -10 <= x_i <= 10 */
-double Helical_Valley(Agent *a, ...){
+double Helical_Valley(Agent *a, va_list arg){
     double sum = 0, theta;
     
     if(!a){
@@ -1246,7 +1246,7 @@ a: agent
 ---
 Minimum at f(x*) = 0 at x* = (3, 2)
 Domain: -5 <= x_i <= 5 */
-double Himmelblau(Agent *a, ...){
+double Himmelblau(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -1270,7 +1270,7 @@ a: agent
 ---
 Minimum at f(x*) = -2.3458 at x* = (4, 2)
 Domain: 0 <= x_1 <= 5 and 0 <= x_2 <= 6 */
-double Hosaki(Agent *a, ...){
+double Hosaki(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -1294,7 +1294,7 @@ a: agent
 ---
 Minimum at f(x*) = 124.3612 at x* = (0.257825, 0.257825)
 Domain: -1 <= x_i <= 1 */
-double Jennrick_Sampson(Agent *a, ...){
+double Jennrick_Sampson(Agent *a, va_list arg){
     int i;
     double sum = 0;
     
@@ -1320,7 +1320,7 @@ a: agent
 ---
 Minimum at f(x*) = -0.673668 at x* = (0, 1.39325) or (1.39325, 0)
 Domain: 0 <= x_i <= 10 */
-double Keane(Agent *a, ...){
+double Keane(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -1344,7 +1344,7 @@ a: agent
 ---
 Minimum at f(x*) = 0 at x* = (1, 1)
 Domain: -1.2 <= x_i <= 1.2 */
-double Leon(Agent *a, ...){
+double Leon(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -1366,9 +1366,9 @@ double Leon(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 0 at x* = (1, ...,  1)
+Minimum at f(x*) = 0 at x* = (1, va_list arg,  1)
 Domain: -10 <= x_i <= 10 */
-double Levy(Agent *a, ...){
+double Levy(Agent *a, va_list arg){
     int i;
     double partial_sum = 0, sum = 0;
     double w, w_1, w_d;
@@ -1402,7 +1402,7 @@ a: agent
 ---
 Minimum at f(x*) = 0 at x* = (1, 1)
 Domain: -10 <= x_i <= 10 */
-double Levy_Thirteenth(Agent *a, ...){
+double Levy_Thirteenth(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -1426,7 +1426,7 @@ a: agent
 ---
 Minimum at f(x*) = 0 at x* = (0, 0)
 Domain: -10 <= x_i <= 10 */
-double Matyas(Agent *a, ...){
+double Matyas(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -1450,7 +1450,7 @@ a: agent
 ---
 Minimum at f(x*) = -1.9133 at x* = (-0.547, -1.547)
 Domain: -1.5 <= x_0 <= 4 and -3 <= x_1 <= 3 */
-double McCormick(Agent *a, ...){
+double McCormick(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -1474,7 +1474,7 @@ a: agent
 ---
 Minimum at f(x*) = 0 at x* = (0, 1, 1, 1)
 Domain: -1 <= x_i <= 1 */
-double Miele_Cantrell(Agent *a, ...){
+double Miele_Cantrell(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -1496,9 +1496,9 @@ double Miele_Cantrell(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 0 at x* = (k*PI/2, lambda*PI) with k = +-1, +-3, ... and lambda = 0, +-1, +-2, ...
+Minimum at f(x*) = 0 at x* = (k*PI/2, lambda*PI) with k = +-1, +-3, va_list arg and lambda = 0, +-1, +-2, va_list arg
 Domain: -5 <= x_i <= 5 */
-double Parsopoulos(Agent *a, ...){
+double Parsopoulos(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -1522,7 +1522,7 @@ a: agent
 ---
 Minimum at f(x*) = -0.96354 at x* = (+-9.646168, +-9.646168)
 Domain: -11 <= x_i <= 11 */
-double Pen_Holder(Agent *a, ...){
+double Pen_Holder(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -1544,9 +1544,9 @@ double Pen_Holder(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 0 at x* = (0, ..., 0)
+Minimum at f(x*) = 0 at x* = (0, va_list arg, 0)
 Domain: -100 <= x_i <= 100 */
-double Pathological(Agent *a, ...){
+double Pathological(Agent *a, va_list arg){
     int i;
     double sum = 0;
     
@@ -1570,9 +1570,9 @@ double Pathological(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = -45.778 at x* = (9.350266, ..., 9.350266)
+Minimum at f(x*) = -45.778 at x* = (9.350266, va_list arg, 9.350266)
 Domain: 2.0001 <= x_i <= 10 */
-double Paviani(Agent *a, ...){
+double Paviani(Agent *a, va_list arg){
     int i;
     double prod = 1, sum = 0;
     
@@ -1602,7 +1602,7 @@ a: agent
 ---
 Minimum at f(x*) = 0.9 at x* = (0, 0)
 Domain: -10 <= x_i <= 10 */
-double Periodic(Agent *a, ...){
+double Periodic(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -1624,9 +1624,9 @@ double Periodic(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 0 at x* = (0, ..., 0)
+Minimum at f(x*) = 0 at x* = (0, va_list arg, 0)
 Domain: -1 <= x_i <= 1 */
-double Powell_Sum(Agent *a, ...){
+double Powell_Sum(Agent *a, va_list arg){
     int i;
     double sum = 0;
     
@@ -1652,7 +1652,7 @@ a: agent
 ---
 Minimum at f(x*) = 0 at x* = (-5, -5), (-5, 5), (5, -5) or (5, 5)
 Domain: -500 <= x_i <= 500 */
-double Price_First(Agent *a, ...){
+double Price_First(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -1676,7 +1676,7 @@ a: agent
 ---
 Minimum at f(x*) = 0.9 at x* = (0, 0)
 Domain: -10 <= x_i <= 10 */
-double Price_Second(Agent *a, ...){
+double Price_Second(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -1700,7 +1700,7 @@ a: agent
 ---
 Minimum at f(x*) = 0 at x* = (-5, -5), (-5, 5), (5, -5) or (5, 5)
 Domain: -500 <= x_i <= 500 */
-double Price_Third(Agent *a, ...){
+double Price_Third(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -1724,7 +1724,7 @@ a: agent
 ---
 Minimum at f(x*) = 0 at x* = (0, 0), (2, 4) or (1.464, -2.506)
 Domain: -500 <= x_i <= 500 */
-double Price_Forth(Agent *a, ...){
+double Price_Forth(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -1746,9 +1746,9 @@ double Price_Forth(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 0 at x* = (+-sqrt(i), ..., +-sqrt(i))
+Minimum at f(x*) = 0 at x* = (+-sqrt(i), va_list arg, +-sqrt(i))
 Domain: -500 <= x_i <= 500 */
-double Qing(Agent *a, ...){
+double Qing(Agent *a, va_list arg){
     int i;
     double sum = 0;
     
@@ -1774,7 +1774,7 @@ a: agent
 ---
 Minimum at f(x*) = -3873.7243 at x* = (0.19388, 0.48513)
 Domain: -10 <= x_i <= 10 */
-double Quadratic(Agent *a, ...){
+double Quadratic(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -1796,9 +1796,9 @@ double Quadratic(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 0 at x* = (0, ..., 0)
+Minimum at f(x*) = 0 at x* = (0, va_list arg, 0)
 Domain: -1.28 <= x_i <= 1.28 */
-double Quartic(Agent *a, ...){
+double Quartic(Agent *a, va_list arg){
     int i;
     double sum = 0, u;
     
@@ -1828,9 +1828,9 @@ double Quartic(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 0 at x* = (-1 or 2, ..., -1 or 2)
+Minimum at f(x*) = 0 at x* = (-1 or 2, va_list arg, -1 or 2)
 Domain: -10 <= x_i <= 10 */
-double Quintic(Agent *a, ...){
+double Quintic(Agent *a, va_list arg){
     int i;
     double sum = 0;
     
@@ -1854,9 +1854,9 @@ double Quintic(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 0 at x* = (0, ..., 0)
+Minimum at f(x*) = 0 at x* = (0, va_list arg, 0)
 Domain: -5.12 <= x_i <= 5.12 */
-double Rastringin(Agent *a, ...){
+double Rastringin(Agent *a, va_list arg){
     int i;
     double sum = 0;
     
@@ -1882,9 +1882,9 @@ double Rastringin(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 0 at x* = (1, ..., 1)
+Minimum at f(x*) = 0 at x* = (1, va_list arg, 1)
 Domain: -30 <= x_i <= 30 */
-double Rosenbrock(Agent *a, ...){
+double Rosenbrock(Agent *a, va_list arg){
     int i;
     double sum = 0;
     
@@ -1910,7 +1910,7 @@ a: agent
 ---
 Minimum at f(x*) = 0 at x* = (0, 0)
 Domain: -500 <= x_i <= 500 */
-double Rotated_Ellipsoid_1(Agent *a, ...){
+double Rotated_Ellipsoid_1(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -1934,7 +1934,7 @@ a: agent
 ---
 Minimum at f(x*) = 0 at x* = (0, 0)
 Domain: -500 <= x_i <= 500 */
-double Rotated_Ellipsoid_2(Agent *a, ...){
+double Rotated_Ellipsoid_2(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -1958,7 +1958,7 @@ a: agent
 ---
 Minimum at f(x*) = 0 at x* = (0, 0)
 Domain: -500 <= x_i <= 500 */
-double Rump(Agent *a, ...){
+double Rump(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -1980,9 +1980,9 @@ double Rump(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 0 at x* = (0, ..., 0)
+Minimum at f(x*) = 0 at x* = (0, va_list arg, 0)
 Domain: -100 <= x_i <= 100 */
-double Salomon(Agent *a, ...){
+double Salomon(Agent *a, va_list arg){
     int i;
     double partial_sum = 0, sum = 0;
     
@@ -2010,7 +2010,7 @@ a: agent
 ---
 Minimum at f(x*) = 0 at x* = (0, 0)
 Domain: -100 <= x_i <= 100 */
-double Schaffer_First(Agent *a, ...){
+double Schaffer_First(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -2034,7 +2034,7 @@ a: agent
 ---
 Minimum at f(x*) = 0 at x* = (0, 0)
 Domain: -100 <= x_i <= 100 */
-double Schaffer_Second(Agent *a, ...){
+double Schaffer_Second(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -2058,7 +2058,7 @@ a: agent
 ---
 Minimum at f(x*) = 0.001230 at x* = (0, +-1.253002) or (+-1.253002, 0)
 Domain: -100 <= x_i <= 100 */
-double Schaffer_Third(Agent *a, ...){
+double Schaffer_Third(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -2082,7 +2082,7 @@ a: agent
 ---
 Minimum at f(x*) = 0.292438 at x* = (0, +-1.253028) or (+-1.253028, 0)
 Domain: -100 <= x_i <= 100 */
-double Schaffer_Forth(Agent *a, ...){
+double Schaffer_Forth(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -2106,7 +2106,7 @@ a: agent
 ---
 Minimum at f(x*) = 3 at x* = (0.78547, 0.78547, 0.78547)
 Domain: 0 <= x_i <= 10 */
-double Schmidt_Vetters(Agent *a, ...){
+double Schmidt_Vetters(Agent *a, va_list arg){
     double sum = 0;
     
     if(!a){
@@ -2128,9 +2128,9 @@ double Schmidt_Vetters(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 0 at x* = (0, ..., 0)
+Minimum at f(x*) = 0 at x* = (0, va_list arg, 0)
 Domain: -100 <= x_i <= 100 */
-double Schumer_Steiglitz(Agent *a, ...){
+double Schumer_Steiglitz(Agent *a, va_list arg){
     int i;
     double sum = 0;
     
@@ -2154,9 +2154,9 @@ double Schumer_Steiglitz(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 0 at x* = (0, ..., 0)
+Minimum at f(x*) = 0 at x* = (0, va_list arg, 0)
 Domain: -100 <= x_i <= 100 */
-double Schewefel(Agent *a, ...){
+double Schewefel(Agent *a, va_list arg){
     int i;
     double alpha, sum = 0;
     
@@ -2184,9 +2184,9 @@ double Schewefel(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 0 at x* = (0, ..., 0)
+Minimum at f(x*) = 0 at x* = (0, va_list arg, 0)
 Domain: 0 <= x_i <= 10 */
-double Sphere(Agent *a, ...){
+double Sphere(Agent *a, va_list arg){
     int i;
     double sum = 0;
     
@@ -2210,9 +2210,9 @@ double Sphere(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 0 at x* = (0, ..., 0)
+Minimum at f(x*) = 0 at x* = (0, va_list arg, 0)
 Domain: -10 <= x_i <= 10 */
-double Streched_V_SineWave(Agent *a, ...){
+double Streched_V_SineWave(Agent *a, va_list arg){
     int i;
     double sum = 0;
     
@@ -2236,9 +2236,9 @@ double Streched_V_SineWave(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 0 at x* = (0, ..., 0)
+Minimum at f(x*) = 0 at x* = (0, va_list arg, 0)
 Domain:  -1 <= x_i <= 1 */
-double Sum_DifferentPowers(Agent *a, ...){
+double Sum_DifferentPowers(Agent *a, va_list arg){
     int i;
     double sum = 0;
 
@@ -2262,9 +2262,9 @@ double Sum_DifferentPowers(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 0 at x* = (0, ..., 0)
+Minimum at f(x*) = 0 at x* = (0, va_list arg, 0)
 Domain:  -10 <= x_i <= 10 */
-double Sum_Squares(Agent *a, ...){
+double Sum_Squares(Agent *a, va_list arg){
     int i;
     double sum = 0;
 
@@ -2288,9 +2288,9 @@ double Sum_Squares(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = -78.332 at x* = (-2.903534, ..., -2.903534)
+Minimum at f(x*) = -78.332 at x* = (-2.903534, va_list arg, -2.903534)
 Domain:  -5 <= x_i <= 5 */
-double Styblinski_Tang(Agent *a, ...){
+double Styblinski_Tang(Agent *a, va_list arg){
     int i;
     double sum = 0;
 
@@ -2318,7 +2318,7 @@ a: agent
 ---
 Minimum at f(x*) = -26.920336 at x* = (+-9.646168, +-9.646168)
 Domain:  -10 <= x_i <= 10 */
-double Holder_Table_First(Agent *a, ...){
+double Holder_Table_First(Agent *a, va_list arg){
     double sum = 0;
 
     if(!a){
@@ -2342,7 +2342,7 @@ a: agent
 ---
 Minimum at f(x*) = -19.20850 at x* = (+-8.055023472141116, +-9.664590028909654)
 Domain:  -10 <= x_i <= 10 */
-double Holder_Table_Second(Agent *a, ...){
+double Holder_Table_Second(Agent *a, va_list arg){
     double sum = 0;
 
     if(!a){
@@ -2366,7 +2366,7 @@ a: agent
 ---
 Minimum at f(x*) = -24.1568155 at x* = (+-9.646157266348881, +-9.646134286497169)
 Domain:  -10 <= x_i <= 10 */
-double Carrom_Table(Agent *a, ...){
+double Carrom_Table(Agent *a, va_list arg){
     double sum = 0;
 
     if(!a){
@@ -2390,7 +2390,7 @@ a: agent
 ---
 Minimum at f(x*) = -10.872300 at x* = (+-PI/2, 0)
 Domain:  -10 <= x_i <= 10 */
-double Testtube_Holder(Agent *a, ...){
+double Testtube_Holder(Agent *a, va_list arg){
     double sum = 0;
 
     if(!a){
@@ -2414,7 +2414,7 @@ a: agent
 ---
 Minimum at f(x*) = 0 at x* = (0, 0) or (-2, 0)
 Domain:  -5 <= x_i <= 5 */
-double Trecanni(Agent *a, ...){
+double Trecanni(Agent *a, va_list arg){
     double sum = 0;
 
     if(!a){
@@ -2438,7 +2438,7 @@ a: agent
 ---
 Minimum at f(x*) = -3.30686865 at x* = (-0.024403, 0.210612)
 Domain:  -10 <= x_i <= 10 */
-double Trefethen(Agent *a, ...){
+double Trefethen(Agent *a, va_list arg){
     double sum = 0;
 
     if(!a){
@@ -2460,9 +2460,9 @@ double Trefethen(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 0 at x* = (0, ..., 0)
+Minimum at f(x*) = 0 at x* = (0, va_list arg, 0)
 Domain:  0 <= x_i <= PI */
-double Trigonometric_1(Agent *a, ...){
+double Trigonometric_1(Agent *a, va_list arg){
     int i, j;
     double partial_sum = 0, sum = 0;
 
@@ -2488,9 +2488,9 @@ double Trigonometric_1(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 1 at x* = (0.9, ..., 0.9)
+Minimum at f(x*) = 1 at x* = (0.9, va_list arg, 0.9)
 Domain:  -500 <= x_i <= 500 */
-double Trigonometric_2(Agent *a, ...){
+double Trigonometric_2(Agent *a, va_list arg){
     int i;
     double partial_sum = 0, sum = 0;
 
@@ -2518,7 +2518,7 @@ a: agent
 ---
 Minimum at f(x*) = -400 at x* = (0, 0)
 Domain: -50 <= x_i <= 50 */
-double Venter_Sobiezcczanski(Agent *a, ...){
+double Venter_Sobiezcczanski(Agent *a, va_list arg){
     double sum = 0;
 
     if(!a){
@@ -2542,7 +2542,7 @@ a: agent
 ---
 Minimum at f(x*) = 0.002288 at x* = (-0.0158, 1.012, -0.2329, 1.260, -1.513, 0.9928)
 Domain: |x_i| <= 10 with a_i = i/29 */
-double Watson(Agent *a, ...){
+double Watson(Agent *a, va_list arg){
     int i, j;
     double partial_sum_1 = 0, partial_sum_2 = 0, sum = 0;
 
@@ -2574,7 +2574,7 @@ a: agent
 ---
 Minimum at f(x*) = 0 at x* = (1, 2) or (1.597, 0.806)
 Domain: -500 <= x_i <= 500 */
-double Wayburn_Seader_1(Agent *a, ...){
+double Wayburn_Seader_1(Agent *a, va_list arg){
     double sum = 0;
 
     if(!a){
@@ -2598,7 +2598,7 @@ a: agent
 ---
 Minimum at f(x*) = 0 at x* = (0.2, 1) or (0.425, 1)
 Domain: -500 <= x_i <= 500 */
-double Wayburn_Seader_2(Agent *a, ...){
+double Wayburn_Seader_2(Agent *a, va_list arg){
     double sum = 0;
 
     if(!a){
@@ -2622,7 +2622,7 @@ a: agent
 ---
 Minimum at f(x*) = 21.35 at x* = (5.611, 6.187)
 Domain: -500 <= x_i <= 500 */
-double Wayburn_Seader_3(Agent *a, ...){
+double Wayburn_Seader_3(Agent *a, va_list arg){
     double sum = 0;
 
     if(!a){
@@ -2646,7 +2646,7 @@ a: agent
 ---
 Minimum at f(x*) = 0 at x* = (0, 0) with k = 10
 Domain: -PI <= x_i <= PI */
-double Wavy(Agent *a, ...){
+double Wavy(Agent *a, va_list arg){
     int i, k = 10;
     double sum = 0;
 
@@ -2672,9 +2672,9 @@ double Wavy(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 0 at x* = (0, ..., 0)
+Minimum at f(x*) = 0 at x* = (0, va_list arg, 0)
 Domain: -5 <= x_i <= 5 */
-double XinShe_Yang_1(Agent *a, ...){
+double XinShe_Yang_1(Agent *a, va_list arg){
     int e, i;
     double sum = 0;
 
@@ -2700,9 +2700,9 @@ double XinShe_Yang_1(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 0 at x* = (0, ..., 0)
+Minimum at f(x*) = 0 at x* = (0, va_list arg, 0)
 Domain: -2PI <= x_i <= 2PI */
-double XinShe_Yang_2(Agent *a, ...){
+double XinShe_Yang_2(Agent *a, va_list arg){
     double sum = 0, sum1 = 0, sum2 = 0;
     int i;
 
@@ -2730,9 +2730,9 @@ double XinShe_Yang_2(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = -1 at x* = (0, ..., 0) with m = 5 and beta = 15
+Minimum at f(x*) = -1 at x* = (0, va_list arg, 0) with m = 5 and beta = 15
 Domain: -20 <= x_i <= 20 */
-double XinShe_Yang_3(Agent *a, ...){
+double XinShe_Yang_3(Agent *a, va_list arg){
     double sum = 0, sum1 = 0, sum2 = 0, sum3 = 1;
     int i, m = 5, beta = 15;
 
@@ -2761,9 +2761,9 @@ double XinShe_Yang_3(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = -1 at x* = (0, ..., 0)
+Minimum at f(x*) = -1 at x* = (0, va_list arg, 0)
 Domain: -10 <= x_i <= 10 */
-double XinShe_Yang_4(Agent *a, ...){
+double XinShe_Yang_4(Agent *a, va_list arg){
     double sum = 0, sum1 = 0, sum2 = 0, sum3 = 0;
     int i;
 
@@ -2792,9 +2792,9 @@ double XinShe_Yang_4(Agent *a, ...){
 Parameters:
 a: agent
 ---
-Minimum at f(x*) = 0 at x* = (0, ..., 0)
+Minimum at f(x*) = 0 at x* = (0, va_list arg, 0)
 Domain: -5 <= x_i <= 10 */
-double Zakharov(Agent *a, ...){
+double Zakharov(Agent *a, va_list arg){
     double sum = 0, sum1 = 0, sum2 = 0;
     int i;
 
@@ -2824,7 +2824,7 @@ a: agent
 ---
 Minimum at f(x*) = -0.003791 at x* = (-0.0299, 0)
 Domain: -5 <= x_i <= 10 */
-double Zettl(Agent *a, ...){
+double Zettl(Agent *a, va_list arg){
     double sum = 0;
 
     if(!a){
@@ -2848,7 +2848,7 @@ a: agent
 ---
 Minimum at f(x*) = -0.3523 at x* = (-1.0465, 0)
 Domain: -10 <= x_i <= 10 */
-double Zirilli(Agent *a, ...){
+double Zirilli(Agent *a, va_list arg){
     double sum = 0;
 
     if(!a){
