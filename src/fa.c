@@ -48,9 +48,7 @@ void runFA(SearchSpace *s, prtFun Evaluate, ...){
 	    CheckAgentLimits(s, s->a[i]);
 	    DestroyAgent(&tmp[i], _FA_);
 	}
-	
-	//s->alpha *= delta; /* It controls de step size of parameter alpha by Equation 3*/
-	
+		
 	va_copy(arg, argtmp);
        
 	fprintf(stderr, "OK (minimum fitness value %lf)", s->gfit);
