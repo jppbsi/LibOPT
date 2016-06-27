@@ -168,7 +168,7 @@ Agent *GenerateNewAgent(SearchSpace *s, int opt_id){
         case _GA_:
         break;
         case _BHA_:
-        	a = CreateAgent(s->n, _CS_);
+        	a = CreateAgent(s->n, _BHA_);
         break;
         default:
             fprintf(stderr,"\nInvalid optimization identifier @GenerateNewAgent.\n");
@@ -630,6 +630,8 @@ char CheckSearchSpace(SearchSpace *s, int opt_id){
                 fprintf(stderr,"\n  -> Summation of probabilites (reproduction, mutation and crossover) should be equal to 1.");
                 OK = 0;
             }
+        break;
+        case _BHA_:
         break;
         default:
             fprintf(stderr,"\n Invalid optimization identifier @CheckSearchSpace.\n");

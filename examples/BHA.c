@@ -11,7 +11,8 @@ int main(){
     
     InitializeSearchSpace(s, _BHA_); /* It initalizes the search space */
     
-    runBHA(s, Rosenbrock); /* It minimizes function Rosenbrock */
+    if (CheckSearchSpace(s, _BHA_)) /* It checks wether the search space is valid or not */
+        runBHA(s, Rosenbrock); /* It minimizes function Rosenbrock */
     
     DestroySearchSpace(&s, _BHA_); /* It deallocates the search space */
         
