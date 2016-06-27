@@ -57,7 +57,7 @@ void runBHA(SearchSpace *s, prtFun Evaluate, ...){
 	radius = s->gfit/sum;
 	for(i = 0; i < s->m; i++){
 	    dist = EuclideanDistance(s->g, s->a[i]->x, s->n); /* It obtains the euclidean distance */
-	    if(dist > radius){
+	    if(dist < radius){
 		DestroyAgent(&(s->a[i]), _BHA_);
 		s->a[i] = GenerateNewAgent(s, _BHA_);
 	    }
