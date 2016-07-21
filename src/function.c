@@ -3027,4 +3027,84 @@ double *f_LOG_(double *x, int n){
     
     return out;
 }
+
+/* It computes the logical function AND among two n-dimensional arrays
+Parameters:
+x, y: arrays
+n: dimension */
+double *f_AND_(double *x, double *y, int n){
+    if(!x || !y){
+        fprintf(stderr,"\nInvalid input parameters @f_DIV_.\n");
+        exit(-1);
+    }
+    
+    int i;
+    double *out = NULL;
+    
+    out = (double *)malloc(n*sizeof(double));
+    for(i = 0; i < n; i++)
+        out[i] = (double)((int)x[i] & (int)y[i]);
+    
+    return out;
+}
+
+/* It computes the logical function OR among two n-dimensional arrays
+Parameters:
+x, y: arrays
+n: dimension */
+double *f_OR_(double *x, double *y, int n){
+    if(!x || !y){
+        fprintf(stderr,"\nInvalid input parameters @f_DIV_.\n");
+        exit(-1);
+    }
+    
+    int i;
+    double *out = NULL;
+    
+    out = (double *)malloc(n*sizeof(double));
+    for(i = 0; i < n; i++)
+        out[i] = (double)((int)x[i] | (int)y[i]);
+    
+    return out;
+}
+
+/* It computes the logical function XOR among two n-dimensional arrays
+Parameters:
+x, y: arrays
+n: dimension */
+double *f_XOR_(double *x, double *y, int n){
+    if(!x || !y){
+        fprintf(stderr,"\nInvalid input parameters @f_DIV_.\n");
+        exit(-1);
+    }
+    
+    int i;
+    double *out = NULL;
+    
+    out = (double *)malloc(n*sizeof(double));
+    for(i = 0; i < n; i++)
+        out[i] = (double)((int)x[i] ^ (int)y[i]);
+    
+    return out;
+}
+
+/* It computes the logical function NOT of an n-dimensional array
+Parameters:
+x: array
+n: dimension */
+double *f_NOT_(double *x, int n){
+    if(!x){
+        fprintf(stderr,"\nInvalid input parameters @f_LOG_.\n");
+        exit(-1);
+    }
+    
+    int i;
+    double *out = NULL;
+    
+    out = (double *)malloc(n*sizeof(double));
+    for(i = 0; i < n; i++)
+        out[i] = (double)~(int)x[i];
+    
+    return out;
+}
 /*****************************/

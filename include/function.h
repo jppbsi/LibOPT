@@ -127,5 +127,9 @@ double *f_ABS_(double *x, int n); /* It computes the absolute value of each elem
 double *f_SQRT_(double *x, int n); /* It computes the squared root of each element from a two n-dimensional array */
 double *f_EXP_(double *x, int n); /* It computes the exponential (e) of each element from an n-dimensional array */
 double *f_LOG_(double *x, int n); /* It computes the natural logarithm (base-e logarithm) of each element from an n-dimensional array */
+double *f_AND_(double *x, double *y, int n); /* It computes the logical function AND among two n-dimensional arrays */
+double *f_OR_(double *x, double *y, int n); /* It computes the logical function OR among two n-dimensional arrays */
+double *f_XOR_(double *x, double *y, int n); /* It computes the logical function XOR among two n-dimensional arrays */
+double *f_NOT_(double *x, int n); /* It computes the logical function NOT of an n-dimensional array */
 /*****************************/
 #endif
