@@ -1130,7 +1130,7 @@ void PreFixPrintTree4File(SearchSpace *s, Node *T, FILE *fp){
         if(T->status != TERMINAL) fprintf(fp,"(");
         if(T->status == CONSTANT){
             for(j = 0; j < s->n-1; j++)
-                fprintf(fp,"%lf, ", s->constant[j][T->id]);
+                fprintf(fp,"%lf,", s->constant[j][T->id]);
             fprintf(fp,"%lf", s->constant[j][T->id]);
         }
 	else fprintf(fp,"%s ", T->elem);
