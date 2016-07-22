@@ -88,7 +88,7 @@ typedef struct SearchSpace_{
     int n_constants; /* number of constants */
     char **function; /* matrix with the functions' names */
     char **terminal; /* matrix with the terminals' names */
-    double *constant; /* array with the random constants */
+    double **constant; /* matrix with the random constants */
     Node **T; /* pointer to the tree */
     double *tree_fit; /* fitness of each tree (in GP, the number of agents is different from the number of trees) */
 

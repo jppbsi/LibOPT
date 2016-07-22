@@ -10,10 +10,10 @@ int main(int argc, char **argv){
     
     SearchSpace *s = NULL;
     
-    int min_depth = 1, max_depth = 3, n_terminals = 2, i;
+    int min_depth = 1, max_depth = 3, n_terminals = 2, i, j;
     int n_functions = 3, m = 10, n = 2;
     char **terminal = NULL, **function = NULL;
-    double *constant = NULL;
+    double **constant = NULL;
     
     /* This toy example shows how to use GP using a model file and using features added in the source-code */
     fprintf(stderr,"\nToy example using built-in features ***\n");
@@ -37,9 +37,12 @@ int main(int argc, char **argv){
     /****************************/
     
     /* loading constants */
-    constant = (double *)malloc(N_CONSTANTS*sizeof(double));
-    for(i = 0; i < N_CONSTANTS; i++)
-        constant[i] = GenerateUniformRandomNumber(0,10);
+    constant = (double **)malloc(n*sizeof(double *));
+    for(i = 0; i < n; i++){
+        constant[i] = (double *)malloc(N_CONSTANTS*sizeof(double));
+        for(j = 0; j < N_CONSTANTS; j++)
+            constant[i][j] = GenerateUniformRandomNumber(-5.0,5.0);
+    }
     /*********************/
         
     /* It creates a GP seach space with 10 agents (trees), 2 dimensions,

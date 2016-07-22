@@ -256,7 +256,7 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...){
             s->n_constants = va_arg(arg, int);
             s->n_functions = va_arg(arg, int);            
             s->terminal = va_arg(arg, char **);
-            s->constant = va_arg(arg, double *);
+            s->constant = va_arg(arg, double **);
             s->function = va_arg(arg, char **);
     
             s->T = (Node **)malloc(s->m*sizeof(Node *));
@@ -328,13 +328,19 @@ void DestroySearchSpace(SearchSpace **s, int opt_id){
                 if(tmp->terminal[i]) free(tmp->terminal[i]);
             }
             if(tmp->a) free(tmp->a);
-            if(tmp->terminal) free(tmp->terminal);
+            free(tmp->terminal);
             
-            for(i = 0; i < tmp->n_functions; i++)
-                if(tmp->function[i]) free(tmp->function[i]);
-            free(tmp->function);
+            if(tmp->function){
+                for(i = 0; i < tmp->n_functions; i++)
+                    if(tmp->function[i]) free(tmp->function[i]);
+                free(tmp->function);
+            }
             
-            if(tmp->constant) free(tmp->constant);
+            if(tmp->constant){
+                for(i = 0; i < tmp->n; i++)
+                    if (tmp->constant[i]) free(tmp->constant[i]);
+                free(tmp->constant);
+            }
             if(tmp->tree_fit) free(tmp->tree_fit);
         }
     }
@@ -758,9 +764,9 @@ opt_id: identifier of the optimization technique */
 SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
     FILE *fp = NULL;
     SearchSpace *s = NULL;
-    int j, m, n, iterations, n_terminals = 0, n_functions = 0, min_depth, max_depth;
+    int i, j, m, n, iterations, n_terminals = 0, n_functions = 0, min_depth, max_depth;
     int has_constant = 0;
-    double pReproduction, pMutation, pCrossover, *constant = NULL;
+    double pReproduction, pMutation, pCrossover, **constant = NULL, *LB = NULL, *UB = NULL;
     char line[LINE_SIZE], *pline = NULL, **function = NULL, **terminal = NULL;
     Node *head = NULL, *tail = NULL, *aux = NULL;
     
@@ -876,32 +882,53 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
             }
             DestroyTree(&head);
             /*****************************/
-            
+        
+            /* loading lower and upper bounds */
+            LB = (double *)malloc(n*sizeof(double));
+            UB = (double *)malloc(n*sizeof(double));
+            for(j = 0; j < n; j++){
+                fscanf(fp, "%lf %lf", &(LB[j]), &(UB[j]));
+
+                WaiveComment(fp);
+            }
             /* loading constants */
             if(has_constant){
-                constant = (double *)malloc(N_CONSTANTS*sizeof(double));
-                for(j = 0; j < N_CONSTANTS; j++)
-                    constant[j] = GenerateUniformRandomNumber(0,10);
+                constant = (double **)malloc(n*sizeof(double *));
+                for(j = 0; j < n; j++)
+                    constant[j] = (double *)malloc(N_CONSTANTS*sizeof(double));
+                
+                for(i = 0; i < n; i++)
+                    for(j = 0; j < N_CONSTANTS; j++)
+                        constant[i][j] = GenerateUniformRandomNumber(LB[i],UB[i]);
+                
             }
             /*********************/
             
-            fprintf(stderr,"\nn_functions: %d\n", n_functions);
-            fprintf(stderr,"\nn_terminals: %d\n", n_terminals);
             s = CreateSearchSpace(m, n, _GP_, min_depth, max_depth, n_terminals, N_CONSTANTS, n_functions, terminal, constant, function);
             s->iterations = iterations;
             s->pReproduction = pReproduction;
             s->pMutation = pMutation;
             s->pCrossover = pCrossover;
+            
+            for(j = 0; j < s->n; j++){
+                s->LB[j] = LB[j];
+                s->UB[j] = UB[j];
+            }
+            free(LB);
+            free(UB);
         break;
         default:
             fprintf(stderr,"\nInvalid optimization identifier @ReadSearchSpaceFromFile.\n");
         break;
     }
     
-    for(j = 0; j < s->n; j++){
-        fscanf(fp, "%lf %lf", &(s->LB[j]), &(s->UB[j]));
-        WaiveComment(fp);
+    if(opt_id != _GP_){
+        for(j = 0; j < s->n; j++){
+            fscanf(fp, "%lf %lf", &(s->LB[j]), &(s->UB[j]));
+            WaiveComment(fp);
+        }
     }
+    
     fclose(fp);
     
     return s;
@@ -1098,9 +1125,14 @@ s: search space
 T: pointer to the tree
 fileName: output file name */
 void PreFixPrintTree4File(SearchSpace *s, Node *T, FILE *fp){
+    int j;
     if(T){
         if(T->status != TERMINAL) fprintf(fp,"(");
-        if(T->status == CONSTANT) fprintf(fp,"%lf ", s->constant[T->id]);
+        if(T->status == CONSTANT){
+            for(j = 0; j < s->n-1; j++)
+                fprintf(fp,"%lf, ", s->constant[j][T->id]);
+            fprintf(fp,"%lf", s->constant[j][T->id]);
+        }
 	else fprintf(fp,"%s ", T->elem);
         PreFixPrintTree4File(s, T->left, fp);
         PreFixPrintTree4File(s, T->right, fp);
@@ -1124,7 +1156,7 @@ double *RunTree(SearchSpace *s, Node *T){
             out = (double *)calloc(s->n,sizeof(double));
 	    if(T->status == CONSTANT){
                 for(i = 0; i < s->n; i++)
-                    out[i] = s->constant[T->id];
+                    out[i] = s->constant[i][T->id];
 	    }else{
                 for(i = 0; i < s->n; i++)
                     out[i] = s->a[T->id]->x[i];
