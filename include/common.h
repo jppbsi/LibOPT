@@ -3,6 +3,10 @@
 
 #include "random.h"
 
+/* General-Purpose variables */
+#define LINE_SIZE 128 /* It limits the number of characters in a line when reading from model files */
+/*****************************/
+
 /* It defines the node of the tree used to implement GP */
 typedef struct _Node{
     char *elem; /* Content of the node */

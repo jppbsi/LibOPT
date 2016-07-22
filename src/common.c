@@ -758,7 +758,11 @@ opt_id: identifier of the optimization technique */
 SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
     FILE *fp = NULL;
     SearchSpace *s = NULL;
-    int j, m, n, iterations;
+    int j, m, n, iterations, n_terminals = 0, n_functions = 0, min_depth, max_depth;
+    int has_constant = 0;
+    double pReproduction, pMutation, pCrossover, *constant = NULL;
+    char line[LINE_SIZE], *pline = NULL, **function = NULL, **terminal = NULL;
+    Node *head = NULL, *tail = NULL, *aux = NULL;
     
     fp = fopen(fileName, "r");
     if(!fp){
@@ -815,10 +819,79 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
             s->iterations = iterations;
         break;
         case _GP_:
-            s = CreateSearchSpace(m, n, _GP_);
+            fscanf(fp, "%lf %lf %lf", &pReproduction, &pMutation, &pCrossover); WaiveComment(fp);
+            fscanf(fp, "%d %d", &min_depth, &max_depth); WaiveComment(fp);
+            
+            /* Loading function nodes */
+            fgets(line, LINE_SIZE, fp);
+            pline = strtok (line," \t"); j = 0;
+            while ((pline) && (*pline != '#')){
+                aux = CreateNode(pline, 0, 0);
+                
+                if(!head) head = aux;
+                else tail->right = aux;
+                tail = aux;
+                
+                n_functions++;
+                pline = strtok (NULL, " \t");
+            }
+            
+            function = (char **)malloc(n_functions*sizeof(char *));
+            for(j = 0; j < n_functions; j++)
+                function[j] = (char *)malloc(TERMINAL_LENGTH*sizeof(char));
+            
+            j = 0;
+            aux = head;
+            while(aux){
+                strcpy(function[j++], aux->elem);
+                aux = aux->right;
+            }
+            DestroyTree(&head);
+            /*****************************/
+            
+            /* Loading terminal nodes */
+            fgets(line, LINE_SIZE, fp);
+            pline = strtok (line," \t"); j = 0;
+            while ((pline) && (*pline != '#')){
+                aux = CreateNode(pline, 0, 0);
+                if(!strcmp(pline, "CONST")) has_constant = 1;
+                
+                if(!head) head = aux;
+                else tail->right = aux;
+                tail = aux;
+                
+                n_terminals++;
+                pline = strtok (NULL, " \t");
+            }
+            
+            terminal = (char **)malloc(n_terminals*sizeof(char *));
+            for(j = 0; j < n_terminals; j++)
+                terminal[j] = (char *)malloc(TERMINAL_LENGTH*sizeof(char));
+            
+            j = 0;
+            aux = head;
+            while(aux){
+                strcpy(terminal[j++], aux->elem);
+                aux = aux->right;
+            }
+            DestroyTree(&head);
+            /*****************************/
+            
+            /* loading constants */
+            if(has_constant){
+                constant = (double *)malloc(N_CONSTANTS*sizeof(double));
+                for(j = 0; j < N_CONSTANTS; j++)
+                    constant[j] = GenerateUniformRandomNumber(0,10);
+            }
+            /*********************/
+            
+            fprintf(stderr,"\nn_functions: %d\n", n_functions);
+            fprintf(stderr,"\nn_terminals: %d\n", n_terminals);
+            s = CreateSearchSpace(m, n, _GP_, min_depth, max_depth, n_terminals, N_CONSTANTS, n_functions, terminal, constant, function);
             s->iterations = iterations;
-            fscanf(fp, "%lf %lf %lf", &(s->pReproduction), &(s->pMutation), &(s->pCrossover)); WaiveComment(fp);
-            fscanf(fp, "%d %d", &(s->min_depth), &(s->max_depth)); WaiveComment(fp);
+            s->pReproduction = pReproduction;
+            s->pMutation = pMutation;
+            s->pCrossover = pCrossover;
         break;
         default:
             fprintf(stderr,"\nInvalid optimization identifier @ReadSearchSpaceFromFile.\n");

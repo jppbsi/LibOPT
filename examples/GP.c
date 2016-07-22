@@ -2,7 +2,12 @@
 #include "function.h"
 #include "gp.h"
 
-int main(){
+int main(int argc, char **argv){
+    if(argc != 2){
+        fprintf(stderr,"\nusage GP <model_file>\n");
+        exit(-1);
+    }
+    
     SearchSpace *s = NULL;
     
     int min_depth = 1, max_depth = 3, n_terminals = 2, i;
@@ -11,6 +16,7 @@ int main(){
     double *constant = NULL;
     
     /* This toy example shows how to use GP using a model file and using features added in the source-code */
+    fprintf(stderr,"\nToy example using built-in features ***\n");
     
     /* Built-in features ******************************************************/
     /* loading set of terminals */
@@ -37,7 +43,7 @@ int main(){
     /*********************/
         
     /* It creates a GP seach space with 10 agents (trees), 2 dimensions,
-    trees with minimum depth of min_depth and maximum depth of max_depth, 2 functions (+ and -), 2 terminals (x and y) and 100 constants chosen
+    trees with minimum depth of min_depth and maximum depth of max_depth, 2 functions (+ and -), 2 terminals (x,y and CONST) and 100 constants chosen
     at random within [0,10]*/
     s = CreateSearchSpace(m, n, _GP_, min_depth, max_depth, n_terminals, N_CONSTANTS, n_functions, terminal, constant, function);
     s->iterations = 10;
@@ -63,8 +69,16 @@ int main(){
     /**************************************************************************/
     
     /* Using model file *******************************************************/
+    fprintf(stderr,"\nToy example using model file ***\n");
     s = NULL;
-    s = ReadSearchSpaceFromFile("../model_files/gp_model.txt", _GP_);
+    s = ReadSearchSpaceFromFile(argv[1], _GP_);
+    InitializeSearchSpace(s, _GP_); /* It initalizes the search space */
+    
+    if (CheckSearchSpace(s, _GP_)) runGP(s, Sphere); /* It minimizes function Sphere */
+    else fprintf(stderr,"\nPlease, check your GP configuration prior running it.\n");
+
+    PrintTree2File(s, s->T[s->best], "best_tree.txt"); /* It saves the best tree */
+
     DestroySearchSpace(&s, _GP_);
     /**************************************************************************/
     
