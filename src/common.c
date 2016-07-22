@@ -343,6 +343,7 @@ void DestroySearchSpace(SearchSpace **s, int opt_id){
     if(tmp->UB) free(tmp->UB);
     
     free(tmp);
+    tmp = NULL;
 }
 
 /* It initializes an allocated search space
@@ -812,6 +813,12 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
         case _BHA_:
             s = CreateSearchSpace(m, n, _BHA_);
             s->iterations = iterations;
+        break;
+        case _GP_:
+            s = CreateSearchSpace(m, n, _GP_);
+            s->iterations = iterations;
+            fscanf(fp, "%lf %lf %lf", &(s->pReproduction), &(s->pMutation), &(s->pCrossover)); WaiveComment(fp);
+            fscanf(fp, "%d %d", &(s->min_depth), &(s->max_depth)); WaiveComment(fp);
         break;
         default:
             fprintf(stderr,"\nInvalid optimization identifier @ReadSearchSpaceFromFile.\n");

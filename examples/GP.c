@@ -10,6 +10,9 @@ int main(){
     char **terminal = NULL, **function = NULL;
     double *constant = NULL;
     
+    /* This toy example shows how to use GP using a model file and using features added in the source-code */
+    
+    /* Built-in features ******************************************************/
     /* loading set of terminals */
     terminal = (char **)malloc(n_terminals*sizeof(char *));
     for(i = 0; i < n_terminals; i++)
@@ -54,9 +57,16 @@ int main(){
     if (CheckSearchSpace(s, _GP_)) runGP(s, Sphere); /* It minimizes function Sphere */
     else fprintf(stderr,"\nPlease, check your GP configuration prior running it.\n");
 
-    PrintTree2File(s, s->T[s->best], "best_tree.txt");
+    PrintTree2File(s, s->T[s->best], "best_tree.txt"); /* It saves the best tree */
 
     DestroySearchSpace(&s, _GP_);
+    /**************************************************************************/
+    
+    /* Using model file *******************************************************/
+    s = NULL;
+    s = ReadSearchSpaceFromFile("../model_files/gp_model.txt", _GP_);
+    DestroySearchSpace(&s, _GP_);
+    /**************************************************************************/
     
     return 0;
 }
