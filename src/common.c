@@ -506,7 +506,9 @@ void EvaluateSearchSpace(SearchSpace *s, int opt_id, prtFun Evaluate, va_list ar
                 tmp = RunTree(s, s->T[i]);
                 memcpy(individual->x, tmp, s->n*sizeof(double)); /* It runs over a tree computing the output individual (current solution) */
                 free(tmp);
-        
+                
+                CheckAgentLimits(s, individual);
+                
                 f = Evaluate(individual, arg); /* It executes the fitness function for agent i */
                 
                 if(f < s->tree_fit[i]) /* It updates the fitness value */
