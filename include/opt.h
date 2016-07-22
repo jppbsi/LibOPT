@@ -37,6 +37,10 @@ extern "C" {
 #define _SQRT_ 5
 #define _LOG_ 6
 #define _ABS_ 7
+#define _AND_ 8
+#define _OR_ 9
+#define _XOR_ 10
+#define _NOT_ 11
 /**************************/
 
 #include <stdio.h>

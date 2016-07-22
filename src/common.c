@@ -948,10 +948,14 @@ int getFUNCTIONid(char *s){
                     else if(!strcmp(s,"SQRT")) return _SQRT_;
 			else if(!strcmp(s,"LOG")) return _LOG_;
 			    else if(!strcmp(s,"ABS")) return _ABS_;
-			    else{
-				fprintf(stderr,"\nUndefined function @getFUNCTIONid.");
-				exit(-1);
-			    }
+                                else if(!strcmp(s,"AND")) return _AND_;
+                                    else if(!strcmp(s,"OR")) return _OR_;
+                                        else if(!strcmp(s,"XOR")) return _XOR_;
+                                            else if(!strcmp(s,"NOT")) return _NOT_;
+                                            else{
+                                                fprintf(stderr,"\nUndefined function @getFUNCTIONid.");
+                                		exit(-1);
+                                            }
 }
 
 /* It selects k elements based on the roulette selection method.
@@ -1173,13 +1177,20 @@ double *RunTree(SearchSpace *s, Node *T){
                             if(x) out = f_EXP_(x, s->n);
                             else out = f_EXP_(y, s->n);
                         }
-                        else if(!strcmp(T->elem,"SQRT")){
-                            if(x) out = f_SQRT_(x, s->n);
-                            else out = f_SQRT_(y, s->n);
-                        }else if(!strcmp(T->elem,"LOG")){
-                            if(x) out = f_LOG_(x, s->n);
-                            else out = f_LOG_(y, s->n);
-                        }
+                            else if(!strcmp(T->elem,"SQRT")){
+                                if(x) out = f_SQRT_(x, s->n);
+                                else out = f_SQRT_(y, s->n);
+                            }else if(!strcmp(T->elem,"LOG")){
+                                if(x) out = f_LOG_(x, s->n);
+                                else out = f_LOG_(y, s->n);
+                            }else if(!strcmp(T->elem,"AND")) out = f_AND_(x, y, s->n);
+                                else if(!strcmp(T->elem,"OR")) out = f_OR_(x, y, s->n);
+                                    else if(!strcmp(T->elem,"XOR")) out = f_XOR_(x, y, s->n);
+                                    else if(!strcmp(T->elem,"NOT")){
+                                        if(x) out = f_NOT_(x, s->n);
+                                        else out = f_NOT_(y, s->n);
+                                    }   
+
 	    /* it deallocates the sons of the current one, since they have been used already */
 	    if (x) free(x); 
 	    if (y) free(y);
