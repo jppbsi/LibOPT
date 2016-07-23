@@ -52,6 +52,7 @@ typedef struct SearchSpace_{
     double *g; /* global best agent */
     int best; /* index of the best agent */
     double gfit; /* global best fitness */
+    char is_integer_opt; /* integer-valued optimization problem? */
     
     /* PSO */
     double w; /* inertia weight */

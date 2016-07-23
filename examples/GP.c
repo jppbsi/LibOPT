@@ -50,6 +50,7 @@ int main(int argc, char **argv){
     at random within [0,10]*/
     s = CreateSearchSpace(m, n, _GP_, min_depth, max_depth, n_terminals, N_CONSTANTS, n_functions, terminal, constant, function);
     s->iterations = 10;
+    s->is_integer_opt = 0; /* real-valued optimization problem */
     
     /* Initializing lower and upper bounds */
     for(i = 0; i < s->n; i++){

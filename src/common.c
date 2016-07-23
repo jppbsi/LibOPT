@@ -206,6 +206,7 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...){
     s->n = n;
     s->gfit = DBL_MAX;
     s->iterations = 0;
+    s->is_integer_opt = 0;
     
     /* PSO */
     s->w = NAN;
@@ -379,8 +380,10 @@ void InitializeSearchSpace(SearchSpace *s, int opt_id){
         break;
         case _GP_:
             for(i = 0; i < s->n_terminals; i++){
-                for(j = 0; j < s->n; j++)
-                    s->a[i]->x[j] = GenerateUniformRandomNumber(s->LB[j], s->UB[j]);
+                for(j = 0; j < s->n; j++){
+                    if(s->is_integer_opt) s->a[i]->x[j] = round(GenerateUniformRandomNumber(s->LB[j], s->UB[j]));
+                    else s->a[i]->x[j] = GenerateUniformRandomNumber(s->LB[j], s->UB[j]);
+                }
             }
         break;
     }
@@ -770,6 +773,7 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
     int has_constant = 0;
     double pReproduction, pMutation, pCrossover, **constant = NULL, *LB = NULL, *UB = NULL;
     char line[LINE_SIZE], *pline = NULL, **function = NULL, **terminal = NULL;
+    char is_integer_opt, same_range;
     Node *head = NULL, *tail = NULL, *aux = NULL;
     
     fp = fopen(fileName, "r");
@@ -885,14 +889,25 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
             DestroyTree(&head);
             /*****************************/
         
+            fscanf(fp, "%c %c", &is_integer_opt, &same_range);
+            
             /* loading lower and upper bounds */
             LB = (double *)malloc(n*sizeof(double));
             UB = (double *)malloc(n*sizeof(double));
-            for(j = 0; j < n; j++){
-                fscanf(fp, "%lf %lf", &(LB[j]), &(UB[j]));
-
-                WaiveComment(fp);
+            
+            if(!same_range){ 
+                for(j = 0; j < n; j++){
+                    fscanf(fp, "%lf %lf", &(LB[j]), &(UB[j]));
+                    WaiveComment(fp);
+                }
+            }else{
+                fscanf(fp, "%lf %lf", &(LB[0]), &(UB[0]));
+                for(j = 1; j < n; j++){
+                    LB[j] = LB[0];
+                    UB[j] = UB[0];
+                }
             }
+            
             /* loading constants */
             if(has_constant){
                 constant = (double **)malloc(n*sizeof(double *));
@@ -911,6 +926,7 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
             s->pReproduction = pReproduction;
             s->pMutation = pMutation;
             s->pCrossover = pCrossover;
+            s->is_integer_opt;
             
             for(j = 0; j < s->n; j++){
                 s->LB[j] = LB[j];
