@@ -206,7 +206,7 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...){
     s->n = n;
     s->gfit = DBL_MAX;
     s->iterations = 0;
-    s->is_integer_opt = 0;
+    s->is_integer_opt = 1;
     
     /* PSO */
     s->w = NAN;
@@ -381,8 +381,9 @@ void InitializeSearchSpace(SearchSpace *s, int opt_id){
         case _GP_:
             for(i = 0; i < s->n_terminals; i++){
                 for(j = 0; j < s->n; j++){
-                    if(s->is_integer_opt) s->a[i]->x[j] = round(GenerateUniformRandomNumber(s->LB[j], s->UB[j]));
+                    if(!s->is_integer_opt) s->a[i]->x[j] = round(GenerateUniformRandomNumber(s->LB[j], s->UB[j]));
                     else s->a[i]->x[j] = GenerateUniformRandomNumber(s->LB[j], s->UB[j]);
+                    fprintf(stderr, "%lf\n", s->a[i]->x[j]);
                 }
             }
         break;
@@ -770,10 +771,9 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
     FILE *fp = NULL;
     SearchSpace *s = NULL;
     int i, j, m, n, iterations, n_terminals = 0, n_functions = 0, min_depth, max_depth;
-    int has_constant = 0;
+    int has_constant = 0, is_integer_opt, same_range;
     double pReproduction, pMutation, pCrossover, **constant = NULL, *LB = NULL, *UB = NULL;
     char line[LINE_SIZE], *pline = NULL, **function = NULL, **terminal = NULL;
-    char is_integer_opt, same_range;
     Node *head = NULL, *tail = NULL, *aux = NULL;
     
     fp = fopen(fileName, "r");
@@ -889,19 +889,21 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
             DestroyTree(&head);
             /*****************************/
         
-            fscanf(fp, "%c %c", &is_integer_opt, &same_range);
+            fscanf(fp, "%d %d", &is_integer_opt, &same_range);
+            WaiveComment(fp);
             
             /* loading lower and upper bounds */
             LB = (double *)malloc(n*sizeof(double));
             UB = (double *)malloc(n*sizeof(double));
             
-            if(!same_range){ 
+            if(same_range){ 
                 for(j = 0; j < n; j++){
                     fscanf(fp, "%lf %lf", &(LB[j]), &(UB[j]));
                     WaiveComment(fp);
                 }
             }else{
                 fscanf(fp, "%lf %lf", &(LB[0]), &(UB[0]));
+                WaiveComment(fp);
                 for(j = 1; j < n; j++){
                     LB[j] = LB[0];
                     UB[j] = UB[0];
@@ -926,7 +928,7 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
             s->pReproduction = pReproduction;
             s->pMutation = pMutation;
             s->pCrossover = pCrossover;
-            s->is_integer_opt;
+            s->is_integer_opt = is_integer_opt;
             
             for(j = 0; j < s->n; j++){
                 s->LB[j] = LB[j];
@@ -1196,17 +1198,18 @@ double *RunTree(SearchSpace *s, Node *T){
                             else if(!strcmp(T->elem,"SQRT")){
                                 if(x) out = f_SQRT_(x, s->n);
                                 else out = f_SQRT_(y, s->n);
-                            }else if(!strcmp(T->elem,"LOG")){
-                                if(x) out = f_LOG_(x, s->n);
-                                else out = f_LOG_(y, s->n);
-                            }else if(!strcmp(T->elem,"AND")) out = f_AND_(x, y, s->n);
-                                else if(!strcmp(T->elem,"OR")) out = f_OR_(x, y, s->n);
-                                    else if(!strcmp(T->elem,"XOR")) out = f_XOR_(x, y, s->n);
-                                    else if(!strcmp(T->elem,"NOT")){
-                                        if(x) out = f_NOT_(x, s->n);
-                                        else out = f_NOT_(y, s->n);
-                                    }   
-
+                            }
+                                else if(!strcmp(T->elem,"LOG")){
+                                    if(x) out = f_LOG_(x, s->n);
+                                    else out = f_LOG_(y, s->n);
+                                }
+                                    else if(!strcmp(T->elem,"AND")) out = f_AND_(x, y, s->n);
+                                        else if(!strcmp(T->elem,"OR")) out = f_OR_(x, y, s->n);
+                                            else if(!strcmp(T->elem,"XOR")) out = f_XOR_(x, y, s->n);
+                                                else if(!strcmp(T->elem,"NOT")){
+                                                    if(x) out = f_NOT_(x, s->n);
+                                                    else out = f_NOT_(y, s->n);
+                                                }   
 	    /* it deallocates the sons of the current one, since they have been used already */
 	    if (x) free(x); 
 	    if (y) free(y);

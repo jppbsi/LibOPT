@@ -3034,7 +3034,7 @@ x, y: arrays
 n: dimension */
 double *f_AND_(double *x, double *y, int n){
     if(!x || !y){
-        fprintf(stderr,"\nInvalid input parameters @f_DIV_.\n");
+        fprintf(stderr,"\nInvalid input parameters @f_AND_.\n");
         exit(-1);
     }
     
@@ -3054,7 +3054,7 @@ x, y: arrays
 n: dimension */
 double *f_OR_(double *x, double *y, int n){
     if(!x || !y){
-        fprintf(stderr,"\nInvalid input parameters @f_DIV_.\n");
+        fprintf(stderr,"\nInvalid input parameters @f_OR_.\n");
         exit(-1);
     }
     
@@ -3074,7 +3074,7 @@ x, y: arrays
 n: dimension */
 double *f_XOR_(double *x, double *y, int n){
     if(!x || !y){
-        fprintf(stderr,"\nInvalid input parameters @f_DIV_.\n");
+        fprintf(stderr,"\nInvalid input parameters @f_XOR_.\n");
         exit(-1);
     }
     
@@ -3094,7 +3094,7 @@ x: array
 n: dimension */
 double *f_NOT_(double *x, int n){
     if(!x){
-        fprintf(stderr,"\nInvalid input parameters @f_LOG_.\n");
+        fprintf(stderr,"\nInvalid input parameters @f_NOT_.\n");
         exit(-1);
     }
     
