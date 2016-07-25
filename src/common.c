@@ -383,7 +383,6 @@ void InitializeSearchSpace(SearchSpace *s, int opt_id){
                 for(j = 0; j < s->n; j++){
                     if(!s->is_integer_opt) s->a[i]->x[j] = round(GenerateUniformRandomNumber(s->LB[j], s->UB[j]));
                     else s->a[i]->x[j] = GenerateUniformRandomNumber(s->LB[j], s->UB[j]);
-                    fprintf(stderr, "%lf\n", s->a[i]->x[j]);
                 }
             }
         break;
