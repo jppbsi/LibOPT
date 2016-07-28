@@ -271,6 +271,8 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...){
             s->tree_fit = (double *)malloc(s->m*sizeof(double));
             for(i = 0; i < s->m; i++)
                 s->tree_fit[i] = DBL_MAX;
+                
+            s->g = (double *)calloc(s->n,sizeof(double));
         }
         
     }
@@ -343,6 +345,7 @@ void DestroySearchSpace(SearchSpace **s, int opt_id){
                 free(tmp->constant);
             }
             if(tmp->tree_fit) free(tmp->tree_fit);
+            if(tmp->g) free(tmp->g);
         }
     }
     
@@ -520,6 +523,8 @@ void EvaluateSearchSpace(SearchSpace *s, int opt_id, prtFun Evaluate, va_list ar
                 if(s->tree_fit[i] < s->gfit){ /* It updates the global best value */
                     s->best = i;
                     s->gfit = s->tree_fit[i];
+                    for(j = 0; j < s->n; j++)
+                        s->g[j] = individual->x[j];
                 }
                 
                 va_copy(arg, argtmp);
