@@ -8,7 +8,7 @@ AIWPSO implementation is based on the paper available at http://ceit.aut.ac.ir/~
 
 /* PSO-related functions */
 void UpdateParticleVelocity(SearchSpace *s, int i); /* It updates the velocity of an agent (particle) */
-void UpdateParticlePosition(SearchSpace *S, int i); /* It updates the position of an agent (particle) */
+void UpdateParticlePosition(SearchSpace *s, int i); /* It updates the position of an agent (particle) */
 void runPSO(SearchSpace *s, prtFun Evaluate, ...); /* It executes the Particle Swarm Optimization for function minimization */
 /*************************/
 
