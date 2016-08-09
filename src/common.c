@@ -2,8 +2,8 @@
 #include "function.h"
 
 /* number of arguments (descendants) required by each terminal function in GP in the following order:
-SUM, SUB, MUL, DIV, EXP, SQRT, LOG and ABS */
-const int N_ARGS_FUNCTION[] =  {2,2,2,2,1,1,1,1};
+SUM, SUB, MUL, DIV, EXP, SQRT, LOG, ABS, AND, OR, XOR and NOT */
+const int N_ARGS_FUNCTION[] =  {2,2,2,2,1,1,1,1,2,2,2,1};
 
 /* Agent-related functions */
 /* It creates an agent
@@ -263,7 +263,7 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...){
             s->T = (Node **)malloc(s->m*sizeof(Node *));
             for(i = 0; i < s->m; i++)
                 s->T[i] = GROW(s, s->min_depth, s->max_depth);
-            
+                            
             s->a = (Agent **)malloc(s->n_terminals*sizeof(Agent *));
             for(i = 0; i < s->n_terminals; i++)
                 s->a[i] = CreateAgent(s->n, opt_id);
