@@ -1393,7 +1393,7 @@ Node **Crossover(Node *Father, Node *Mother, float p){
 }
 
 /* It returns the parent of the pos-th node using a prefix travel
-Paremeters:
+Parameters:
 T: pointer to the tree
 pos: position of the node to be retrieved
 left_son: flag to identify whether the pos-th node is a left-son or not
@@ -1427,5 +1427,19 @@ Node *PreFixPositioningTree(Node *T, int pos, char *left_son, int status, int *c
             }
         }
     }else return NULL;
+}
+
+/* It performs the Geometric Semantic Genetic Programming crossover operator for boolean functions
+Parameters:
+s: search space
+T1: pointer to the first tree
+T2: pointer to the second tree */
+Node *SGXB(SearchSpace *s, Node *T1, Node *T2){
+    Node *T3 = NULL, *TR = NULL;
+    
+    /* It generates a random tree. It is expected a random tree with boolean functions if properly defined when creating the search space. */
+    //TR = GROW(s); 
+    
+    return T3;
 }
 /***********************/
