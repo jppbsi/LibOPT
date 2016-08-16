@@ -1457,15 +1457,47 @@ Node *SGXB(SearchSpace *s, Node *T1_tmp, Node *T2_tmp){
     T3->left = LeftTree; LeftTree->parent = T3;
     LeftTree->left = T1; T1->parent = LeftTree;
     LeftTree->right = TR; TR->parent = LeftTree; TR->left_son = 0;
-    
-    
+        
     RightTree = CreateNode("AND", getFUNCTIONid("AND"), FUNCTION); /* It creates the tree on the right */
-    NOT = CreateNode("NOT", getFUNCTIONid("NOT"), FUNCTION);
     T3->right = RightTree; RightTree->parent = T3; RightTree->left_son = 0;
+    NOT = CreateNode("NOT", getFUNCTIONid("NOT"), FUNCTION);
     RightTree->left = NOT; NOT->parent = RightTree;
     RightTree->right = T2; T2->parent = RightTree; T2->left_son = 0;
     NOT->left = TR_cpy; TR_cpy->parent = NOT;
     
     return T3;
+}
+
+/* It performs the Geometric Semantic Genetic Programming mutation operator for boolean functions
+Parameters:
+s: search space
+T: pointer to the tree */
+Node *SGMB(SearchSpace *s, Node *T_tmp){
+    Node *TM = NULL, *T = NULL, *NOT_M = NULL;
+    double r;
+    
+    if(!s || !T_tmp){
+        fprintf(stderr,"\nInput error @SGMB.\n");
+        return NULL;
+    }
+    
+    r = randinter(0,1);
+    T = CopyTree(T_tmp);
+    
+    if(r <= 0.5){
+        TM = CreateNode("OR", getFUNCTIONid("OR"), FUNCTION);
+        TM->parent = NULL;
+        TM->left = T; T->parent = TM;
+        //TM->right = M; M->parent = TM; M->left_son = 0;
+    }else{
+        TM = CreateNode("AND", getFUNCTIONid("AND"), FUNCTION);
+        TM->parent = NULL;
+        TM->left = T; T->parent = TM;
+        NOT_M = CreateNode("NOT", getFUNCTIONid("NOT"), FUNCTION);
+        TM->right = NOT_M; NOT_M->parent = TM; NOT_M->left_son = 0;
+        //NOT_M->left = NOTM; NOTM->parent = NOT_M;
+    }
+    
+    return TM;
 }
 /***********************/
