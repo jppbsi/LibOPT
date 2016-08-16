@@ -140,7 +140,7 @@ int getSizeTree(Node *T); /* It returns the size of a tree (number of nodes) */
 Node *Mutation(SearchSpace *s, Node *T, float p); /* It performs the mutation of a tree T at the p-th node */
 Node **Crossover(Node *Father, Node *Mother, float p); /* It performs the crossover between father and mother trees */
 Node *PreFixPositioningTree(Node *T, int pos, char *left_son, int status, int *ctr); /* It returns the parent of the pos-th node using a prefix travel */
-Node *SGXB(SearchSpace *s, Node *T1, Node *T2); /* It performs the Geometric Semantic Genetic Programming crossover operator for boolean functions */
+Node *SGXB(SearchSpace *s, Node *T1_tmp, Node *T2_tmp); /* It performs the Geometric Semantic Genetic Programming crossover operator for boolean functions */
 /***********************/
 
 /* Implementations

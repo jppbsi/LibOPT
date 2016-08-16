@@ -1434,11 +1434,37 @@ Parameters:
 s: search space
 T1: pointer to the first tree
 T2: pointer to the second tree */
-Node *SGXB(SearchSpace *s, Node *T1, Node *T2){
-    Node *T3 = NULL, *TR = NULL;
+Node *SGXB(SearchSpace *s, Node *T1_tmp, Node *T2_tmp){
+    Node *T3 = NULL, *TR = NULL, *TR_cpy = NULL, *LeftTree = NULL;
+    Node *RightTree = NULL, *T1 = NULL, *T2 = NULL, *NOT = NULL;
+    
+    if(!s || !T1_tmp || !T2_tmp){
+        fprintf(stderr,"\nInput error @SGXB.\n");
+        return NULL;
+    }
+    
+    T1 = CopyTree(T1_tmp);
+    T2 = CopyTree(T2_tmp);
     
     /* It generates a random tree. It is expected a random tree with boolean functions if properly defined when creating the search space. */
-    //TR = GROW(s); 
+    TR = GROW(s, s->min_depth, s->max_depth);
+    TR_cpy = CopyTree(TR);
+    
+    T3 = CreateNode("OR", getFUNCTIONid("OR"), FUNCTION); /* It creates the root */
+    T3->parent = NULL;
+    
+    LeftTree = CreateNode("AND", getFUNCTIONid("AND"), FUNCTION); /* It creates the tree on the left */    
+    T3->left = LeftTree; LeftTree->parent = T3;
+    LeftTree->left = T1; T1->parent = LeftTree;
+    LeftTree->right = TR; TR->parent = LeftTree; TR->left_son = 0;
+    
+    
+    RightTree = CreateNode("AND", getFUNCTIONid("AND"), FUNCTION); /* It creates the tree on the right */
+    NOT = CreateNode("NOT", getFUNCTIONid("NOT"), FUNCTION);
+    T3->right = RightTree; RightTree->parent = T3; RightTree->left_son = 0;
+    RightTree->left = NOT; NOT->parent = RightTree;
+    RightTree->right = T2; T2->parent = RightTree; T2->left_son = 0;
+    NOT->left = TR_cpy; TR_cpy->parent = NOT;
     
     return T3;
 }
