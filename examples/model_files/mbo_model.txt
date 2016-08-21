@@ -1,0 +1,4 @@
+10 2 10 #<n_birds> <dimension> <max_iterations>
+10 8 10 #<k> <X> <M>
+-4.5 4.5 #<LB> <UB> x[0]
+-4.5 4.5 #<LB> <UB> x[1]
