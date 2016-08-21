@@ -850,7 +850,7 @@ opt_id: identifier of the optimization technique */
 SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
     FILE *fp = NULL;
     SearchSpace *s = NULL;
-    int i, j, m, n, iterations, n_terminals = 0, n_functions = 0, min_depth, max_depth;
+    int i, j, m, n, k, iterations, n_terminals = 0, n_functions = 0, min_depth, max_depth;
     int has_constant = 0, is_integer_opt, same_range;
     double pReproduction, pMutation, pCrossover, **constant = NULL, *LB = NULL, *UB = NULL;
     char line[LINE_SIZE], *pline = NULL, **function = NULL, **terminal = NULL;
@@ -1016,6 +1016,13 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
             }
             free(LB);
             free(UB);
+        break;
+	case _MBO_:
+            fscanf(fp, "%d", &k);
+	    s = CreateSearchSpace(m, n, _MBO_, k);
+            s->iterations = iterations;   
+	    fscanf(fp,"%d %d", &(s->X), &(s->M));
+            WaiveComment(fp);
         break;
         default:
             fprintf(stderr,"\nInvalid optimization identifier @ReadSearchSpaceFromFile.\n");
