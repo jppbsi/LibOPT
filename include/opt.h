@@ -14,6 +14,7 @@ extern "C" {
 #define _GP_ 6 /* Genetic Programming */
 #define _GA_ 7 /* Genetic Algorithm */
 #define _BHA_ 8 /* Black Hole Algorithm */
+#define _MBO_ 9 /* Migrating Bird Optimization */
 /**************************/
 
 /* GP type nodes */
