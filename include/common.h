@@ -38,7 +38,10 @@ typedef struct Agent_{
     double pfit; /* fitness value of the previous iteration */
     
     /* BA */
-    double f; /* frequency */    
+    double f; /* frequency */
+    
+    /* MBO */
+    struct Agent_ **nb; /* array of pointers to neighbours */
 }Agent;
 
 /* It defines the search space */
@@ -93,7 +96,12 @@ typedef struct SearchSpace_{
     double **constant; /* matrix with the random constants */
     Node **T; /* pointer to the tree */
     double *tree_fit; /* fitness of each tree (in GP, the number of agents is different from the number of trees) */
-
+    
+    /* MBO */
+    int k; /* number of neighbours solutions to be considered */
+    int X; /* number of neighbor solutions to be shared with the next solution */
+    int M; /* number of tours, i.e., the number of iterations for the leader */
+    int leftSide; /* a flag to know what bird will be changed */
 }SearchSpace;
 
 typedef double (*prtFun)(Agent *, va_list arg); /* Pointer to the function used to evaluate agents */

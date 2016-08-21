@@ -23,6 +23,7 @@ Agent *CreateAgent(int n, int opt_id){
     a->fit = DBL_MAX;
     a->pfit = DBL_MAX;
     a->n = n;
+    a->nb = NULL;
     
     switch (opt_id){
         case _PSO_:
@@ -33,6 +34,7 @@ Agent *CreateAgent(int n, int opt_id){
         case _GP_:
         case _GA_:
         case _BHA_:
+	case _MBO_:
             a->x = (double *)calloc(n,sizeof(double));
             if(opt_id != _GP_) a->v = (double *)calloc(n,sizeof(double));
             if(opt_id == _PSO_) a->xl = (double *)calloc(n,sizeof(double));
@@ -69,6 +71,7 @@ void DestroyAgent(Agent **a, int opt_id){
         case _GP_:
         case _GA_:
         case _BHA_:
+	case _MBO_:
             if(tmp->x) free(tmp->x);
             if(tmp->v) free(tmp->v);
             if(opt_id == _PSO_) if(tmp->xl) free(tmp->xl);
@@ -170,6 +173,8 @@ Agent *GenerateNewAgent(SearchSpace *s, int opt_id){
         case _BHA_:
         	a = CreateAgent(s->n, _BHA_);
         break;
+	case _MBO_:
+        break;
         default:
             fprintf(stderr,"\nInvalid optimization identifier @GenerateNewAgent.\n");
             return NULL;
@@ -198,7 +203,7 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...){
         fprintf(stderr,"\nInvalid parameters @CreateSearchSpace.\n");
         return NULL;
     }
-    int i;
+    int i, j;
     
     va_start(arg, opt_id);
     s = (SearchSpace *)malloc(sizeof(SearchSpace));
@@ -235,12 +240,26 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...){
     s->pMutation = NAN;
     s->pCrossover = NAN;
     
+    /* MBO */
+    s->k = va_arg(arg, int);
+    s->X = NAN;
+    s->M = NAN;
+    s->leftSide = 1;
+    
     if(opt_id != _GP_){ /* GP uses a different structure than that of others */
         s->a = (Agent **)malloc(s->m*sizeof(Agent *));
         s->a[0] = CreateAgent(s->n, opt_id);
         if(s->a[0]){ /* Here, we verify whether opt_id is valid or not. In the latter case, function CreateAgent returns NULL. */
             for(i = 1; i < s->m; i++)
                 s->a[i] = CreateAgent(s->n, opt_id);
+		
+	    if(opt_id == _MBO_){ /* We create the k neighbours of each agent*/
+		for(i = 0; i < s->m; i++){
+		    s->a[i]->nb = (Agent **)malloc(s->k*sizeof(Agent *));
+		    for(j = 0; j < s->k; j++)
+			s->a[i]->nb[j] = CreateAgent(s->n, opt_id);	
+		}
+	    }
         }else{
             free(s->a);
             free(s);
@@ -291,7 +310,7 @@ s: address of the search space to be deallocated
 opt_id: identifier of the optimization technique */
 void DestroySearchSpace(SearchSpace **s, int opt_id){
     SearchSpace *tmp = NULL;
-    int i;
+    int i, j;
     
     tmp = *s;
     if(!tmp){
@@ -300,7 +319,14 @@ void DestroySearchSpace(SearchSpace **s, int opt_id){
     }
     
     if(opt_id != _GP_){ /* GP uses a different structure than that of others */
-    
+	if(opt_id == _MBO_){ /* We free the neighbours allocation */
+	    for(i = 0; i < tmp->m; i++){
+		for(j = 0; j < tmp->k; j++)
+		    if(tmp->a[i]->nb[j]) DestroyAgent(&(tmp->a[i]->nb[j]), opt_id);
+		free(tmp->a[i]->nb);
+	    }    
+	}
+	
         for(i = 0; i < tmp->m; i++)
             if(tmp->a[i]) DestroyAgent(&(tmp->a[i]), opt_id);
         free(tmp->a);
@@ -313,6 +339,7 @@ void DestroySearchSpace(SearchSpace **s, int opt_id){
             case _CS_:
             case _GA_:
             case _BHA_:
+	    case _MBO_:
                 if(tmp->g) free(tmp->g);
             break;
             default:
@@ -376,6 +403,7 @@ void InitializeSearchSpace(SearchSpace *s, int opt_id){
         case _CS_:
         case _GA_:
         case _BHA_:
+	case _MBO_:
             for(i = 0; i < s->m; i++){
                 for(j = 0; j < s->n; j++)
                     s->a[i]->x[j] = GenerateUniformRandomNumber(s->LB[j], s->UB[j]);
@@ -402,7 +430,7 @@ void ShowSearchSpace(SearchSpace *s, int opt_id){
         exit(-1);
     }
     
-    int i, j;
+    int i, j, k;
     fprintf(stderr,"\nSearch space with %d agents and %d decision variables\n", s->m, s->n);
     
     switch (opt_id){
@@ -423,6 +451,24 @@ void ShowSearchSpace(SearchSpace *s, int opt_id){
         case _GP_:
             for(i = 0; i < s->m; i++)
                 fprintf(stderr,"\nAgent %d-> fitness value %lf", i, s->tree_fit[i]);
+        break;
+	case _MBO_:
+            for(i = 0; i < s->m; i++){
+                fprintf(stderr,"\nAgent %d-> ", i);
+                for(j = 0; j < s->n; j++)
+                    fprintf(stderr,"x[%d]: %f   ", j, s->a[i]->x[j]);
+                fprintf(stderr,"fitness value: %f", s->a[i]->fit);
+		
+		if(s->a[i]->nb[0] != NULL){ /* It shows the neighbours */
+		    for(k = 0; k < s->k; k++) { /* Leader has k neighbours*/
+	    	    fprintf(stderr,"\n\tNeighbour %d-> ", k);
+			for(j = 0; j < s->n; j++)
+			    fprintf(stderr,"x[%d]: %f   ", j, s->a[i]->nb[k]->x[j]);
+			fprintf(stderr,"fitness value: %f", s->a[i]->nb[k]->fit);
+		    }
+		    fprintf(stderr,"\n");
+		}
+            }
         break;
         default:
             fprintf(stderr,"\n Invalid optimization identifier @ShowSearchSpace.\n");
@@ -530,6 +576,14 @@ void EvaluateSearchSpace(SearchSpace *s, int opt_id, prtFun Evaluate, va_list ar
                 va_copy(arg, argtmp);
             }
             DestroyAgent(&individual, _GP_);
+        break;
+	case _MBO_:
+            for(i = 0; i < s->m; i++){
+                f = Evaluate(s->a[i], arg); /* It executes the fitness function for agent i */
+                s->a[i]->fit = f; /* It updates the fitness value of actual agent i */
+        
+                va_copy(arg, argtmp);
+            }
         break;
         default:
             fprintf(stderr,"\n Invalid optimization identifier @EvaluateSearchSpace.\n");
@@ -650,6 +704,28 @@ char CheckSearchSpace(SearchSpace *s, int opt_id){
         break;
         case _BHA_:
         break;
+	case _MBO_:
+            if(isnan(s->k)){
+                fprintf(stderr,"\n  -> Number of neighbours solutions to be considered undefined.");
+                OK = 0;
+            }
+            if(isnan(s->X)){
+                fprintf(stderr,"\n  -> Number of neighbour solutions to be shared with the next solution undefined.");
+                OK = 0;
+            }
+            if(isnan(s->M)){
+                fprintf(stderr,"\n  -> Number of tours undefined.");
+                OK = 0;
+            }
+	    if(s->X >= s->k){
+                fprintf(stderr,"\n  -> Number of neighbour shared should be smaller than the number of neighbours considered.");
+                OK = 0;
+            }
+	    if(s->m < 3){
+                fprintf(stderr,"\n  -> Number of birds should be bigger than or equal to 3.");
+                OK = 0;
+            }
+	break;
         default:
             fprintf(stderr,"\n Invalid optimization identifier @CheckSearchSpace.\n");
             return 0;
