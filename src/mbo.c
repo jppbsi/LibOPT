@@ -1,14 +1,5 @@
 #include "mbo.h"
 
-/* Addicional function to qsort function */
-int compare(const void *a, const void *b) {
-    Agent *agentA = *(Agent * const *)a;
-    Agent *agentB = *(Agent * const *)b;
-    
-    if ((double)(agentA->fit) > (double)(agentB->fit)) return 1;
-    else return -1;
-}
-
 /* It updates the neighbours of a single bird
 Parameters:
 s: search space
@@ -34,7 +25,7 @@ void UpdateNeighbours(SearchSpace *s, int b, int k, prtFun Evaluate, va_list arg
         
         va_copy(arg, argtmp);
     }
-    qsort(s->a[b]->nb, s->k, sizeof(Agent *), compare); /* It sorts the neighbours */
+    qsort(s->a[b]->nb, s->k, sizeof(Agent **), SortAgent); /* It sorts the neighbours */
 }
 
 
@@ -48,28 +39,28 @@ void ShareNeighbours(SearchSpace *s){
     }
     int i, j, k;
     
-    for(i = 0; i < s->X; i++){ /* It distribuites the X best neighbours (except the first) to the following birds of leader (1rst and 2nd) */
+    for(i = 0; i < s->X; i++){ /* It distribuites the X best neighbours (except the first) to the following birds of leader (1st and 2nd) */
         for(j = 0; j < s->n; j++)
             s->a[1]->nb[(s->k)-(s->X)+i]->x[j] = s->a[2]->nb[(s->k)-(s->X)+i]->x[j] = s->a[0]->nb[i+1]->x[j];
         s->a[1]->nb[(s->k)-(s->X)+i]->fit = s->a[2]->nb[(s->k)-(s->X)+i]->fit = s->a[0]->nb[i+1]->fit;
     }
-    qsort(s->a[1]->nb, s->k, sizeof(Agent *), compare); /* It sorts the new neighbours */
-    qsort(s->a[2]->nb, s->k, sizeof(Agent *), compare);
+    qsort(s->a[1]->nb, s->k, sizeof(Agent **), SortAgent); /* It sorts the new neighbours */
+    qsort(s->a[2]->nb, s->k, sizeof(Agent **), SortAgent);
     
     if(s->m > 3){
-        for(k = 1; k < s->m-2; k++){ /* It distribuites the X best neighbours (except the first) to the following birds */
+        for(k = 1; k < s->m-2; k++){ /* It distributes the X best neighbours (except the first) to the following birds */
             for(i = 0; i < s->X; i++){
                 for(j = 0; j < s->n; j++)
                     s->a[k+2]->nb[(s->k)-(s->X)+i]->x[j] = s->a[k]->nb[i+1]->x[j];
                 s->a[k+2]->nb[(s->k)-(s->X)+i]->fit = s->a[k]->nb[i+1]->fit;
             }
-            qsort(s->a[k+2]->nb, s->k, sizeof(Agent *), compare); /* It sorts the new neighbours */
+            qsort(s->a[k+2]->nb, s->k, sizeof(Agent **), SortAgent); /* It sorts the new neighbours */
         }
     }
 }
 
 
-/* It trys to replace each bird for its best neighbour
+/* It tries to replace each bird for its best neighbour
 Parameters:
 s: search space */
 void ImproveBirds(SearchSpace *s){
@@ -108,7 +99,7 @@ void runMBO(SearchSpace *s, prtFun Evaluate, ...){
     }
     
     EvaluateSearchSpace(s, _MBO_, Evaluate, arg); /* Initial evaluation */
-    qsort(s->a, s->m, sizeof(Agent *), compare); /* Initial bird sort */
+    qsort(s->a, s->m, sizeof(Agent **), SortAgent); /* Initial bird sort */
     
     for(t = 1; t <= s->iterations; t++){
         fprintf(stderr,"\nRunning iteration %d/%d ... ", t, s->iterations);
@@ -126,7 +117,7 @@ void runMBO(SearchSpace *s, prtFun Evaluate, ...){
             ShareNeighbours(s);
             ImproveBirds(s);
         }
-        qsort(s->a, s->m, sizeof(Agent *), compare); /* It replaces the leader with the best bird and sorts the birds flock*/       			
+        qsort(s->a, s->m, sizeof(Agent **), SortAgent); /* It replaces the leader with the best bird and sorts the birds flock*/       			
 	//ShowSearchSpace(s, _MBO_);
 	fprintf(stderr, "OK (minimum fitness value %lf)", s->a[0]->fit);
     }

@@ -99,9 +99,9 @@ typedef struct SearchSpace_{
     
     /* MBO */
     int k; /* number of neighbours solutions to be considered */
-    int X; /* number of neighbor solutions to be shared with the next solution */
+    int X; /* number of neighbour solutions to be shared with the next solution */
     int M; /* number of tours, i.e., the number of iterations for the leader */
-    int leftSide; /* a flag to know what bird will be changed */
+    int leftSide; /* flag to know which bird will be changed */
 }SearchSpace;
 
 typedef double (*prtFun)(Agent *, va_list arg); /* Pointer to the function used to evaluate agents */
