@@ -6,6 +6,7 @@
 /* In GP structure, we have the agents and the nodes. The agents are used according to the other
 techniques either, but the nodes are employed to build the tree-like representation. */
 
+void runBGSGP(SearchSpace *s, prtFun Evaluate, ...); /* It executes the Binary Geometric Semantic Genetic Programming for function minimization */
 void runGP(SearchSpace *s, prtFun Evaluate, ...); /* It executes the Genetic Programming for function minimization */
 
 #endif
