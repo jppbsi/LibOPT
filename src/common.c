@@ -1129,22 +1129,33 @@ int *RouletteSelection(SearchSpace *s, int k){
 Parameters:
 value: content of the node
 node_id: identifier of the node id, i.e. its position in the array of terminals, functions or constants
-status: TERMINAL|FUNCTION|CONSTANT */
-Node *CreateNode(char *value, int node_id, char status){
+status: TERMINAL|FUNCTION|CONSTANT|NEW_TERMINAL
+n_decision_variables: only when status = NEW_TERMINAL */
+Node *CreateNode(char *value, int node_id, char status, ...){
     Node *tmp = NULL;
     tmp = (Node *)malloc(sizeof(Node));
+    va_list arg;
+    int n_decision_variables;
     
     if(!value){
         fprintf(stderr,"\nInvalid input @CreateNode.\n");
         return NULL;
     }
 
+    va_start(arg, status);
+    n_decision_variables = va_arg(arg, int);
+    
     tmp->id = node_id;
     tmp->left = tmp->right = tmp->parent = NULL;
     tmp->status = status;
     tmp->left_son = 1; /* by default, every node is a left node */
     tmp->elem = (char *)malloc((strlen(value)+1)*sizeof(char));
     strcpy(tmp->elem, value);
+    
+    tmp->val = NULL;
+    if(status == NEW_TERMINAL) tmp->val = (double *)malloc(n_decision_variables*sizeof(double));
+    
+    va_end(arg);
     
     return tmp;
 }
@@ -1206,6 +1217,7 @@ void DestroyTree(Node **T){
         DestroyTree(&(*T)->left);
         DestroyTree(&(*T)->right);
 	free((*T)->elem);
+        if((*T)->status == NEW_TERMINAL) free((*T)->val);
         free(*T);
         *T = NULL;
     }
@@ -1263,14 +1275,19 @@ double *RunTree(SearchSpace *s, Node *T){
 	x = RunTree(s, T->left); /* It runs over the subtree on the left */
 	y = RunTree(s, T->right); /* It runs over the subtree on the right */
 	
-	if(T->status == TERMINAL || T->status == CONSTANT){
+	if(T->status == TERMINAL || T->status == CONSTANT || T->status == NEW_TERMINAL){
             out = (double *)calloc(s->n,sizeof(double));
 	    if(T->status == CONSTANT){
                 for(i = 0; i < s->n; i++)
                     out[i] = s->constant[i][T->id];
 	    }else{
-                for(i = 0; i < s->n; i++)
-                    out[i] = s->a[T->id]->x[i];
+                if(T->status == NEW_TERMINAL){
+                    for(i = 0; i < s->n; i++)
+                        out[i] = T->val[i];
+                }else{
+                    for(i = 0; i < s->n; i++)
+                        out[i] = s->a[T->id]->x[i];
+                }
 	    }
 	    return out;
 	}else{
@@ -1558,6 +1575,7 @@ T: pointer to the tree */
 Node *SGMB(SearchSpace *s, Node *T_tmp){
     Node *TM = NULL, *T = NULL, *M = NULL, *NOT = NULL;
     double r;
+    int i;
     
     if(!s || !T_tmp){
         fprintf(stderr,"\nInput error @SGMB.\n");
@@ -1567,7 +1585,9 @@ Node *SGMB(SearchSpace *s, Node *T_tmp){
     r = randinter(0,1);
     T = CopyTree(T_tmp);
     
-    M = CreateNode("TMP", 0, TERMINAL);
+    M = CreateNode("TMP", 0, NEW_TERMINAL, s->n);
+    for(i = 0; i < s->n; i++)
+        M->val[i] = round(GenerateUniformRandomNumber(s->LB[0], s->UB[0])); /* Creating a random minterm */
     
     if(r <= 0.5){
         TM = CreateNode("OR", getFUNCTIONid("OR"), FUNCTION);

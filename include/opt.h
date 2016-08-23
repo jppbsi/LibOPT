@@ -21,6 +21,7 @@ extern "C" {
 #define TERMINAL 0
 #define FUNCTION 1
 #define CONSTANT 2
+#define NEW_TERMINAL 3
 #define TERMINAL_LENGTH 16
 /*****************/
 

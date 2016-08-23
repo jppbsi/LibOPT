@@ -14,6 +14,7 @@ typedef struct _Node{
     int id; /* Identifier of the node (its position in the array of nodes -- it depends on its status) */
     char left_son; /* Flag to identify whether the node is a son placed on the left or on the right */
     struct _Node *right, *left, *parent; /* Pointers to the subtrees on the right, left and parent */
+    double *val; /* used for Geometric Semantic GP */
 }Node;
 
 /* It defines a general-purpose structure */
@@ -136,7 +137,7 @@ int *RouletteSelection(SearchSpace *s, int k); /* It selects k elements based on
 /**************************/
 
 /* Tree-related functions */
-Node *CreateNode(char *value, int node_id, char status); /* It creates a tree node */
+Node *CreateNode(char *value, int node_id, char status, ...); /* It creates a tree node */
 Node *GROW(SearchSpace *s, int min_depth, int max_depth); /* It creates a random tree based on the GROW algorithm */
 void DestroyTree(Node **T); /* It deallocates a tree */
 void PrintTree2File(SearchSpace *s, Node *T, char *fileName); /* It stores a tree in a text file */
