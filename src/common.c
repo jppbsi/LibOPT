@@ -412,7 +412,7 @@ void InitializeSearchSpace(SearchSpace *s, int opt_id){
         case _GP_:
             for(i = 0; i < s->n_terminals; i++){
                 for(j = 0; j < s->n; j++){
-                    if(!s->is_integer_opt) s->a[i]->x[j] = round(GenerateUniformRandomNumber(s->LB[j], s->UB[j]));
+                    if(s->is_integer_opt) s->a[i]->x[j] = round(GenerateUniformRandomNumber(s->LB[j], s->UB[j]));
                     else s->a[i]->x[j] = GenerateUniformRandomNumber(s->LB[j], s->UB[j]);
                 }
             }
