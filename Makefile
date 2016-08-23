@@ -77,9 +77,6 @@ $(OBJ)/bha.o: $(SRC)/bha.c
 $(OBJ)/mbo.o: $(SRC)/mbo.c
 	$(CC) $(FLAGS) -I $(INCLUDE) -c $(SRC)/mbo.c -o $(OBJ)/mbo.o
 
-$(OBJ)/gsgp.o: $(SRC)/gsgp.c
-	$(CC) $(FLAGS) -I $(INCLUDE) -c $(SRC)/gsgp.c -o $(OBJ)/gsgp.o
-
 PSO: examples/PSO.c
 	$(CC) $(FLAGS) examples/PSO.c -o examples/bin/PSO -I $(INCLUDE) -L $(LIB) -lopt-plus -lm;
 
