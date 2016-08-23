@@ -11,7 +11,7 @@ void runBGSGP(SearchSpace *s, prtFun Evaluate, ...){
     int *reproduction = NULL, *mutation = NULL, *crossover = NULL;
     int father_cross_point, mother_crosspoint, ctr;
     double beta, prob;
-    Node **tmpTree = NULL, **aux = NULL;
+    Node **tmpTree = NULL, *aux = NULL;
     		
     va_start(arg, Evaluate);
     va_copy(argtmp, arg);
@@ -69,14 +69,8 @@ void runBGSGP(SearchSpace *s, prtFun Evaluate, ...){
                 
 	    aux = SGXB(s, tmpTree[crossover[father_cross_point]], tmpTree[crossover[mother_crosspoint]]);
 	    DestroyTree(&(s->T[j]));
-	    s->T[j] = CopyTree(aux[0]);
-	    if(j+1 < n_reproduction+n_mutation+n_crossover){
-		DestroyTree(&(s->T[j+1]));
-		s->T[j+1] = CopyTree(aux[1]); /* in case of an odd number of samples to do crossover */
-	    }
-	    DestroyTree(&aux[0]);
-	    DestroyTree(&aux[1]);
-	    free(aux);
+	    s->T[j] = CopyTree(aux);
+	    DestroyTree(&aux);
 	    z++;
 	}
     	    
