@@ -59,7 +59,7 @@ void runBGSGP(SearchSpace *s, prtFun Evaluate, ...){
 	
 	/* It performs the crossover */
 	z = 0;
-	for(j = n_reproduction+n_mutation; j < n_reproduction+n_mutation+n_crossover; j+=2){
+	for(j = n_reproduction+n_mutation; j < n_reproduction+n_mutation+n_crossover; j++){
 	    ctr = 1;
 	    do{
 		father_cross_point = GenerateUniformRandomNumber(0, n_crossover);
