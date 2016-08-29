@@ -1,5 +1,5 @@
-10 2 10 #<n_particles> <dimension> <max_iterations>
-0.0 2.0 #<f_min> <f_max>
-0.5 0.5 #<A> <r>
--10 10 #<LB> <UB> x[0]
--10 10 #<LB> <UB> x[1]
+10 2 10 # <n_particles> <dimension> <max_iterations>
+0.0 2.0 # <f_min> <f_max>
+0.5 0.5 # <A> <r>
+-10 10 # <LB> <UB> x[0]
+-10 10 # <LB> <UB> x[1]

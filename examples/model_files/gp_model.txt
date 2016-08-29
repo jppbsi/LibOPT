@@ -3,6 +3,6 @@
 2 5 # <minimum_depth_tree> <maximum_depth_tree>
 SUM MUL DIV SUB # function nodes
 PARAM CONST # terminal nodes
-1 1 # <real-optimization problem> <the variables have different ranges>
--5.0 5.0 # decision variable 1
--7.0 7.0 # decision variable 2
+1 1 # <integer(binary)-optimization problem> <the variables have different ranges>
+-5.0 5.0 # <LB> <UB> x[0]
+-7.0 7.0 # <LB> <UB> x[1]
