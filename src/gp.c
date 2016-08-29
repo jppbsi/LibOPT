@@ -17,7 +17,7 @@ void runBGSGP(SearchSpace *s, prtFun Evaluate, ...){
     va_copy(argtmp, arg);
     
     if(!s){
-        fprintf(stderr,"\nSearch space not allocated @runGSGP.\n");
+        fprintf(stderr,"\nSearch space not allocated @runBGSGP.\n");
         exit(-1);
     }
         

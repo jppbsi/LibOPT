@@ -153,7 +153,4 @@ Node *SGXB(SearchSpace *s, Node *T1_tmp, Node *T2_tmp); /* It performs the Geome
 Node *SGMB(SearchSpace *s, Node *T_tmp); /* It performs the Geometric Semantic Genetic Programming mutation operator for boolean functions */
 /***********************/
 
-/* Implementations
-Geometric Semantic Genetic Programming: A. Moraglio, K. Krawiec and C. G. Johnson. Geometric Semantic Genetic Programming, PPSN 2012, LNCS 7491, pp. 21--31, 2012. */
-
 #endif

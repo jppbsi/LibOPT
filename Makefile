@@ -107,7 +107,7 @@ BHA: examples/BHA.c
 MBO: examples/MBO.c
 	$(CC) $(FLAGS) examples/MBO.c -o examples/bin/MBO -I $(INCLUDE) -L $(LIB) -lopt-plus -lm;
 
-BGSGP: examples/MBO.c
+BGSGP: examples/BGSGP.c
 	$(CC) $(FLAGS) examples/BGSGP.c -o examples/bin/BGSGP -I $(INCLUDE) -L $(LIB) -lopt-plus -lm;
 
 clean:
