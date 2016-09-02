@@ -241,7 +241,6 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...){
     s->pCrossover = NAN;
     
     /* MBO */
-    s->k = va_arg(arg, int);
     s->X = NAN;
     s->M = NAN;
     s->leftSide = 1;
@@ -254,6 +253,7 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...){
                 s->a[i] = CreateAgent(s->n, opt_id);
 		
 	    if(opt_id == _MBO_){ /* We create the k neighbours of each agent*/
+		s->k = va_arg(arg, int);
 		for(i = 0; i < s->m; i++){
 		    s->a[i]->nb = (Agent **)malloc(s->k*sizeof(Agent *));
 		    for(j = 0; j < s->k; j++)
@@ -910,6 +910,13 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
             s = CreateSearchSpace(m, n, _BHA_);
             s->iterations = iterations;
         break;
+	case _MBO_:
+            fscanf(fp, "%d", &k);
+	    s = CreateSearchSpace(m, n, _MBO_, k);
+            s->iterations = iterations;   
+	    fscanf(fp,"%d %d", &(s->X), &(s->M));
+            WaiveComment(fp);
+        break;
         case _GP_:
             fscanf(fp, "%lf %lf %lf", &pReproduction, &pMutation, &pCrossover); WaiveComment(fp);
             fscanf(fp, "%d %d", &min_depth, &max_depth); WaiveComment(fp);
@@ -1016,13 +1023,6 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
             }
             free(LB);
             free(UB);
-        break;
-	case _MBO_:
-            fscanf(fp, "%d", &k);
-	    s = CreateSearchSpace(m, n, _MBO_, k);
-            s->iterations = iterations;   
-	    fscanf(fp,"%d %d", &(s->X), &(s->M));
-            WaiveComment(fp);
         break;
         default:
             fprintf(stderr,"\nInvalid optimization identifier @ReadSearchSpaceFromFile.\n");
