@@ -241,8 +241,8 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...){
     s->pCrossover = NAN;
     
     /* MBO */
-    s->X = NAN;
-    s->M = NAN;
+    s->X = 0;
+    s->M = 0;
     s->leftSide = 1;
     
     if(opt_id != _GP_){ /* GP uses a different structure than that of others */
@@ -705,15 +705,15 @@ char CheckSearchSpace(SearchSpace *s, int opt_id){
         case _BHA_:
         break;
 	case _MBO_:
-            if(isnan(s->k)){
+            if(s->k == 0){
                 fprintf(stderr,"\n  -> Number of neighbours solutions to be considered undefined.");
                 OK = 0;
             }
-            if(isnan(s->X)){
+            if(s->X == 0){
                 fprintf(stderr,"\n  -> Number of neighbour solutions to be shared with the next solution undefined.");
                 OK = 0;
             }
-            if(isnan(s->M)){
+            if(s->M == 0){
                 fprintf(stderr,"\n  -> Number of tours undefined.");
                 OK = 0;
             }
