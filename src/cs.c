@@ -61,8 +61,10 @@ void runCS(SearchSpace *s, prtFun Evaluate, ...){
 	qsort(s->a, s->m, sizeof(Agent**), SortAgent); /* Sorts all nests according to their fitness. First position gets the best nest. */
         
         loss = NestLossParameter(s->m, s->p);
-        
+	
         for(i = s->m-1; i > loss; i--){
+	    va_copy(arg, argtmp);
+	    
             tmp = GenerateNewAgent(s, _CS_);
             /* Random walk */
             rand = GenerateUniformRandomNumber(0,1);
@@ -73,7 +75,7 @@ void runCS(SearchSpace *s, prtFun Evaluate, ...){
             /**************/
 			
 	    CheckAgentLimits(s, tmp);
-			
+	    			
             fitValue = Evaluate(tmp, arg); /* It executes the fitness function for agent i */
             if(fitValue < s->a[i]->fit){ /* We accept the new solution */
                 DestroyAgent(&(s->a[i]), _CS_);
