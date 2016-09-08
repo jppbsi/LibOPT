@@ -21,6 +21,7 @@ void runABC(SearchSpace *s, prtFun Evaluate, ...){
     
     limit = s->limit;
     trial = (int *)calloc(s->m, sizeof(int));
+    prob = (double *)calloc(s->m, sizeof(double));
     
     EvaluateSearchSpace(s, _ABC_, Evaluate, arg); /* Initial evaluation of the search space */
       
@@ -58,8 +59,6 @@ void runABC(SearchSpace *s, prtFun Evaluate, ...){
 	    }
             DestroyAgent(&tmp, _ABC_);
 	}
-	
-	prob = (double *)calloc(s->m, sizeof(double));
 	
 	/* Calculation of new probabilities */
 	max_fitness = s->a[0]->fit;
