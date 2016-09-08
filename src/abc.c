@@ -58,7 +58,7 @@ void runABC(SearchSpace *s, prtFun Evaluate, ...){
 	    }
             DestroyAgent(&tmp, _ABC_);
 	}
-	/*
+	
 	prob = (double *)calloc(s->m, sizeof(double));
 	
 	/* Calculation of new probabilities */
