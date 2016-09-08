@@ -1,4 +1,4 @@
-/* ABC implementation is based on the paper available at  */
+/* ABC implementation is based on the paper available at http://files.matlabsite.com/docs/papers/sp/pso-paper-052.pdf */
 
 #ifndef ABC_H
 #define ABC_H
