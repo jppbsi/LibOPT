@@ -21,7 +21,6 @@ void runABC(SearchSpace *s, prtFun Evaluate, ...){
     
     limit = s->limit;
     trial = (int *)calloc(s->m, sizeof(int));
-    prob = (double *)calloc(s->m, sizeof(double));
     
     EvaluateSearchSpace(s, _ABC_, Evaluate, arg); /* Initial evaluation of the search space */
       
@@ -29,7 +28,7 @@ void runABC(SearchSpace *s, prtFun Evaluate, ...){
         fprintf(stderr,"\nRunning iteration %d/%d ... ", t, s->iterations);
 	
 	/* Employed Bee step */
-	for (i = 0; i < s->m; i++){
+	for (i = 0; i < s->m; i++){ /* For each food source */
 	    va_copy(arg, argtmp);
 	    
 	    chosen_param = GenerateUniformRandomNumber(0, s->n-1); /* Randomly parameter to be used */
@@ -59,6 +58,8 @@ void runABC(SearchSpace *s, prtFun Evaluate, ...){
 	    }
             DestroyAgent(&tmp, _ABC_);
 	}
+	/*
+	prob = (double *)calloc(s->m, sizeof(double));
 	
 	/* Calculation of new probabilities */
 	max_fitness = s->a[0]->fit;
@@ -103,8 +104,8 @@ void runABC(SearchSpace *s, prtFun Evaluate, ...){
 		DestroyAgent(&tmp, _ABC_);
 	    }
 	    i++;
-	    if (i == s->m + 1)
-		i = 1;
+	    if (i == s->m)
+		i = 0;
 	}
 	
 	/* Scout Bee step */
