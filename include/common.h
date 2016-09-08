@@ -102,6 +102,9 @@ typedef struct SearchSpace_{
     int X; /* number of neighbour solutions to be shared with the next solution */
     int M; /* number of tours, i.e., the number of iterations for the leader */
     int leftSide; /* flag to know which bird will be changed */
+    
+    /* ABC */
+    int limit; /* number of trial limits for each food source */
 }SearchSpace;
 
 typedef double (*prtFun)(Agent *, va_list arg); /* Pointer to the function used to evaluate agents */

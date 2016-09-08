@@ -35,6 +35,7 @@ Agent *CreateAgent(int n, int opt_id){
         case _GA_:
         case _BHA_:
 	case _MBO_:
+	case _ABC_:
             a->x = (double *)calloc(n,sizeof(double));
             if(opt_id != _GP_) a->v = (double *)calloc(n,sizeof(double));
             if(opt_id == _PSO_) a->xl = (double *)calloc(n,sizeof(double));
@@ -72,6 +73,7 @@ void DestroyAgent(Agent **a, int opt_id){
         case _GA_:
         case _BHA_:
 	case _MBO_:
+	case _ABC_:
             if(tmp->x) free(tmp->x);
             if(tmp->v) free(tmp->v);
             if(opt_id == _PSO_) if(tmp->xl) free(tmp->xl);
@@ -123,6 +125,7 @@ Agent *CopyAgent(Agent *a, int opt_id){
         case _CS_:
         case _GA_:
         case _BHA_:
+	case _ABC_:
             memcpy(cpy->x, a->x, a->n*sizeof(double));
             memcpy(cpy->v, a->v, a->n*sizeof(double));
             if(opt_id == _PSO_) memcpy(cpy->xl, a->xl, a->n*sizeof(double));
@@ -175,6 +178,9 @@ Agent *GenerateNewAgent(SearchSpace *s, int opt_id){
         break;
 	case _MBO_:
         break;
+	case _ABC_:
+		a = CreateAgent(s->n, _ABC_);
+	break;
         default:
             fprintf(stderr,"\nInvalid optimization identifier @GenerateNewAgent.\n");
             return NULL;
@@ -244,6 +250,9 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...){
     s->X = 0;
     s->M = 0;
     s->leftSide = 1;
+    
+    /* ABC */
+    s->limit = 0;
     
     if(opt_id != _GP_){ /* GP uses a different structure than that of others */
         s->a = (Agent **)malloc(s->m*sizeof(Agent *));
@@ -340,6 +349,7 @@ void DestroySearchSpace(SearchSpace **s, int opt_id){
             case _GA_:
             case _BHA_:
 	    case _MBO_:
+	    case _ABC_:
                 if(tmp->g) free(tmp->g);
             break;
             default:
@@ -404,6 +414,7 @@ void InitializeSearchSpace(SearchSpace *s, int opt_id){
         case _GA_:
         case _BHA_:
 	case _MBO_:
+	case _ABC_:
             for(i = 0; i < s->m; i++){
                 for(j = 0; j < s->n; j++)
                     s->a[i]->x[j] = GenerateUniformRandomNumber(s->LB[j], s->UB[j]);
@@ -441,6 +452,7 @@ void ShowSearchSpace(SearchSpace *s, int opt_id){
         case _CS_:
         case _GA_:
         case _BHA_:
+	case _ABC_:
             for(i = 0; i < s->m; i++){
                 fprintf(stderr,"\nAgent %d-> ", i);
                 for(j = 0; j < s->n; j++)
@@ -503,6 +515,7 @@ void EvaluateSearchSpace(SearchSpace *s, int opt_id, prtFun Evaluate, va_list ar
         case _CS_:
         case _GA_:
         case _BHA_:
+	case _ABC_:
             for(i = 0; i < s->m; i++){
                 f = Evaluate(s->a[i], arg); /* It executes the fitness function for agent i */
         
@@ -726,6 +739,12 @@ char CheckSearchSpace(SearchSpace *s, int opt_id){
                 OK = 0;
             }
 	break;
+	case _ABC_:
+	    if(s->limit == 0){
+		fprintf(stderr, "\n  -> Number of trial limits must be greater than 0.");
+		OK = 0;
+	    }
+	break;
         default:
             fprintf(stderr,"\n Invalid optimization identifier @CheckSearchSpace.\n");
             return 0;
@@ -917,6 +936,12 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
 	    fscanf(fp,"%d %d", &(s->X), &(s->M));
             WaiveComment(fp);
         break;
+	case _ABC_:
+	    s = CreateSearchSpace(m, n, _ABC_);
+            s->iterations = iterations;
+	    fscanf(fp, "%d", &(s->limit));
+	    WaiveComment(fp);
+	break;
         case _GP_:
             fscanf(fp, "%lf %lf %lf", &pReproduction, &pMutation, &pCrossover); WaiveComment(fp);
             fscanf(fp, "%d %d", &min_depth, &max_depth); WaiveComment(fp);

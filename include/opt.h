@@ -15,6 +15,7 @@ extern "C" {
 #define _GA_ 7 /* Genetic Algorithm */
 #define _BHA_ 8 /* Black Hole Algorithm */
 #define _MBO_ 9 /* Migrating Bird Optimization */
+#define _ABC_ 10 /* Artificial Bee Colony */
 /**************************/
 
 /* GP type nodes */
