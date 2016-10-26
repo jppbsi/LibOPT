@@ -29,6 +29,7 @@ typedef struct Agent_{
     int n; /* number of decision variables */
     double *x; /* position */
     double fit; /* fitness value */
+    double **t; /* tensor */
     
     /* PSO */
     double *v; /* velocity */
@@ -154,6 +155,15 @@ Node **Crossover(Node *Father, Node *Mother, float p); /* It performs the crosso
 Node *PreFixPositioningTree(Node *T, int pos, char *left_son, int status, int *ctr); /* It returns the parent of the pos-th node using a prefix travel */
 Node *SGXB(SearchSpace *s, Node *T1_tmp, Node *T2_tmp); /* It performs the Geometric Semantic Genetic Programming crossover operator for boolean functions */
 Node *SGMB(SearchSpace *s, Node *T_tmp); /* It performs the Geometric Semantic Genetic Programming mutation operator for boolean functions */
+/***********************/
+
+/* Tensor-related functions */
+double **AllocateTensor(int n, int tensor_id); /* It allocates a new tensor */
+void DeallocateTensor(double ***t, int n); /* It deallocates a tensor */
+void InitializeTensorSearchSpace(SearchSpace *s, int tensor_id); /* It initializes an allocated search space with tensors */
+void ShowTensorSearchSpace(SearchSpace *s, int tensor_id); /* It shows a search space with tensors */
+double TensorNorm(double *t, int tensor_id); /* It computes the norm of a given tensor */
+double TensorSpan(double L, double U, double *t, int tensor_id); /* It maps the quaternion value to a real one bounded by [L,U] */
 /***********************/
 
 #endif

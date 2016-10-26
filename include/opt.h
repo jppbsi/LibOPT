@@ -18,6 +18,11 @@ extern "C" {
 #define _ABC_ 10 /* Artificial Bee Colony */
 /**************************/
 
+/* Tensors */
+#define _QUATERNION_ 4 /* Quaternion Space */
+#define _OCTONION_ 8 /* Octonion Space */
+/**************************/
+
 /* GP type nodes */
 #define TERMINAL 0
 #define FUNCTION 1

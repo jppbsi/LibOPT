@@ -21,6 +21,7 @@ Agent *CreateAgent(int n, int opt_id){
     a->v = NULL;
     a->xl = NULL;
     a->fit = DBL_MAX;
+    a->t = NULL;
     a->pfit = DBL_MAX;
     a->n = n;
     a->nb = NULL;
@@ -34,8 +35,8 @@ Agent *CreateAgent(int n, int opt_id){
         case _GP_:
         case _GA_:
         case _BHA_:
-	case _MBO_:
-	case _ABC_:
+        case _MBO_:
+        case _ABC_:
             a->x = (double *)calloc(n,sizeof(double));
             if(opt_id != _GP_) a->v = (double *)calloc(n,sizeof(double));
             if(opt_id == _PSO_) a->xl = (double *)calloc(n,sizeof(double));
@@ -72,8 +73,8 @@ void DestroyAgent(Agent **a, int opt_id){
         case _GP_:
         case _GA_:
         case _BHA_:
-	case _MBO_:
-	case _ABC_:
+        case _MBO_:
+        case _ABC_:
             if(tmp->x) free(tmp->x);
             if(tmp->v) free(tmp->v);
             if(opt_id == _PSO_) if(tmp->xl) free(tmp->xl);
@@ -200,7 +201,7 @@ n: number of decision variables
 opt_id: identifier of the optimization technique
 additional parameters: related to each technique
 PSO, BA, FPA and FA: do not require additional parameters
-GP: it requires the minimum and maximum depth of a tree, number of terminals and a matrix (char **) with the terminals' names  */
+GP: it requires the minimum and maximum depth of a tree, number of terminals and a matrix (char **) with the terminals' names */
 SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...){
     SearchSpace *s = NULL;
     va_list arg;
@@ -434,7 +435,7 @@ void InitializeSearchSpace(SearchSpace *s, int opt_id){
 /* It shows a search space
 Parameters:
 s: search space
-opt_id: identifier of the optimization technique*/
+opt_id: identifier of the optimization technique */
 void ShowSearchSpace(SearchSpace *s, int opt_id){
     if(!s){
         fprintf(stderr,"\nSearch space not allocated @ShowSearchSpace.\n");
@@ -1629,5 +1630,135 @@ Node *SGMB(SearchSpace *s, Node *T_tmp){
     }
     
     return TM;
+}
+/***********************/
+
+/* Tensor-related functions */
+/* It allocates a new tensor
+Parameters:
+n: number of decision variables
+tensor_id: tensor space dimension */
+double **AllocateTensor(int n, int tensor_id){
+    if(tensor_id <= 0){
+        fprintf(stderr,"\nInvalid parameters @AllocateTensor.\n");
+        return NULL;
+    }
+    double **t;
+    int i;
+    
+    t = (double **)calloc(n, sizeof(double *));
+    for (i = 0; i < n; i++)
+        t[i] = (double *)calloc(tensor_id, sizeof(double));
+
+    return t;
+}
+
+/* It deallocates a new tensor
+Parameters:
+*t: pointer to tensor
+n: number of decision variables */
+void DeallocateTensor(double ***t, int n){
+    double **tmp = NULL;
+    int i;
+    
+    tmp = *t;
+    if(!tmp){
+        fprintf(stderr,"\nTensor not allocated @DeallocateTensor.\n");
+        exit(-1);
+    }
+    
+    for (i = 0; i < n; i++)
+        free(tmp[i]);
+    free(tmp);
+}
+
+/* It initializes an allocated search space with tensors
+Parameters:
+s: search space
+tensor_id: identifier of the tensor space dimension */
+void InitializeTensorSearchSpace(SearchSpace *s, int tensor_id){
+    if(!s){
+        fprintf(stderr,"\nSearch space not allocated @InitializeTensorSearchSpace.\n");
+        exit(-1);
+    }
+    
+    int i, j, k;
+    
+    for (i = 0; i < s->m; i++){
+        for (j = 0; j < s->n; j++){
+            for (k = 0; k < tensor_id; k++)
+                s->a[i]->t[j][k] = GenerateUniformRandomNumber(0, 1);
+            s->a[i]->x[j] = TensorSpan(s->LB[j], s->UB[j], s->a[i]->t[j], tensor_id);
+        }
+    }
+            
+}
+
+/* It shows a search space with tensors
+Parameters:
+s: search space
+tensor_id: identifier of the tensor space dimension */
+void ShowTensorSearchSpace(SearchSpace *s, int tensor_id){
+    if(!s){
+        fprintf(stderr,"\nSearch space not allocated @ShowTensorSearchSpace.\n");
+        exit(-1);
+    }
+    
+    int i, j, k;
+    fprintf(stderr,"\nSearch space with %d agents, %d decision variables and %d-D tensors\n", s->m, s->n, tensor_id);
+    
+    for(i = 0; i < s->m; i++){
+        fprintf(stderr,"\nAgent %d->\n", i);
+        for(j = 0; j < s->n; j++){
+            for(k = 0; k < tensor_id; k++)
+                fprintf(stderr,"t[%d][%d]: %f   ", j, k, s->a[i]->t[j][k]);
+            fprintf(stderr, "\n");
+        }
+        fprintf(stderr,"fitness value: %f", s->a[i]->fit);
+    }
+    fprintf(stderr,"\n-----------------------------------------------------\n");
+}
+
+/* It computes the norm of a given tensor
+Parameters:
+t: tensor vector
+tensor_id: identifier of the tensor space dimension */
+double TensorNorm(double *t, int tensor_id){
+    if(tensor_id <= 0){
+        fprintf(stderr,"\nInvalid parameters @TensorNorm.\n");
+        return -1;
+    }
+    
+    double norm = 0;
+    int i;
+
+    for (i = 0; i < tensor_id; i++)
+        norm += pow(t[i], 2);
+    norm = sqrt(norm);
+            
+    return norm;
+}
+
+/* It maps the quaternion value to a real one bounded by [L,U]
+Parameters:
+L: lower bound
+U: upper bound
+t: tensor vector */
+double TensorSpan(double L, double U, double *t, int tensor_id){
+    if(tensor_id <= 0){
+        fprintf(stderr,"\nInvalid parameters @TensorSpan.\n");
+        return -1;
+    }
+    
+    double span = 0;
+    int i;
+
+    span = (U-L)/(2*(sin(TensorNorm(t, tensor_id))+0.00001));
+    if (span < L)
+        span = L;
+    else if(span > U)
+        span = U;
+    
+    return span;
 }
 /***********************/
