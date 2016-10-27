@@ -1779,8 +1779,8 @@ double TensorSpan(double L, double U, double *t, int tensor_id){
     double span = 0;
     int i;
 
-    span = (U-L)*sin(2*TensorNorm(t, tensor_id)/3)+L;
-    //span = (U-L)*(TensorNorm(t, tensor_id)/2)+L; 
+    //span = (U-L)*sin(2*TensorNorm(t, tensor_id)/3)+L;
+    span = (U-L)*(TensorNorm(t, tensor_id)/sqrt(tensor_id))+L; 
      
     return span;
 }
