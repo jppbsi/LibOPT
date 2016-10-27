@@ -1745,29 +1745,6 @@ void CheckTensorLimits(SearchSpace *s, double **t, int tensor_id){
     }
 }
 
-/* It copies a tensor
-Parameters:
-t: tensor
-n: problem's dimension size
-tensor_id: identifier of tensor's dimension */
-double **CopyTensor(double **t, int n, int tensor_id){
-    if(!t){
-        fprintf(stderr,"\nAgent not allocated @CopyTensor.\n");
-        exit(-1);
-    }
-    
-    int i;
-    double **cpy = NULL;
-    
-    cpy = (double **)calloc(n, sizeof(double *));
-    for(i = 0; i < n; i++){
-        cpy[i] = (double *)calloc(tensor_id, sizeof(double));
-        memcpy(cpy[i], t[i], tensor_id*sizeof(double));
-    }
-
-    return cpy;
-}
-
 /* It computes the norm of a given tensor
 Parameters:
 t: tensor vector

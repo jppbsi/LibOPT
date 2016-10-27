@@ -103,8 +103,11 @@ void runTensorFPA(SearchSpace *s, int tensor_id, prtFun Evaluate, ...){
        for(i = 0; i < s->m; i++){
             va_copy(arg, argtmp);
             tmp = CopyAgent(s->a[i], _FPA_);
-            tmp_t = CopyTensor(s->a[i]->t, s->n, _QUATERNION_);
-                        
+            tmp_t = AllocateTensor(s->n, _QUATERNION_);
+            for(j = 0; j < s->n; j++)
+                for(k = 0; k < tensor_id; k++)
+                    tmp_t[j][k] = s->a[i]->t[j][k];
+            
             prob = GenerateUniformRandomNumber(0,1);
             if(prob > s->p){ /* large-scale pollination */
                 L = GenerateLevyDistribution(s->n, s->beta);
@@ -132,17 +135,21 @@ void runTensorFPA(SearchSpace *s, int tensor_id, prtFun Evaluate, ...){
                 
             fitValue = Evaluate(tmp, arg); /* It executes the fitness function for agent i */
             if(fitValue < s->a[i]->fit){ /* We accept the new solution */
-                DestroyAgent(&(s->a[i]), _FPA_);
-                s->a[i] = CopyAgent(tmp, _FPA_);
                 s->a[i]->fit = fitValue;
-                s->a[i]->t = CopyTensor(tmp_t, s->n, _QUATERNION_);
+                for(j = 0; j < s->n; j++){
+                    s->a[i]->x[j] = tmp->x[j];
+                    for(k = 0; k < tensor_id; k++)
+                        s->a[i]->t[j][k] = tmp_t[j][k];
+                }
             }
             
             if(fitValue < s->gfit){ /* update the global best */
                 s->gfit = fitValue;
-                for(j = 0; j < s->n; j++)
+                for(j = 0; j < s->n; j++){
                     s->g[j] = tmp->x[j];
-                s->t_g = CopyTensor(tmp_t, s->n, _QUATERNION_);
+                    for(k = 0; k < tensor_id; k++)
+                        s->t_g[j][k] = tmp_t[j][k];
+                }
             }
             
             DestroyAgent(&tmp, _FPA_);
