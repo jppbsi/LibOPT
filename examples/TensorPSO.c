@@ -20,7 +20,7 @@ int main(){
         
     //ShowSearchSpace(s, _PSO_); /* It shows the regular search space, with the tensors being mapped with their span function */
     
-    if (CheckSearchSpace(s, _PSO_)) /* It checks wether the search space is valid or not */
+    if (CheckSearchSpace(s, _PSO_)) /* It checks whether the search space is valid or not */
         runTensorPSO(s, _QUATERNION_, Sphere); /* It minimizes function Sphere */
     
     DeallocateTensor(&s->t_g, s->n);

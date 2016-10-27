@@ -3,7 +3,7 @@
 /* PSO-related functions */
 /* It updates the velocity of an agent (particle)
 Parameters:
-S: search space
+s: search space
 i: particle's index */ 
 void UpdateParticleVelocity(SearchSpace *s, int i){
     double r1, r2;
@@ -23,7 +23,7 @@ void UpdateParticleVelocity(SearchSpace *s, int i){
 
 /* It updates the position of an agent (particle)
 Parameters:
-S: search space
+s: search space
 i: particle's index */ 
 void UpdateParticlePosition(SearchSpace *s, int i){
     int j;
@@ -150,7 +150,7 @@ double ComputeSuccess(SearchSpace *s){
 /* TensorPSO-related functions */
 /* It updates the velocity of an tensor (particle)
 Parameters:
-S: search space
+s: search space
 i: particle's index
 tensor_id: identifier of tensor's dimension */ 
 void UpdateTensorParticleVelocity(SearchSpace *s, int i, int tensor_id){
@@ -174,7 +174,7 @@ void UpdateTensorParticleVelocity(SearchSpace *s, int i, int tensor_id){
 
 /* It updates the position of an tensor (particle)
 Parameters:
-S: search space
+s: search space
 i: particle's index
 tensor_id: identifier of tensor's dimension */ 
 void UpdateTensorParticlePosition(SearchSpace *s, int i, int tensor_id){

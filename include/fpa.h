@@ -6,5 +6,6 @@
 #include "opt.h"
 
 void runFPA(SearchSpace *s, prtFun Evaluate, ...); /* It executes the Flower Pollination Algorithm for function minimization */
+void runTensorFPA(SearchSpace *s, int tensor_id, prtFun Evaluate, ...); /* It executes the Tensor-based Flower Pollination Algorithm for function minimization */
 
 #endif

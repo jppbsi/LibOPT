@@ -1745,6 +1745,29 @@ void CheckTensorLimits(SearchSpace *s, double **t, int tensor_id){
     }
 }
 
+/* It copies a tensor
+Parameters:
+t: tensor
+n: problem's dimension size
+tensor_id: identifier of tensor's dimension */
+double **CopyTensor(double **t, int n, int tensor_id){
+    if(!t){
+        fprintf(stderr,"\nAgent not allocated @CopyTensor.\n");
+        exit(-1);
+    }
+    
+    int i;
+    double **cpy = NULL;
+    
+    cpy = (double **)calloc(n, sizeof(double *));
+    for(i = 0; i < n; i++){
+        cpy[i] = (double *)calloc(tensor_id, sizeof(double));
+        memcpy(cpy[i], t[i], tensor_id*sizeof(double));
+    }
+
+    return cpy;
+}
+
 /* It computes the norm of a given tensor
 Parameters:
 t: tensor vector
@@ -1769,7 +1792,8 @@ double TensorNorm(double *t, int tensor_id){
 Parameters:
 L: lower bound
 U: upper bound
-t: tensor vector */
+t: tensor vector
+tensor_id: identifier of tensor's dimension */
 double TensorSpan(double L, double U, double *t, int tensor_id){
     if(tensor_id <= 0){
         fprintf(stderr,"\nInvalid parameters @TensorSpan.\n");
@@ -1779,7 +1803,6 @@ double TensorSpan(double L, double U, double *t, int tensor_id){
     double span = 0;
     int i;
 
-    //span = (U-L)*sin(2*TensorNorm(t, tensor_id)/3)+L;
     span = (U-L)*(TensorNorm(t, tensor_id)/sqrt(tensor_id))+L; 
      
     return span;
@@ -1808,23 +1831,43 @@ void EvaluateTensorSearchSpace(SearchSpace *s, int opt_id, int tensor_id, prtFun
     va_copy(argtmp, arg);
     
     switch (opt_id){
+        case _FPA_:
+            for(i = 0; i < s->m; i++){
+                f = Evaluate(s->a[i], arg); /* It executes the fitness function for agent i */
+    
+                if(f < s->a[i]->fit) /* It updates the fitness value */
+                    s->a[i]->fit = f;
+        
+                if(s->a[i]->fit < s->gfit){ /* It updates the global best value and position */
+                    s->gfit = s->a[i]->fit;
+                    for(j = 0; j < s->n; j++){
+                        s->g[j] = s->a[i]->x[j];
+                        for(k = 0; k < tensor_id; k++)
+                            s->t_g[j][k] = s->a[i]->t[j][k];
+                    }   
+                }
+        
+                va_copy(arg, argtmp);
+            }
+        break;
         case _PSO_:
             for(i = 0; i < s->m; i++){
                 f = Evaluate(s->a[i], arg); /* It executes the fitness function for agent i */
-        
+                
                 if(f < s->a[i]->fit){ /* It updates the local best value and position */
                     s->a[i]->fit = f;    
                     for(j = 0; j < s->n; j++)
                         for(k = 0; k < tensor_id; k++)
                             s->a[i]->t_xl[j][k] = s->a[i]->t[j][k];
                 }
+                
                 if(s->a[i]->fit < s->gfit){ /* It updates the global best value and position */
                     s->gfit = s->a[i]->fit;
-                    for(j = 0; j < s->n; j++)
-                        for(k = 0; k < tensor_id; k++){
-                            s->g[j] = s->a[i]->x[j];
+                    for(j = 0; j < s->n; j++){
+                        s->g[j] = s->a[i]->x[j];
+                        for(k = 0; k < tensor_id; k++)
                             s->t_g[j][k] = s->a[i]->t[j][k];
-                        }
+                    }
                 }
                 va_copy(arg, argtmp);
             }
