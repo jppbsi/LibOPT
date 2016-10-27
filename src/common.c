@@ -22,6 +22,8 @@ Agent *CreateAgent(int n, int opt_id){
     a->xl = NULL;
     a->fit = DBL_MAX;
     a->t = NULL;
+    a->t_v = NULL;
+    a->t_xl = NULL;
     a->pfit = DBL_MAX;
     a->n = n;
     a->nb = NULL;
@@ -126,7 +128,7 @@ Agent *CopyAgent(Agent *a, int opt_id){
         case _CS_:
         case _GA_:
         case _BHA_:
-	case _ABC_:
+        case _ABC_:
             memcpy(cpy->x, a->x, a->n*sizeof(double));
             memcpy(cpy->v, a->v, a->n*sizeof(double));
             if(opt_id == _PSO_) memcpy(cpy->xl, a->xl, a->n*sizeof(double));
@@ -177,11 +179,11 @@ Agent *GenerateNewAgent(SearchSpace *s, int opt_id){
         case _BHA_:
         	a = CreateAgent(s->n, _BHA_);
         break;
-	case _MBO_:
+        case _MBO_:
         break;
-	case _ABC_:
-		a = CreateAgent(s->n, _ABC_);
-	break;
+        case _ABC_:
+            a = CreateAgent(s->n, _ABC_);
+        break;
         default:
             fprintf(stderr,"\nInvalid optimization identifier @GenerateNewAgent.\n");
             return NULL;
@@ -278,6 +280,8 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...){
         }
     
         s->g = (double *)calloc(s->n,sizeof(double));
+        s->t_g = NULL;
+        
     }else{
         if(opt_id == _GP_){
             s->min_depth = va_arg(arg, int);
@@ -349,8 +353,8 @@ void DestroySearchSpace(SearchSpace **s, int opt_id){
             case _CS_:
             case _GA_:
             case _BHA_:
-	    case _MBO_:
-	    case _ABC_:
+            case _MBO_:
+            case _ABC_:
                 if(tmp->g) free(tmp->g);
             break;
             default:
@@ -414,8 +418,8 @@ void InitializeSearchSpace(SearchSpace *s, int opt_id){
         case _CS_:
         case _GA_:
         case _BHA_:
-	case _MBO_:
-	case _ABC_:
+        case _MBO_:
+        case _ABC_:
             for(i = 0; i < s->m; i++){
                 for(j = 0; j < s->n; j++)
                     s->a[i]->x[j] = GenerateUniformRandomNumber(s->LB[j], s->UB[j]);
@@ -516,7 +520,7 @@ void EvaluateSearchSpace(SearchSpace *s, int opt_id, prtFun Evaluate, va_list ar
         case _CS_:
         case _GA_:
         case _BHA_:
-	case _ABC_:
+        case _ABC_:
             for(i = 0; i < s->m; i++){
                 f = Evaluate(s->a[i], arg); /* It executes the fitness function for agent i */
         
@@ -1719,6 +1723,28 @@ void ShowTensorSearchSpace(SearchSpace *s, int tensor_id){
     fprintf(stderr,"\n-----------------------------------------------------\n");
 }
 
+/* It checks whether a given tensor has excedeed boundaries
+Parameters:
+s: search space
+a: tensor */
+void CheckTensorLimits(SearchSpace *s, double **t, int tensor_id){
+    if((!s) || (!t)){
+        fprintf(stderr,"\nInvalid input parameters @CheckTensorLimits.\n");
+        exit(-1);
+    }
+    
+    int j, k;
+
+    for(j = 0; j < s->n; j++){
+        for(k = 0; k < tensor_id; k++){
+            if(t[j][k] < 0)
+                t[j][k] = 0;
+            else if(t[j][k] > 1)
+                t[j][k] = 1;
+        }
+    }
+}
+
 /* It computes the norm of a given tensor
 Parameters:
 t: tensor vector
@@ -1753,12 +1779,59 @@ double TensorSpan(double L, double U, double *t, int tensor_id){
     double span = 0;
     int i;
 
-    span = (U-L)/(2*(sin(TensorNorm(t, tensor_id))+0.00001));
-    if (span < L)
-        span = L;
-    else if(span > U)
-        span = U;
-    
+    span = (U-L)*sin(2*TensorNorm(t, tensor_id)/3)+L;
+    //span = (U-L)*(TensorNorm(t, tensor_id)/2)+L; 
+     
     return span;
+}
+
+/* It evaluates a tensor-based search space
+ * This function only evaluates each agent and sets its best fitness value,
+ * as well as it sets the global best fitness value and agent.
+Parameters:
+s: search space
+opt_id: optimization technique identifier
+tensor_id: identifier of tensor's dimension
+EvaluateFun: pointer to the function used to evaluate particles (agents)
+arg: list of additional arguments */
+void EvaluateTensorSearchSpace(SearchSpace *s, int opt_id, int tensor_id, prtFun Evaluate, va_list arg){
+    if(!s){
+        fprintf(stderr,"\nSearch space not allocated @EvaluateTensorSearchSpace.\n");
+        exit(-1);
+    }
+    
+    int i, j, k;
+    double f, *tmp = NULL;
+    Agent *individual = NULL;
+    va_list argtmp;
+    
+    va_copy(argtmp, arg);
+    
+    switch (opt_id){
+        case _PSO_:
+            for(i = 0; i < s->m; i++){
+                f = Evaluate(s->a[i], arg); /* It executes the fitness function for agent i */
+        
+                if(f < s->a[i]->fit){ /* It updates the local best value and position */
+                    s->a[i]->fit = f;    
+                    for(j = 0; j < s->n; j++)
+                        for(k = 0; k < tensor_id; k++)
+                            s->a[i]->t_xl[j][k] = s->a[i]->t[j][k];
+                }
+                if(s->a[i]->fit < s->gfit){ /* It updates the global best value and position */
+                    s->gfit = s->a[i]->fit;
+                    for(j = 0; j < s->n; j++)
+                        for(k = 0; k < tensor_id; k++){
+                            s->g[j] = s->a[i]->x[j];
+                            s->t_g[j][k] = s->a[i]->t[j][k];
+                        }
+                }
+                va_copy(arg, argtmp);
+            }
+        break;
+        default:
+            fprintf(stderr,"\n Invalid optimization identifier @EvaluateTensorSearchSpace.\n");
+        break;
+    }
 }
 /***********************/

@@ -38,6 +38,10 @@ typedef struct Agent_{
     /* AIWPSO */
     double pfit; /* fitness value of the previous iteration */
     
+    /* TensorPSO */
+    double **t_v; /* tensor velocity */
+    double **t_xl; /* tensor local best */
+    
     /* BA */
     double f; /* frequency */
     
@@ -55,6 +59,7 @@ typedef struct SearchSpace_{
     double *LB; /* lower boundaries of each decision variable */
     double *UB; /* upper boundaries of each decision variable */
     double *g; /* global best agent */
+    double **t_g; /* global best tensor */
     int best; /* index of the best agent */
     double gfit; /* global best fitness */
     int is_integer_opt; /* integer-valued optimization problem? */
@@ -162,8 +167,10 @@ double **AllocateTensor(int n, int tensor_id); /* It allocates a new tensor */
 void DeallocateTensor(double ***t, int n); /* It deallocates a tensor */
 void InitializeTensorSearchSpace(SearchSpace *s, int tensor_id); /* It initializes an allocated search space with tensors */
 void ShowTensorSearchSpace(SearchSpace *s, int tensor_id); /* It shows a search space with tensors */
+void CheckTensorLimits(SearchSpace *s, double **t, int tensor_id); /* It checks whether a given tensor has excedeed boundaries */
 double TensorNorm(double *t, int tensor_id); /* It computes the norm of a given tensor */
 double TensorSpan(double L, double U, double *t, int tensor_id); /* It maps the quaternion value to a real one bounded by [L,U] */
+void EvaluateTensorSearchSpace(SearchSpace *s, int opt_id, int tensor_id, prtFun Evaluate, va_list arg); /* It evaluates a tensor-based search space */
 /***********************/
 
 #endif

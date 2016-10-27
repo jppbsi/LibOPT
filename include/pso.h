@@ -17,4 +17,10 @@ void runAIWPSO(SearchSpace *s, prtFun Evaluate, ...); /* It executes the Particl
 double ComputeSuccess(SearchSpace *s); /* It computes the pecentage of success concerning the whole search space */
 /****************************/
 
+/* TensorPSO-related functions */
+void UpdateTensorParticleVelocity(SearchSpace *s, int i, int tensor_id); /* It updates the velocity of an tensor (particle) */
+void UpdateTensorParticlePosition(SearchSpace *s, int i, int tensor_id); /* It updates the position of an tensor (particle) */
+void runTensorPSO(SearchSpace *s, int tensor_id, prtFun Evaluate, ...); /* It executes the Tensor-based Particle Swarm Optimization for function minimization */
+/*************************/
+
 #endif
