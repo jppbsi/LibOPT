@@ -1827,6 +1827,33 @@ double TensorSpan(double L, double U, double *t, int tensor_id){
     return span;
 }
 
+/* It calculates the Euclidean Distance between tensors
+Parameters:
+t: first tensor
+s: second tensor
+n: problem's dimension
+tensor_id: identifier of tensor's dimension */
+double TensorEuclideanDistance(double **t, double **s, int n, int tensor_id){
+    if(tensor_id <= 0){
+        fprintf(stderr,"\nInvalid parameters @TensorEuclideanDistance.\n");
+        return -1;
+    }
+    
+    double distance = 0, p_distance = 0;
+    int j, k;
+    
+    for(j = 0; j < n; j++){
+        for(k = 0; k < tensor_id; k++)
+            p_distance += pow(t[j][k] - s[j][k], 2);
+        distance += sqrt(p_distance); 
+        p_distance = 0;
+    }
+    
+    distance = sqrt(distance);
+      
+    return distance;
+}
+
 /* It evaluates a tensor-based search space
  * This function only evaluates each agent and sets its best fitness value,
  * as well as it sets the global best fitness value and agent.
@@ -1852,6 +1879,7 @@ void EvaluateTensorSearchSpace(SearchSpace *s, int opt_id, int tensor_id, prtFun
     switch (opt_id){
         case _FPA_:
         case _CS_:
+        case _BHA_:
             for(i = 0; i < s->m; i++){
                 f = Evaluate(s->a[i], arg); /* It executes the fitness function for agent i */
     

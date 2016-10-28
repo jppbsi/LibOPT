@@ -6,5 +6,6 @@
 #include "opt.h"
 
 void runBHA(SearchSpace *s, prtFun Evaluate, ...); /* It executes the Black Hole Algorithm for function minimization */
+void runTensorBHA(SearchSpace *s, int tensor_id, prtFun Evaluate, ...); /* It executes the Tensor-based Black Hole Algorithm for function minimization */
 
 #endif
