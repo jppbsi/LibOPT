@@ -103,10 +103,7 @@ void runTensorFPA(SearchSpace *s, int tensor_id, prtFun Evaluate, ...){
        for(i = 0; i < s->m; i++){
             va_copy(arg, argtmp);
             tmp = CopyAgent(s->a[i], _FPA_);
-            tmp_t = AllocateTensor(s->n, _QUATERNION_);
-            for(j = 0; j < s->n; j++)
-                for(k = 0; k < tensor_id; k++)
-                    tmp_t[j][k] = s->a[i]->t[j][k];
+            tmp_t = CopyTensor(s->a[i]->t, s->n, _QUATERNION_);
             
             prob = GenerateUniformRandomNumber(0,1);
             if(prob > s->p){ /* large-scale pollination */

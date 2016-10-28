@@ -1745,6 +1745,22 @@ void CheckTensorLimits(SearchSpace *s, double **t, int tensor_id){
     }
 }
 
+double **CopyTensor(double **t, int n, int tensor_id){
+    if(!t){
+        fprintf(stderr,"\nNo tensor allocated @CopyTensor.\n");
+        exit(-1);
+    }
+    
+    int i;
+    double **cpy = NULL;
+    
+    cpy = AllocateTensor(n, _QUATERNION_); 
+    for(i = 0; i < n; i++)
+        memcpy(cpy[i], t[i], tensor_id*sizeof(double));
+        
+    return cpy;
+}
+
 /* It computes the norm of a given tensor
 Parameters:
 t: tensor vector
