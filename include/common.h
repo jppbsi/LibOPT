@@ -169,6 +169,7 @@ void InitializeTensorSearchSpace(SearchSpace *s, int tensor_id); /* It initializ
 void ShowTensorSearchSpace(SearchSpace *s, int tensor_id); /* It shows a search space with tensors */
 void CheckTensorLimits(SearchSpace *s, double **t, int tensor_id); /* It checks whether a given tensor has excedeed boundaries */
 double **CopyTensor(double **t, int n, int tensor_id); /* It copies a given tensor */
+double **GenerateNewTensor(SearchSpace *s, int tensor_id);
 double TensorNorm(double *t, int tensor_id); /* It computes the norm of a given tensor */
 double TensorSpan(double L, double U, double *t, int tensor_id); /* It maps the quaternion value to a real one bounded by [L,U] */
 void EvaluateTensorSearchSpace(SearchSpace *s, int opt_id, int tensor_id, prtFun Evaluate, va_list arg); /* It evaluates a tensor-based search space */

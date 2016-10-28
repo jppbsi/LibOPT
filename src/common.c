@@ -1786,6 +1786,27 @@ double TensorNorm(double *t, int tensor_id){
     return norm;
 }
 
+/* It generates a new tensor
+Paremeters:
+s: search space
+tensor_id: identifier of tensor's dimension */
+double **GenerateNewTensor(SearchSpace *s, int tensor_id){
+    if(!s){
+        fprintf(stderr,"\nSearch space not allocated @GenerateNewTensor.\n");
+        exit(-1);
+    }
+    
+    double **t = NULL;
+    int j, k;
+    
+    t = AllocateTensor(s->n, tensor_id);
+    for (j = 0; j < s->n; j++)
+        for (k = 0; k < tensor_id; k++)
+            t[j][k] = GenerateUniformRandomNumber(0, 1);
+            
+    return t;
+}
+
 /* It maps the quaternion value to a real one bounded by [L,U]
 Parameters:
 L: lower bound
@@ -1830,6 +1851,7 @@ void EvaluateTensorSearchSpace(SearchSpace *s, int opt_id, int tensor_id, prtFun
     
     switch (opt_id){
         case _FPA_:
+        case _CS_:
             for(i = 0; i < s->m; i++){
                 f = Evaluate(s->a[i], arg); /* It executes the fitness function for agent i */
     
