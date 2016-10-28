@@ -1745,6 +1745,11 @@ void CheckTensorLimits(SearchSpace *s, double **t, int tensor_id){
     }
 }
 
+/* It copies a given tensor
+Parameters:
+t: tensor vector
+n: problem's dimension
+tensor_id: identifier of the tensor space dimension */
 double **CopyTensor(double **t, int n, int tensor_id){
     if(!t){
         fprintf(stderr,"\nNo tensor allocated @CopyTensor.\n");
