@@ -8,7 +8,7 @@ CC=gcc
 FLAGS=  -g -O0
 CFLAGS=''
 
-all: libopt-plus PSO AIWPSO BA FPA FA CS GP GA BHA MBO BGSGP ABC TensorPSO TensorFPA TensorCS TensorBHA
+all: libopt-plus PSO AIWPSO BA FPA FA CS GP GA BHA MBO BGSGP ABC TensorPSO TensorFPA TensorCS TensorBHA TensorABC
 
 libopt-plus: $(LIB)/libopt-plus.a
 	echo "libopt-plus.a built..."
@@ -129,6 +129,9 @@ TensorCS: examples/TensorCS.c
 
 TensorBHA: examples/TensorBHA.c
 	$(CC) $(FLAGS) examples/TensorBHA.c -o examples/bin/TensorBHA -I $(INCLUDE) -L $(LIB) -lopt-plus -lm;
+
+TensorABC: examples/TensorABC.c
+	$(CC) $(FLAGS) examples/TensorABC.c -o examples/bin/TensorABC -I $(INCLUDE) -L $(LIB) -lopt-plus -lm;
 
 clean:
 	rm -f $(LIB)/lib*.a; rm -f $(OBJ)/*.o; rm -rf examples/bin/*

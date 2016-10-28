@@ -12,7 +12,7 @@ int main(){
     InitializeSearchSpace(s, _ABC_); /* It initalizes the search space */
             
     if (CheckSearchSpace(s, _ABC_)) /* It checks wether the search space is valid or not */
-        runABC(s, Sphere); /* It minimizes function Levy */
+        runABC(s, Sphere); /* It minimizes function Sphere */
     
     DestroySearchSpace(&s, _ABC_); /* It deallocates the search space */
         

@@ -1880,6 +1880,7 @@ void EvaluateTensorSearchSpace(SearchSpace *s, int opt_id, int tensor_id, prtFun
         case _FPA_:
         case _CS_:
         case _BHA_:
+        case _ABC_:
             for(i = 0; i < s->m; i++){
                 f = Evaluate(s->a[i], arg); /* It executes the fitness function for agent i */
     

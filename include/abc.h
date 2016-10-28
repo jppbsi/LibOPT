@@ -6,5 +6,6 @@
 #include "opt.h"
 
 void runABC(SearchSpace *s, prtFun Evaluate, ...); /* It executes the Artificial Bee Colony for function minimization */
+void runTensorABC(SearchSpace *s, int tensor_id, prtFun Evaluate, ...); /* It executes the Tensor-based Artificial Bee Colony for function minimization */
 
 #endif
