@@ -102,7 +102,7 @@ arg: list of additional arguments */
 void runTensorCS(SearchSpace *s, int tensor_id, prtFun Evaluate, ...){
     va_list arg, argtmp;
     int t, i, j, k, nest_i, nest_j, loss;
-    double rand, *L = NULL, fitValue;
+    double rand, **L = NULL, fitValue;
     double **tmp_t = NULL;
     Agent *tmp = NULL;
     		
@@ -126,10 +126,14 @@ void runTensorCS(SearchSpace *s, int tensor_id, prtFun Evaluate, ...){
         tmp_t = CopyTensor(s->a[nest_i]->t, s->n, _QUATERNION_);
 	
         /* Equation 1 */
-        L = GenerateLevyDistribution(s->n, s->beta);
+        L = (double **)calloc(s->n, sizeof(double *));
+        for(j = 0; j < s->n; j++)
+            L[j] = GenerateLevyDistribution(tensor_id, s->beta);
         for(j = 0; j < s->n; j++)
             for(k = 0; k < tensor_id; k++)
-                tmp_t[j][k] += s->alpha * L[j];
+                tmp_t[j][k] += s->alpha * L[j][k];
+        for(j = 0; j < s->n; j++)
+            free(L[j]);
         free(L);
         /**************/
         

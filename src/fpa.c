@@ -82,7 +82,7 @@ arg: list of additional arguments */
 void runTensorFPA(SearchSpace *s, int tensor_id, prtFun Evaluate, ...){
     va_list arg, argtmp;
     int t, i, j, k, flower_j, flower_k;
-    double prob, epsilon, *L = NULL, fitValue;
+    double prob, epsilon, **L = NULL, fitValue;
     double **tmp_t = NULL;
     Agent *tmp = NULL;
     		
@@ -107,14 +107,17 @@ void runTensorFPA(SearchSpace *s, int tensor_id, prtFun Evaluate, ...){
             
             prob = GenerateUniformRandomNumber(0,1);
             if(prob > s->p){ /* large-scale pollination */
-                L = GenerateLevyDistribution(s->n, s->beta);
+                L = (double **)calloc(s->n, sizeof(double *));
+                for(j = 0; j < s->n; j++)
+                    L[j] = GenerateLevyDistribution(tensor_id, s->beta);
                 
                 /* Equation 1 */
                 for(j = 0; j < s->n; j++)
                     for(k = 0; k < tensor_id; k++)
-                        tmp_t[j][k] = tmp_t[j][k]+L[j]*(tmp_t[j][k]-s->t_g[j][k]);
+                        tmp_t[j][k] = tmp_t[j][k]+L[j][k]*(tmp_t[j][k]-s->t_g[j][k]);
                 /**************/
-                
+                for(j = 0; j < s->n; j++)
+                    free(L[j]);
                 free(L);
             }else{ /* local pollination */
                 epsilon = GenerateUniformRandomNumber(0,1);
