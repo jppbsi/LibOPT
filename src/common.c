@@ -457,7 +457,7 @@ void ShowSearchSpace(SearchSpace *s, int opt_id){
         case _CS_:
         case _GA_:
         case _BHA_:
-	case _ABC_:
+        case _ABC_:
             for(i = 0; i < s->m; i++){
                 fprintf(stderr,"\nAgent %d-> ", i);
                 for(j = 0; j < s->n; j++)
@@ -469,7 +469,7 @@ void ShowSearchSpace(SearchSpace *s, int opt_id){
             for(i = 0; i < s->m; i++)
                 fprintf(stderr,"\nAgent %d-> fitness value %lf", i, s->tree_fit[i]);
         break;
-	case _MBO_:
+        case _MBO_:
             for(i = 0; i < s->m; i++){
                 fprintf(stderr,"\nAgent %d-> ", i);
                 for(j = 0; j < s->n; j++)
@@ -595,7 +595,7 @@ void EvaluateSearchSpace(SearchSpace *s, int opt_id, prtFun Evaluate, va_list ar
             }
             DestroyAgent(&individual, _GP_);
         break;
-	case _MBO_:
+        case _MBO_:
             for(i = 0; i < s->m; i++){
                 f = Evaluate(s->a[i], arg); /* It executes the fitness function for agent i */
                 s->a[i]->fit = f; /* It updates the fitness value of actual agent i */
@@ -722,7 +722,7 @@ char CheckSearchSpace(SearchSpace *s, int opt_id){
         break;
         case _BHA_:
         break;
-	case _MBO_:
+        case _MBO_:
             if(s->k == 0){
                 fprintf(stderr,"\n  -> Number of neighbours solutions to be considered undefined.");
                 OK = 0;
@@ -735,21 +735,21 @@ char CheckSearchSpace(SearchSpace *s, int opt_id){
                 fprintf(stderr,"\n  -> Number of tours undefined.");
                 OK = 0;
             }
-	    if(s->X >= s->k){
+            if(s->X >= s->k){
                 fprintf(stderr,"\n  -> Number of neighbour shared should be smaller than the number of neighbours considered.");
                 OK = 0;
             }
-	    if(s->m < 3){
+            if(s->m < 3){
                 fprintf(stderr,"\n  -> Number of birds should be bigger than or equal to 3.");
                 OK = 0;
             }
-	break;
-	case _ABC_:
-	    if(s->limit == 0){
-		fprintf(stderr, "\n  -> Number of trial limits must be greater than 0.");
-		OK = 0;
-	    }
-	break;
+        break;
+        case _ABC_:
+            if(s->limit == 0){
+            fprintf(stderr, "\n  -> Number of trial limits must be greater than 0.");
+            OK = 0;
+            }
+        break;
         default:
             fprintf(stderr,"\n Invalid optimization identifier @CheckSearchSpace.\n");
             return 0;
@@ -1877,6 +1877,7 @@ void EvaluateTensorSearchSpace(SearchSpace *s, int opt_id, int tensor_id, prtFun
     va_copy(argtmp, arg);
     
     switch (opt_id){
+        case _BA_:
         case _FPA_:
         case _CS_:
         case _BHA_:

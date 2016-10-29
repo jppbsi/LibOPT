@@ -98,3 +98,106 @@ void runBA(SearchSpace *s, prtFun Evaluate, ...){
     va_end(arg);
 }
 /*************************/
+
+/* It updates the velocity of an tensor (bat)
+Parameters:
+S: search space
+i: particle's index
+tensor_id: identifier of tensor's dimension */
+void UpdateTensorBatVelocity(SearchSpace *s, int i, int tensor_id){
+    if(!s){
+        fprintf(stderr,"\nSearch space not allocated @UpdateTensorBatVelocity.\n");
+        exit(-1);
+    }
+     
+    int j, k;
+    
+    for(j = 0; j < s->n; j++)
+        for(k = 0; k < tensor_id; k++)
+            s->a[i]->t_v[j][k] = s->a[i]->t_v[j][k]+(s->a[i]->t[j][k]-s->t_g[j][k])*s->a[i]->f;
+}
+
+/* It executes the Tensor-based Bat Algorithm for function minimization
+Parameters:
+s: search space
+tensor_id: identifier of tensor's dimension
+Evaluate: pointer to the function used to evaluate particles
+arg: list of additional arguments */
+void runTensorBA(SearchSpace *s, int tensor_id, prtFun Evaluate, ...){
+    va_list arg, argtmp;
+    int t, i, j, k;
+    double beta, prob, fitValue;
+    double **tmp_t = NULL, **tmp_t_v = NULL;
+    Agent *tmp = NULL;
+    		
+    va_start(arg, Evaluate);
+    va_copy(argtmp, arg);
+    
+    if(!s){
+        fprintf(stderr,"\nSearch space not allocated @runTensorBA.\n");
+        exit(-1);
+    }
+        
+    EvaluateTensorSearchSpace(s, _BA_, tensor_id, Evaluate, arg); /* Initial evaluation of the search space */
+        
+    for(t = 1; t <= s->iterations; t++){
+        fprintf(stderr,"\nRunning iteration %d/%d ... ", t, s->iterations);
+            
+        /* for each bat */
+        for(i = 0; i < s->m; i++){
+            va_copy(arg, argtmp);
+            
+            SetBatFrequency(s, i); /* Equation 1 */
+            UpdateTensorBatVelocity(s, i, tensor_id); /* Equation 2 */
+	    
+            /* Equation 3
+            Here, we generate a temporary agent (bat) */
+            tmp = CopyAgent(s->a[i], _BA_);
+            tmp_t = CopyTensor(s->a[i]->t, s->n, _QUATERNION_);
+            tmp_t_v = CopyTensor(s->a[i]->t_v, s->n, _QUATERNION_);
+            for(j = 0; j < s->n; j++)
+                for(k = 0; k < tensor_id; k++)
+                    tmp_t[j][k] = tmp_t[j][k]+tmp_t_v[j][k];   
+            /**************/
+
+            prob = GenerateUniformRandomNumber(0,1);
+            if(prob > s->r){
+                DeallocateTensor(&tmp_t, s->n);
+                DestroyAgent(&tmp, _BA_);
+                tmp = GenerateNewAgent(s, _BA_);
+                tmp_t = GenerateNewTensor(s, tensor_id);
+            }
+			CheckTensorLimits(s, tmp_t, tensor_id);
+            for(j = 0; j < s->n; j++)
+                tmp->x[j] = TensorSpan(s->LB[j], s->UB[j], tmp_t[j], tensor_id);
+	    
+            fitValue = Evaluate(tmp, arg); /* It executes the fitness function for agent i */
+            prob = GenerateUniformRandomNumber(0,1);
+            if((fitValue < s->a[i]->fit) && (prob < s->A)){ /* We accept the new solution */
+                DeallocateTensor(&s->a[i]->t, s->n);
+                DestroyAgent(&(s->a[i]), _BA_);
+                s->a[i] = CopyAgent(tmp, _BA_);
+                s->a[i]->fit = fitValue;
+                s->a[i]->t = CopyTensor(tmp_t, s->n, _QUATERNION_);
+                s->a[i]->t_v = CopyTensor(tmp_t_v, s->n, _QUATERNION_);
+            }
+	    
+            if(fitValue < s->gfit){ /* update the global best */
+                s->gfit = fitValue;
+                DeallocateTensor(&s->t_g, s->n);
+                s->t_g = CopyTensor(tmp_t, s->n, _QUATERNION_);
+                for(j = 0; j < s->n; j++)
+                    s->g[j] = tmp->x[j];
+            }
+	    
+            DestroyAgent(&tmp, _BA_);
+            DeallocateTensor(&tmp_t, s->n);
+            DeallocateTensor(&tmp_t_v, s->n);
+        }
+       
+       fprintf(stderr, "OK (minimum fitness value %lf)", s->gfit);
+    }
+
+    va_end(arg);
+}
+/*************************/
