@@ -117,6 +117,27 @@ void UpdateTensorBatVelocity(SearchSpace *s, int i, int tensor_id){
             s->a[i]->t_v[j][k] = s->a[i]->t_v[j][k]+(s->a[i]->t[j][k]-s->t_g[j][k])*s->a[i]->f;
 }
 
+/* It generates a new tensor for BA algorithm
+Parameters:
+s: search space
+tensor_id: identifier of tensor's dimension */
+double **GenerateNewBatTensor(SearchSpace *s, int tensor_id){
+    if(!s){
+        fprintf(stderr,"\nSearch space not allocated @GenerateNewBatTensor.\n");
+        exit(-1);
+    }
+    
+    double **t = NULL;
+    int j, k;
+    
+    t = AllocateTensor(s->n, tensor_id);
+    for (j = 0; j < s->n; j++)
+        for (k = 0; k < tensor_id; k++)
+            t[j][k] = s->t_g[j][k] + 0.001*GenerateUniformRandomNumber(0, 1);
+            
+    return t;
+}
+
 /* It executes the Tensor-based Bat Algorithm for function minimization
 Parameters:
 s: search space
@@ -165,7 +186,7 @@ void runTensorBA(SearchSpace *s, int tensor_id, prtFun Evaluate, ...){
                 DeallocateTensor(&tmp_t, s->n);
                 DestroyAgent(&tmp, _BA_);
                 tmp = GenerateNewAgent(s, _BA_);
-                tmp_t = GenerateNewTensor(s, tensor_id);
+                tmp_t = GenerateNewBatTensor(s, tensor_id);
             }
 			CheckTensorLimits(s, tmp_t, tensor_id);
             for(j = 0; j < s->n; j++)

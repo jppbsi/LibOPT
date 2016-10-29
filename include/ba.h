@@ -13,6 +13,7 @@ void runBA(SearchSpace *s, prtFun Evaluate, ...); /* It executes the Bat Algorit
 
 /* TensorBA related functions */
 void UpdateTensorBatVelocity(SearchSpace *s, int i, int tensor_id); /* It updates the velocity of an tensor (bat) */
+double **GenerateNewBatTensor(SearchSpace *s, int tensor_id); /* It generates a new tensor for BA algorithm */
 void runTensorBA(SearchSpace *s, int tensor_id, prtFun Evaluate, ...); /* It executes the Tensor-based Bat Algorithm for function minimization */
 /*************************/
 
