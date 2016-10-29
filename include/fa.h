@@ -6,5 +6,6 @@
 #include "opt.h"
 
 void runFA(SearchSpace *s, prtFun Evaluate, ...); /* It executes the Firefly Algorithm for function minimization */
+void runTensorFA(SearchSpace *s, int tensor_id, prtFun Evaluate, ...); /* It executes the Tensor-based Firefly Algorithm for function minimization */
 
 #endif

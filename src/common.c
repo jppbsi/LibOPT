@@ -1921,6 +1921,24 @@ void EvaluateTensorSearchSpace(SearchSpace *s, int opt_id, int tensor_id, prtFun
                 va_copy(arg, argtmp);
             }
         break;
+        case _FA_:
+            for(i = 0; i < s->m; i++){
+                f = Evaluate(s->a[i], arg); /* It executes the fitness function for agent i */
+        
+                s->a[i]->fit = f; /* It updates the fitness value of actual agent i */
+                    
+                if(s->a[i]->fit < s->gfit){ /* It updates the global best value and position */
+                    s->gfit = s->a[i]->fit;
+                    for(j = 0; j < s->n; j++){
+                        s->g[j] = s->a[i]->x[j];
+                        for(k = 0; k < tensor_id; k++)
+                            s->t_g[j][k] = s->a[i]->t[j][k];
+                    }
+                }
+        
+                va_copy(arg, argtmp);
+            }
+        break;
         default:
             fprintf(stderr,"\n Invalid optimization identifier @EvaluateTensorSearchSpace.\n");
         break;
