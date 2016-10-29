@@ -123,6 +123,7 @@ void runTensorFA(SearchSpace *s, int tensor_id, prtFun Evaluate, ...){
     }
     
     free(tmp);
+    free(tmp_t);
     va_end(arg);
 }
 /*************************/
