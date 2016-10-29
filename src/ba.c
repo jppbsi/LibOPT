@@ -175,6 +175,7 @@ void runTensorBA(SearchSpace *s, int tensor_id, prtFun Evaluate, ...){
             prob = GenerateUniformRandomNumber(0,1);
             if((fitValue < s->a[i]->fit) && (prob < s->A)){ /* We accept the new solution */
                 DeallocateTensor(&s->a[i]->t, s->n);
+                DeallocateTensor(&s->a[i]->t_v, s->n);
                 DestroyAgent(&(s->a[i]), _BA_);
                 s->a[i] = CopyAgent(tmp, _BA_);
                 s->a[i]->fit = fitValue;
