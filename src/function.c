@@ -2675,8 +2675,8 @@ a: agent
 Minimum at f(x*) = 0 at x* = (0, va_list arg, 0)
 Domain: -5 <= x_i <= 5 */
 double XinShe_Yang_1(Agent *a, va_list arg){
-    int e, i;
-    double sum = 0;
+    int i;
+    double e, sum = 0;
 
     if(!a){
         fprintf(stderr,"\nAgent not allocated @XinShe_Yang_1.\n");
