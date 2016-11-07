@@ -1850,23 +1850,23 @@ double Quintic(Agent *a, va_list arg){
     return sum;
 }
 
-/* It computes the Rastringin's function
+/* It computes the Rastrigin's function
 Parameters:
 a: agent
 ---
 Minimum at f(x*) = 0 at x* = (0, va_list arg, 0)
 Domain: -5.12 <= x_i <= 5.12 */
-double Rastringin(Agent *a, va_list arg){
+double Rastrigin(Agent *a, va_list arg){
     int i;
     double sum = 0;
     
     if(!a){
-        fprintf(stderr,"\nAgent not allocated @Rastringin.\n");
+        fprintf(stderr,"\nAgent not allocated @Rastrigin.\n");
         return DBL_MAX;
     }
     
     if(a->n < 1){
-        fprintf(stderr,"\nInvalid number of decision variables @Rastringin. It must be equal or greater than one.\n");
+        fprintf(stderr,"\nInvalid number of decision variables @Rastrigin. It must be equal or greater than one.\n");
         return DBL_MAX;
     }
     
