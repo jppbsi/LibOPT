@@ -117,6 +117,20 @@ void UpdateTensorBatVelocity(SearchSpace *s, int i, int tensor_id){
             s->a[i]->t_v[j][k] = s->a[i]->t_v[j][k]+(s->a[i]->t[j][k]-s->t_g[j][k])*s->a[i]->f;
 }
 
+/* It sets the frequency of an tensor (bat)
+Parameters:
+S: search space
+i: particle's index */ 
+void SetTensorBatFrequency(SearchSpace *s, int i){
+    if(!s){
+        fprintf(stderr,"\nSearch space not allocated @SetTensorBatFrequency.\n");
+        exit(-1);
+    }
+    
+    double beta = GenerateUniformRandomNumber(0,1);
+    s->a[i]->f = s->f_min+(s->f_max-s->f_min)*beta;
+}
+
 /* It generates a new tensor for BA algorithm
 Parameters:
 s: search space
@@ -133,7 +147,7 @@ double **GenerateNewBatTensor(SearchSpace *s, int tensor_id){
     t = AllocateTensor(s->n, tensor_id);
     for (j = 0; j < s->n; j++)
         for (k = 0; k < tensor_id; k++)
-            t[j][k] = s->t_g[j][k] + 0.001*GenerateUniformRandomNumber(0, 1);
+            t[j][k] = s->t_g[j][k] + 0.001*GenerateUniformRandomNumber(-1, 1);
             
     return t;
 }
@@ -168,14 +182,14 @@ void runTensorBA(SearchSpace *s, int tensor_id, prtFun Evaluate, ...){
         for(i = 0; i < s->m; i++){
             va_copy(arg, argtmp);
             
-            SetBatFrequency(s, i); /* Equation 1 */
+            SetTensorBatFrequency(s, i); /* Equation 1 */
             UpdateTensorBatVelocity(s, i, tensor_id); /* Equation 2 */
 	    
             /* Equation 3
             Here, we generate a temporary agent (bat) */
             tmp = CopyAgent(s->a[i], _BA_);
-            tmp_t = CopyTensor(s->a[i]->t, s->n, _QUATERNION_);
-            tmp_t_v = CopyTensor(s->a[i]->t_v, s->n, _QUATERNION_);
+            tmp_t = CopyTensor(s->a[i]->t, s->n, tensor_id);
+            tmp_t_v = CopyTensor(s->a[i]->t_v, s->n, tensor_id);
             for(j = 0; j < s->n; j++)
                 for(k = 0; k < tensor_id; k++)
                     tmp_t[j][k] = tmp_t[j][k]+tmp_t_v[j][k];   
@@ -200,14 +214,14 @@ void runTensorBA(SearchSpace *s, int tensor_id, prtFun Evaluate, ...){
                 DestroyAgent(&(s->a[i]), _BA_);
                 s->a[i] = CopyAgent(tmp, _BA_);
                 s->a[i]->fit = fitValue;
-                s->a[i]->t = CopyTensor(tmp_t, s->n, _QUATERNION_);
-                s->a[i]->t_v = CopyTensor(tmp_t_v, s->n, _QUATERNION_);
+                s->a[i]->t = CopyTensor(tmp_t, s->n, tensor_id);
+                s->a[i]->t_v = CopyTensor(tmp_t_v, s->n, tensor_id);
             }
 	    
             if(fitValue < s->gfit){ /* update the global best */
                 s->gfit = fitValue;
                 DeallocateTensor(&s->t_g, s->n);
-                s->t_g = CopyTensor(tmp_t, s->n, _QUATERNION_);
+                s->t_g = CopyTensor(tmp_t, s->n, tensor_id);
                 for(j = 0; j < s->n; j++)
                     s->g[j] = tmp->x[j];
             }
