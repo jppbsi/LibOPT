@@ -1759,7 +1759,7 @@ double **CopyTensor(double **t, int n, int tensor_id){
     int i;
     double **cpy = NULL;
     
-    cpy = AllocateTensor(n, _QUATERNION_); 
+    cpy = AllocateTensor(n, tensor_id); 
     for(i = 0; i < n; i++)
         memcpy(cpy[i], t[i], tensor_id*sizeof(double));
         
@@ -1807,7 +1807,7 @@ double **GenerateNewTensor(SearchSpace *s, int tensor_id){
     return t;
 }
 
-/* It maps the quaternion value to a real one bounded by [L,U]
+/* It maps the tensor value to a real one bounded by [L,U]
 Parameters:
 L: lower bound
 U: upper bound
