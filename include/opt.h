@@ -14,8 +14,9 @@ extern "C" {
 #define _GP_ 6 /* Genetic Programming */
 #define _GA_ 7 /* Genetic Algorithm */
 #define _BHA_ 8 /* Black Hole Algorithm */
-#define _MBO_ 9 /* Migrating Bird Optimization */
-#define _ABC_ 10 /* Artificial Bee Colony */
+#define _WCA_ 9 /* Water Cycle Algorithm */
+#define _MBO_ 10 /* Migrating Bird Optimization */
+#define _ABC_ 11 /* Artificial Bee Colony */
 /**************************/
 
 /* Tensors */

@@ -37,6 +37,7 @@ Agent *CreateAgent(int n, int opt_id){
         case _GP_:
         case _GA_:
         case _BHA_:
+        case _WCA_:
         case _MBO_:
         case _ABC_:
             a->x = (double *)calloc(n,sizeof(double));
@@ -75,6 +76,7 @@ void DestroyAgent(Agent **a, int opt_id){
         case _GP_:
         case _GA_:
         case _BHA_:
+        case _WCA_:
         case _MBO_:
         case _ABC_:
             if(tmp->x) free(tmp->x);
@@ -128,6 +130,7 @@ Agent *CopyAgent(Agent *a, int opt_id){
         case _CS_:
         case _GA_:
         case _BHA_:
+        case _WCA_:
         case _ABC_:
             memcpy(cpy->x, a->x, a->n*sizeof(double));
             memcpy(cpy->v, a->v, a->n*sizeof(double));
@@ -177,7 +180,10 @@ Agent *GenerateNewAgent(SearchSpace *s, int opt_id){
         case _GA_:
         break;
         case _BHA_:
-        	a = CreateAgent(s->n, _BHA_);
+            a = CreateAgent(s->n, _BHA_);
+        break;
+        case _WCA_:
+            a = CreateAgent(s->n, _WCA_);
         break;
         case _MBO_:
         break;
@@ -248,6 +254,10 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...){
     s->pReproduction = NAN;
     s->pMutation = NAN;
     s->pCrossover = NAN;
+
+    /* WCA */
+    s->nsr = 0;
+    s->dmax = NAN;
     
     /* MBO */
     s->X = 0;
@@ -353,6 +363,7 @@ void DestroySearchSpace(SearchSpace **s, int opt_id){
             case _CS_:
             case _GA_:
             case _BHA_:
+            case _WCA_:
             case _MBO_:
             case _ABC_:
                 if(tmp->g) free(tmp->g);
@@ -418,6 +429,7 @@ void InitializeSearchSpace(SearchSpace *s, int opt_id){
         case _CS_:
         case _GA_:
         case _BHA_:
+        case _WCA_:
         case _MBO_:
         case _ABC_:
             for(i = 0; i < s->m; i++){
@@ -457,6 +469,7 @@ void ShowSearchSpace(SearchSpace *s, int opt_id){
         case _CS_:
         case _GA_:
         case _BHA_:
+        case _WCA_:
         case _ABC_:
             for(i = 0; i < s->m; i++){
                 fprintf(stderr,"\nAgent %d-> ", i);
@@ -520,6 +533,7 @@ void EvaluateSearchSpace(SearchSpace *s, int opt_id, prtFun Evaluate, va_list ar
         case _CS_:
         case _GA_:
         case _BHA_:
+        case _WCA_:
         case _ABC_:
             for(i = 0; i < s->m; i++){
                 f = Evaluate(s->a[i], arg); /* It executes the fitness function for agent i */
@@ -721,6 +735,16 @@ char CheckSearchSpace(SearchSpace *s, int opt_id){
             }
         break;
         case _BHA_:
+        break;
+        case _WCA_:
+            if(s->nsr == 0){
+                fprintf(stderr,"\n  -> Number of rivers undefined.");
+                OK = 0;
+            }
+            if(isnan(s->dmax)){
+                fprintf(stderr,"\n  -> Raining process maximum distance undefined.");
+                OK = 0;
+            }
         break;
         case _MBO_:
             if(s->k == 0){
@@ -933,6 +957,12 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
         case _BHA_:
             s = CreateSearchSpace(m, n, _BHA_);
             s->iterations = iterations;
+        break;
+        case _WCA_:
+            s = CreateSearchSpace(m, n, _WCA_);
+            s->iterations = iterations;
+            fscanf(fp, "%d %lf", &(s->nsr), &(s->dmax));
+            WaiveComment(fp);
         break;
 	case _MBO_:
             fscanf(fp, "%d", &k);

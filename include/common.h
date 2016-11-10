@@ -90,6 +90,10 @@ typedef struct SearchSpace_{
     double pReproduction; /* probability of reproduction */
     double pMutation; /* probability of mutation */
     double pCrossover; /* probability of crossover */
+
+    /* WCA */
+    int nsr; /* number of rivers */
+    double dmax; /* raining process maximum distance */
     
     /* GP */ 
     int min_depth; /* minimum depth of a tree */
