@@ -21,7 +21,7 @@ int *FlowIntensity(SearchSpace *s){
 }
 
 void UpdateStreamPosition(SearchSpace *s, int *flow, double c){
-    int k, i, j, flow_count;
+    int k, i, j, flow_count = 0;
     double tmp, rand;
     
     /* Streams flow to the sea */
@@ -112,12 +112,15 @@ void runWCA(SearchSpace *s, prtFun Evaluate, ...){
         fprintf(stderr,"\nRunning iteration %d/%d ... ", t, s->iterations);
         va_copy(arg, argtmp);
         
-        //UpdateStreamPosition(s, flow, c);
-        //UpdateRiverPosition(s, c);
+        UpdateStreamPosition(s, flow, c);
+        UpdateRiverPosition(s, c);
+        for (i = 0; i < s->m; i++){
+	    CheckAgentLimits(s, s->a[i]);
+	}
         EvaluateSearchSpace(s, _WCA_, Evaluate, arg); /* Initial evaluation of the search space */
         qsort(s->a, s->m, sizeof(Agent**), SortAgent); /* Sorts all raindrops according to their fitness. First position gets the sea. */
-        //RainingProcess(s, flow);
-        //s->dmax = s->dmax - (s->dmax/s->iterations);
+        RainingProcess(s, flow);
+        s->dmax = s->dmax - (s->dmax/s->iterations);
         fprintf(stderr, "OK (minimum fitness value %lf)", s->gfit);
     }
     va_end(arg);
