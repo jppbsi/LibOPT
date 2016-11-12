@@ -7,8 +7,8 @@ Evaluate: pointer to the function used to evaluate particles
 arg: list of additional arguments */
 void runABC(SearchSpace *s, prtFun Evaluate, ...){
     va_list arg, argtmp;
-    int i, j, k, t, chosen_param, neighbour, *trial, max_trial_index, max_fitness, limit;
-    double r, fitValue, *prob;
+    int i, j, k, t, chosen_param, neighbour, *trial, max_trial_index, limit;
+    double max_fitness, r, fitValue, *prob;
     Agent *tmp = NULL;
     		
     va_start(arg, Evaluate);
@@ -67,6 +67,7 @@ void runABC(SearchSpace *s, prtFun Evaluate, ...){
                 max_fitness = s->a[i]->fit;
         for (i = 0; i < s->m; i++)
             prob[i] = (0.9 * (s->a[i]->fit / (max_fitness + 0.00000001))) + 0.1;
+            
             
         /* Onlooker Bee step */
         i = 0;
@@ -131,6 +132,7 @@ void runABC(SearchSpace *s, prtFun Evaluate, ...){
         }
     
         fprintf(stderr, "OK (minimum fitness value %lf)", s->gfit);
+        fprintf(stdout, "%lf\n", s->gfit);
     }
     
     free(trial);
@@ -145,8 +147,8 @@ Evaluate: pointer to the function used to evaluate particles
 arg: list of additional arguments */
 void runTensorABC(SearchSpace *s, int tensor_id, prtFun Evaluate, ...){
     va_list arg, argtmp;
-    int i, j, k, l, t, chosen_param, neighbour, *trial, max_trial_index, max_fitness, limit;
-    double r, fitValue, *prob;
+    int i, j, k, l, t, chosen_param, neighbour, *trial, max_trial_index, limit;
+    double max_fitness, r, fitValue, *prob;
     double **tmp_t = NULL;
     Agent *tmp = NULL;
     		
@@ -297,6 +299,7 @@ void runTensorABC(SearchSpace *s, int tensor_id, prtFun Evaluate, ...){
         }
     
         fprintf(stderr, "OK (minimum fitness value %lf)", s->gfit);
+        fprintf(stdout, "%lf\n", s->gfit);
     }
     
     free(trial);
