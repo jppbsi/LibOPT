@@ -132,7 +132,6 @@ void runABC(SearchSpace *s, prtFun Evaluate, ...){
         }
     
         fprintf(stderr, "OK (minimum fitness value %lf)", s->gfit);
-        fprintf(stdout, "%lf\n", s->gfit);
     }
     
     free(trial);
@@ -299,7 +298,6 @@ void runTensorABC(SearchSpace *s, int tensor_id, prtFun Evaluate, ...){
         }
     
         fprintf(stderr, "OK (minimum fitness value %lf)", s->gfit);
-        fprintf(stdout, "%lf\n", s->gfit);
     }
     
     free(trial);
