@@ -193,7 +193,7 @@ void runTensorABC(SearchSpace *s, int tensor_id, prtFun Evaluate, ...){
                 DestroyAgent(&(s->a[i]), _ABC_);
                 s->a[i] = CopyAgent(tmp, _ABC_);
                 s->a[i]->fit = fitValue;
-                s->a[i]->t = CopyTensor(tmp_t, s->n, _QUATERNION_);
+                s->a[i]->t = CopyTensor(tmp_t, s->n, tensor_id);
             }
             else {
                 trial[i]++; /* If the solution could not be improved, we increase the trial counter */
@@ -201,7 +201,7 @@ void runTensorABC(SearchSpace *s, int tensor_id, prtFun Evaluate, ...){
             if(fitValue < s->gfit){ /* Update the global best */
                 s->gfit = fitValue;
                 DeallocateTensor(&s->t_g, s->n);
-                s->t_g = CopyTensor(tmp_t, s->n, _QUATERNION_);
+                s->t_g = CopyTensor(tmp_t, s->n, tensor_id);
                 for(j = 0; j < s->n; j++)
                     s->g[j] = tmp->x[j];
             }
@@ -245,7 +245,7 @@ void runTensorABC(SearchSpace *s, int tensor_id, prtFun Evaluate, ...){
                     DestroyAgent(&(s->a[i]), _ABC_);
                     s->a[i] = CopyAgent(tmp, _ABC_);
                     s->a[i]->fit = fitValue;
-                    s->a[i]->t = CopyTensor(tmp_t, s->n, _QUATERNION_);
+                    s->a[i]->t = CopyTensor(tmp_t, s->n, tensor_id);
                 }
                 else {
                     trial[i]++; /* If the solution could not be improved, we increase the trial counter */
@@ -253,7 +253,7 @@ void runTensorABC(SearchSpace *s, int tensor_id, prtFun Evaluate, ...){
                 if(fitValue < s->gfit){ /* Update the global best */
                     s->gfit = fitValue;
                     DeallocateTensor(&s->t_g, s->n);
-                    s->t_g = CopyTensor(tmp_t, s->n, _QUATERNION_);
+                    s->t_g = CopyTensor(tmp_t, s->n, tensor_id);
                     for(j = 0; j < s->n; j++)
                         s->g[j] = tmp->x[j];
                 }
@@ -284,12 +284,12 @@ void runTensorABC(SearchSpace *s, int tensor_id, prtFun Evaluate, ...){
                 DestroyAgent(&(s->a[max_trial_index]), _ABC_);
                 s->a[max_trial_index] = CopyAgent(tmp, _ABC_);
                 s->a[max_trial_index]->fit = fitValue;
-                s->a[max_trial_index]->t = CopyTensor(tmp_t, s->n, _QUATERNION_);
+                s->a[max_trial_index]->t = CopyTensor(tmp_t, s->n, tensor_id);
             }
             if(fitValue < s->gfit){ /* update the global best */
                 s->gfit = fitValue;
                 DeallocateTensor(&s->t_g, s->n);
-                s->t_g = CopyTensor(tmp_t, s->n, _QUATERNION_);
+                s->t_g = CopyTensor(tmp_t, s->n, tensor_id);
                 for(j = 0; j < s->n; j++)
                     s->g[j] = tmp->x[j];
             }

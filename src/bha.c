@@ -113,7 +113,7 @@ void runTensorBHA(SearchSpace *s, int tensor_id, prtFun Evaluate, ...){
             s->a[i]->fit = Evaluate(s->a[i], arg); /* It executes the fitness function for agent i */
             
             tmp = CopyAgent(s->a[i], _BHA_);
-            tmp_t = CopyTensor(s->a[i]->t, s->n, _QUATERNION_);
+            tmp_t = CopyTensor(s->a[i]->t, s->n, tensor_id);
             if(s->a[i]->fit < s->gfit){
                 fitValue = s->gfit;
                 s->gfit = s->a[i]->fit;

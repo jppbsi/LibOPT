@@ -103,7 +103,7 @@ void runTensorFPA(SearchSpace *s, int tensor_id, prtFun Evaluate, ...){
        for(i = 0; i < s->m; i++){
             va_copy(arg, argtmp);
             tmp = CopyAgent(s->a[i], _FPA_);
-            tmp_t = CopyTensor(s->a[i]->t, s->n, _QUATERNION_);
+            tmp_t = CopyTensor(s->a[i]->t, s->n, tensor_id);
             
             prob = GenerateUniformRandomNumber(0,1);
             if(prob > s->p){ /* large-scale pollination */
@@ -139,13 +139,13 @@ void runTensorFPA(SearchSpace *s, int tensor_id, prtFun Evaluate, ...){
                 DestroyAgent(&(s->a[i]), _FPA_);
                 s->a[i] = CopyAgent(tmp, _FPA_);
                 s->a[i]->fit = fitValue;
-                s->a[i]->t = CopyTensor(tmp_t, s->n, _QUATERNION_);
+                s->a[i]->t = CopyTensor(tmp_t, s->n, tensor_id);
             }
             
             if(fitValue < s->gfit){ /* update the global best */
                 s->gfit = fitValue;
                 DeallocateTensor(&s->t_g, s->n);
-                s->t_g = CopyTensor(tmp_t, s->n, _QUATERNION_);
+                s->t_g = CopyTensor(tmp_t, s->n, tensor_id);
                 for(j = 0; j < s->n; j++)
                     s->g[j] = tmp->x[j];
             }

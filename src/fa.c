@@ -89,7 +89,7 @@ void runTensorFA(SearchSpace *s, int tensor_id, prtFun Evaluate, ...){
         EvaluateTensorSearchSpace(s, _FA_, tensor_id, Evaluate, arg); /* Initial evaluation of the search space */
         for (i = 0; i < s->m; i++){
             tmp[i] = CopyAgent(s->a[i], _FA_);
-            tmp_t[i] = CopyTensor(s->a[i]->t, s->n, _QUATERNION_);
+            tmp_t[i] = CopyTensor(s->a[i]->t, s->n, tensor_id);
         }
         qsort(tmp, s->m, sizeof(Agent**), SortAgent); /* Sorts all fireflies according to their fitness. First position gets the best firefly. */
 	

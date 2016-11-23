@@ -123,7 +123,7 @@ void runTensorCS(SearchSpace *s, int tensor_id, prtFun Evaluate, ...){
 	
         nest_i = round(GenerateUniformRandomNumber(0, s->m-1));
         tmp = CopyAgent(s->a[nest_i], _CS_);
-        tmp_t = CopyTensor(s->a[nest_i]->t, s->n, _QUATERNION_);
+        tmp_t = CopyTensor(s->a[nest_i]->t, s->n, tensor_id);
 	
         /* Equation 1 */
         L = (double **)calloc(s->n, sizeof(double *));
@@ -149,7 +149,7 @@ void runTensorCS(SearchSpace *s, int tensor_id, prtFun Evaluate, ...){
             DestroyAgent(&(s->a[nest_j]), _CS_);
             s->a[nest_j] = CopyAgent(tmp, _CS_);
             s->a[nest_j]->fit = fitValue;
-            s->a[nest_j]->t = CopyTensor(tmp_t, s->n, _QUATERNION_);
+            s->a[nest_j]->t = CopyTensor(tmp_t, s->n, tensor_id);
         }
 
         DestroyAgent(&tmp, _CS_);
@@ -183,7 +183,7 @@ void runTensorCS(SearchSpace *s, int tensor_id, prtFun Evaluate, ...){
                 DestroyAgent(&(s->a[i]), _CS_);
                 s->a[i] = CopyAgent(tmp, _CS_);
                 s->a[i]->fit = fitValue;
-                s->a[i]->t = CopyTensor(tmp_t, s->n, _QUATERNION_);
+                s->a[i]->t = CopyTensor(tmp_t, s->n, tensor_id);
             }
             DestroyAgent(&tmp, _CS_);
             DeallocateTensor(&tmp_t, s->n);
