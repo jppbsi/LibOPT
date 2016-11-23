@@ -24,9 +24,12 @@ Agent *CreateAgent(int n, int opt_id){
     a->t = NULL;
     a->t_v = NULL;
     a->t_xl = NULL;
+    a->f = NAN;
+    a->r = NAN;
+    a->A = NAN;
+    a->nb = NULL;
     a->pfit = DBL_MAX;
     a->n = n;
-    a->nb = NULL;
     
     switch (opt_id){
         case _PSO_:
@@ -274,23 +277,23 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...){
             for(i = 1; i < s->m; i++)
                 s->a[i] = CreateAgent(s->n, opt_id);
 		
-	    if(opt_id == _MBO_){ /* We create the k neighbours of each agent*/
+	if(opt_id == _MBO_){ /* We create the k neighbours of each agent*/
 		s->k = va_arg(arg, int);
 		for(i = 0; i < s->m; i++){
 		    s->a[i]->nb = (Agent **)malloc(s->k*sizeof(Agent *));
 		    for(j = 0; j < s->k; j++)
 			s->a[i]->nb[j] = CreateAgent(s->n, opt_id);	
 		}
-	    }
-        }else{
-            free(s->a);
-            free(s);
-            fprintf(stderr,"\nInvalid optimization identifier @CreateSearchSpace.\n");
-            return NULL;
-        }
+	}
+    }else{
+        free(s->a);
+        free(s);
+        fprintf(stderr,"\nInvalid optimization identifier @CreateSearchSpace.\n");
+        return NULL;
+    }
     
-        s->g = (double *)calloc(s->n,sizeof(double));
-        s->t_g = NULL;
+    s->g = (double *)calloc(s->n,sizeof(double));
+    s->t_g = NULL;
         
     }else{
         if(opt_id == _GP_){

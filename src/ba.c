@@ -38,7 +38,7 @@ arg: list of additional arguments */
 void runBA(SearchSpace *s, prtFun Evaluate, ...){
     va_list arg, argtmp;
     int t, i, j;
-    double beta, prob, fitValue;
+    double alpha = 0.9, beta, prob, fitValue;
     Agent *tmp = NULL;
     		
     va_start(arg, Evaluate);
@@ -48,49 +48,57 @@ void runBA(SearchSpace *s, prtFun Evaluate, ...){
         fprintf(stderr,"\nSearch space not allocated @runBA.\n");
         exit(-1);
     }
-        
+    
+    for(i = 0; i < s->m; i++){
+        s->a[i]->f = GenerateUniformRandomNumber(s->f_min, s->f_max);
+        s->a[i]->r = GenerateUniformRandomNumber(0, s->r);
+        s->a[i]->A = GenerateUniformRandomNumber(0, s->A);
+    }
+    
     EvaluateSearchSpace(s, _BA_, Evaluate, arg); /* Initial evaluation of the search space */
         
     for(t = 1; t <= s->iterations; t++){
         fprintf(stderr,"\nRunning iteration %d/%d ... ", t, s->iterations);
             
         /* for each bat */
-       for(i = 0; i < s->m; i++){
+        for(i = 0; i < s->m; i++){
             va_copy(arg, argtmp);
             
-	    SetBatFrequency(s, i); /* Equation 1 */
+            SetBatFrequency(s, i); /* Equation 1 */
             UpdateBatVelocity(s, i); /* Equation 2 */
-	    
-	    /* Equation 3
+            
+            /* Equation 3
             Here, we generate a temporary agent (bat) */
             tmp = CopyAgent(s->a[i], _BA_);
             for(j = 0; j < s->n; j++)
-                tmp->x[j] = tmp->x[j]+tmp->v[j];
+                    tmp->x[j] = tmp->x[j]+tmp->v[j];
             /**************/
-            
-	    prob = GenerateUniformRandomNumber(0,1);
-            if(prob > s->r){
+                
+            prob = GenerateUniformRandomNumber(0,1);
+            if(prob > s->a[i]->r){
                 DestroyAgent(&tmp, _BA_);
                 tmp = GenerateNewAgent(s, _BA_);
             }
-	    CheckAgentLimits(s, tmp);
-	    
+            CheckAgentLimits(s, tmp);
+            
             fitValue = Evaluate(tmp, arg); /* It executes the fitness function for agent i */
-	    prob = GenerateUniformRandomNumber(0,1);
-	    if((fitValue < s->a[i]->fit) && (prob < s->A)){ /* We accept the new solution */
-		DestroyAgent(&(s->a[i]), _BA_);
+            prob = GenerateUniformRandomNumber(0,1);
+            if((fitValue < s->a[i]->fit) && (prob < s->a[i]->A)){ /* We accept the new solution */
+                DestroyAgent(&(s->a[i]), _BA_);
                 s->a[i] = CopyAgent(tmp, _BA_);
                 s->a[i]->fit = fitValue;
+                s->a[i]->r = s->r * (1 - exp(-alpha*t));
+                s->a[i]->A = s->A * alpha;
             }
-	    
-	    if(fitValue < s->gfit){ /* update the global best */
-		s->gfit = fitValue;
-		for(j = 0; j < s->n; j++)
-		    s->g[j] = tmp->x[j];
-	    }
-	    
-	    DestroyAgent(&tmp, _BA_);
-       }
+            
+            if(fitValue < s->gfit){ /* update the global best */
+                s->gfit = fitValue;
+                for(j = 0; j < s->n; j++)
+                    s->g[j] = tmp->x[j];
+            }
+            
+            DestroyAgent(&tmp, _BA_);
+        }
        
        fprintf(stderr, "OK (minimum fitness value %lf)", s->gfit);
     }
@@ -161,7 +169,7 @@ arg: list of additional arguments */
 void runTensorBA(SearchSpace *s, int tensor_id, prtFun Evaluate, ...){
     va_list arg, argtmp;
     int t, i, j, k;
-    double beta, prob, fitValue;
+    double alpha = 0.9, beta, prob, fitValue;
     double **tmp_t = NULL, **tmp_t_v = NULL;
     Agent *tmp = NULL;
     		
@@ -171,6 +179,12 @@ void runTensorBA(SearchSpace *s, int tensor_id, prtFun Evaluate, ...){
     if(!s){
         fprintf(stderr,"\nSearch space not allocated @runTensorBA.\n");
         exit(-1);
+    }
+    
+    for(i = 0; i < s->m; i++){
+        s->a[i]->f = GenerateUniformRandomNumber(s->f_min, s->f_max);
+        s->a[i]->r = GenerateUniformRandomNumber(0, s->r);
+        s->a[i]->A = GenerateUniformRandomNumber(0, s->A);
     }
         
     EvaluateTensorSearchSpace(s, _BA_, tensor_id, Evaluate, arg); /* Initial evaluation of the search space */
@@ -196,7 +210,7 @@ void runTensorBA(SearchSpace *s, int tensor_id, prtFun Evaluate, ...){
             /**************/
 
             prob = GenerateUniformRandomNumber(0,1);
-            if(prob > s->r){
+            if(prob > s->a[i]->r){
                 DeallocateTensor(&tmp_t, s->n);
                 DestroyAgent(&tmp, _BA_);
                 tmp = GenerateNewAgent(s, _BA_);
@@ -208,7 +222,7 @@ void runTensorBA(SearchSpace *s, int tensor_id, prtFun Evaluate, ...){
 	    
             fitValue = Evaluate(tmp, arg); /* It executes the fitness function for agent i */
             prob = GenerateUniformRandomNumber(0,1);
-            if((fitValue < s->a[i]->fit) && (prob < s->A)){ /* We accept the new solution */
+            if((fitValue < s->a[i]->fit) && (prob < s->a[i]->A)){ /* We accept the new solution */
                 DeallocateTensor(&s->a[i]->t, s->n);
                 DeallocateTensor(&s->a[i]->t_v, s->n);
                 DestroyAgent(&(s->a[i]), _BA_);
@@ -216,6 +230,8 @@ void runTensorBA(SearchSpace *s, int tensor_id, prtFun Evaluate, ...){
                 s->a[i]->fit = fitValue;
                 s->a[i]->t = CopyTensor(tmp_t, s->n, tensor_id);
                 s->a[i]->t_v = CopyTensor(tmp_t_v, s->n, tensor_id);
+                s->a[i]->r = s->r * (1 - exp(-alpha*t));
+                s->a[i]->A = s->A * alpha;
             }
 	    
             if(fitValue < s->gfit){ /* update the global best */

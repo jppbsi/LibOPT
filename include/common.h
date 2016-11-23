@@ -44,6 +44,8 @@ typedef struct Agent_{
     
     /* BA */
     double f; /* frequency */
+    double r; /* pulse rate */
+    double A; /* loudness */
     
     /* MBO */
     struct Agent_ **nb; /* array of pointers to neighbours */
