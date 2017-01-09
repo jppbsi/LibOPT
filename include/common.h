@@ -166,6 +166,7 @@ Node **Crossover(Node *Father, Node *Mother, float p); /* It performs the crosso
 Node *PreFixPositioningTree(Node *T, int pos, char *left_son, int status, int *ctr); /* It returns the parent of the pos-th node using a prefix travel */
 Node *SGXB(SearchSpace *s, Node *T1_tmp, Node *T2_tmp); /* It performs the Geometric Semantic Genetic Programming crossover operator for boolean functions */
 Node *SGMB(SearchSpace *s, Node *T_tmp); /* It performs the Geometric Semantic Genetic Programming mutation operator for boolean functions */
+Node *SGXE(SearchSpace *s, Node *T1_tmp, Node *T2_tmp); /* It performs the Geometric Semantic Genetic Programming crossover operator for real-valued functions */
 /***********************/
 
 /* Tensor-related functions */
