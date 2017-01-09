@@ -1670,6 +1670,52 @@ Node *SGMB(SearchSpace *s, Node *T_tmp){
 }
 /***********************/
 
+/* It performs the Geometric Semantic Genetic Programming crossover operator for real-valued functions
+Parameters:
+s: search space
+T1: pointer to the first tree
+T2: pointer to the second tree */
+Node *SGXE(SearchSpace *s, Node *T1_tmp, Node *T2_tmp){
+    Node *T3 = NULL, *TR = NULL, *TR_cpy = NULL, *LeftTree = NULL;
+    Node *RightTree = NULL, *T1 = NULL, *T2 = NULL, *NOT_TR = NULL;
+    int i;
+    
+    if(!s || !T1_tmp || !T2_tmp){
+        fprintf(stderr,"\nInput error @SGXE.\n");
+        return NULL;
+    }
+    
+    T1 = CopyTree(T1_tmp);
+    T2 = CopyTree(T2_tmp);
+    
+    /* It generates an array with random values within [0,1] */
+    TR = CreateNode("TMP", 0, NEW_TERMINAL, s->n);
+    for(i = 0; i < s->n; i++)
+        TR->val[i] = GenerateUniformRandomNumber(0, 1); /* Creating a random minterm */
+    
+    T3 = CreateNode("SUM", getFUNCTIONid("SUM"), FUNCTION); /* It creates the root */
+    T3->parent = NULL;
+    
+    LeftTree = CreateNode("MUL", getFUNCTIONid("MUL"), FUNCTION); /* It creates the tree on the left */    
+    T3->left = LeftTree; LeftTree->parent = T3;
+    LeftTree->left = T1; T1->parent = LeftTree;
+    LeftTree->right = TR; TR->parent = LeftTree; TR->left_son = 0;
+        
+    RightTree = CreateNode("MUL", getFUNCTIONid("MUL"), FUNCTION); /* It creates the tree on the right */
+    T3->right = RightTree; RightTree->parent = T3; RightTree->left_son = 0;
+    RightTree->left = NOT_TR; NOT_TR->parent = RightTree;
+    
+    NOT_TR = CreateNode("TMP", 0, NEW_TERMINAL, s->n);
+    for(i = 0; i < s->n; i++)
+        NOT_TR->val[i] = 1-TR->val[i]; /* Creating 1-TR */
+    
+    RightTree->left = NOT_TR; NOT_TR->parent = RightTree;
+    RightTree->right = T2; T2->parent = RightTree; T2->left_son = 0;
+    NOT_TR->left = TR_cpy; TR_cpy->parent = NOT_TR;
+    
+    return T3;
+}
+
 /* Tensor-related functions */
 /* It allocates a new tensor
 Parameters:
