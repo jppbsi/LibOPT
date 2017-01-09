@@ -1691,7 +1691,7 @@ Node *SGXE(SearchSpace *s, Node *T1_tmp, Node *T2_tmp){
     /* It generates an array with random values within [0,1] */
     TR = CreateNode("TMP", 0, NEW_TERMINAL, s->n);
     for(i = 0; i < s->n; i++)
-        TR->val[i] = GenerateUniformRandomNumber(0, 1); /* Creating a random minterm */
+        TR->val[i] = GenerateUniformRandomNumber(0, 1); /* Creating an array composed of random numbers */
     
     T3 = CreateNode("SUM", getFUNCTIONid("SUM"), FUNCTION); /* It creates the root */
     T3->parent = NULL;
