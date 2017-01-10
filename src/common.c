@@ -1749,7 +1749,7 @@ Node *SGME(SearchSpace *s, Node *T1_tmp, Node *T2_tmp){
             break;
         case 1:
             for(i = 0; i < s->n; i++)
-                TR->val[i] = abs(sin(TR->val[i]));
+                TR->val[i] = fabs(sin(TR->val[i]));
             break;
         case 2:
             for(i = 0; i < s->n; i++)
