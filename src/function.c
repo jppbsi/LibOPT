@@ -2867,7 +2867,7 @@ double Zirilli(Agent *a, va_list arg){
 }
 /***********************/
 
-/* General-purpose functions */
+/* Genetic Programming general-purpose functions */
 /* It computes the pointwise sum of two n-dimensional arrays
 Parameters:
 x, y: arrays
@@ -3106,5 +3106,19 @@ double *f_NOT_(double *x, int n){
         out[i] = (double)~(int)x[i];
     
     return out;
+}
+/*****************************/
+
+
+/* Math functions */
+/* It computes the logist sigmoid function
+Parameters:
+x: input */
+double Logistic_Sigmoid(double x){
+    double y;
+    
+    y = 1.0/(1+exp(-x));
+    
+    return y;
 }
 /*****************************/

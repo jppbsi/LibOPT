@@ -118,7 +118,7 @@ double Zettl(Agent *a, va_list arg); /* It computes the Zettl's function */
 double Zirilli(Agent *a, va_list arg); /* It computes the Zirilli's function */
 /***********************/
 
-/* General-purpose functions */
+/* Genetic Programming general-purpose functions */
 double *f_SUM_(double *x, double *y, int n); /* It computes the pointwise sum of two n-dimensional arrays */
 double *f_SUB_(double *x, double *y, int n); /* It computes the pointwise subtraction of two n-dimensional arrays */
 double *f_MUL_(double *x, double *y, int n); /* It computes the pointwise multiplication of two n-dimensional arrays */
@@ -132,4 +132,9 @@ double *f_OR_(double *x, double *y, int n); /* It computes the logical function 
 double *f_XOR_(double *x, double *y, int n); /* It computes the logical function XOR among two n-dimensional arrays */
 double *f_NOT_(double *x, int n); /* It computes the logical function NOT of an n-dimensional array */
 /*****************************/
+
+/* Math functions */
+double Logistic_Sigmoid(double x); /* It computes the logist sigmoid function */
+/*****************************/
+
 #endif
