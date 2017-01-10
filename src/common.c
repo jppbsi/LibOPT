@@ -1724,7 +1724,7 @@ T2: pointer to the second tree */
 Node *SGME(SearchSpace *s, Node *T1_tmp, Node *T2_tmp){
     Node *T3 = NULL, *TR = NULL, *TR_cpy = NULL, *LeftTree = NULL;
     Node *RightTree = NULL, *T1 = NULL, *T2 = NULL, *NOT_TR = NULL;
-    int i;
+    int i, j;
     
     if(!s || !T1_tmp || !T2_tmp){
         fprintf(stderr,"\nInput error @SGXE.\n");
@@ -1734,10 +1734,28 @@ Node *SGME(SearchSpace *s, Node *T1_tmp, Node *T2_tmp){
     T1 = CopyTree(T1_tmp);
     T2 = CopyTree(T2_tmp);
     
-    /* It generates an array with random values within [0,1] */  //PRECISAMOS DE UM CONJUNTO DE FUNCOES COM IMAGEM EM [0,1]!!!
+    /* It generates an array with random values within [0,1] */
     TR = CreateNode("TMP", 0, NEW_TERMINAL, s->n);
     for(i = 0; i < s->n; i++)
         TR->val[i] = GenerateUniformRandomNumber(0, 1); /* Creating an array composed of random numbers */
+        
+    /* Now we choose a random number within [0,2] in order to pick some
+    function bounded within [0,1] at random */
+    j = round(GenerateUniformRandomNumber(0, 2));
+    switch (j){
+        case 0:
+            for(i = 0; i < s->n; i++)
+                TR->val[i] = exp(TR->val[i]);
+            break;
+        case 1:
+            for(i = 0; i < s->n; i++)
+                TR->val[i] = abs(sin(TR->val[i]));
+            break;
+        case 2:
+            for(i = 0; i < s->n; i++)
+                TR->val[i] = cos(sin(TR->val[i]));
+            break;
+    }
     
     T3 = CreateNode("SUM", getFUNCTIONid("SUM"), FUNCTION); /* It creates the root */
     T3->parent = NULL;
