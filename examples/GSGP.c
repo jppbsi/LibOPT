@@ -4,7 +4,7 @@
 
 int main(int argc, char **argv){
     if(argc != 2){
-        fprintf(stderr,"\nusage BGSGP <model_file>\n");
+        fprintf(stderr,"\nusage GSGP <model_file>\n");
         exit(-1);
     }
     
@@ -30,10 +30,10 @@ int main(int argc, char **argv){
     function = (char **)malloc(n_functions*sizeof(char *));
     for(i = 0; i < n_functions; i++)
         function[i] = (char *)malloc(TERMINAL_LENGTH*sizeof(char));
-    strcpy(function[0], "AND");
-    strcpy(function[1], "OR");
-    strcpy(function[2], "NOT");
-    strcpy(function[3], "XOR");
+    strcpy(function[0], "SUM");
+    strcpy(function[1], "SUB");
+    strcpy(function[2], "MUL");
+    strcpy(function[3], "DIV");
     /****************************/
     
     /*********************/
@@ -43,7 +43,7 @@ int main(int argc, char **argv){
     at random within [0,10]*/
     s = CreateSearchSpace(m, n, _GP_, min_depth, max_depth, n_terminals, N_CONSTANTS, n_functions, terminal, constant, function);
     s->iterations = 10;
-    s->is_integer_opt = 1; /* integer(binary)-valued optimization problem */
+    s->is_integer_opt = 0; /* integer(binary)-valued optimization problem */
     
     /* Initializing lower and upper bounds */
     for(i = 0; i < s->n; i++){
@@ -57,8 +57,8 @@ int main(int argc, char **argv){
     s->pMutation = 0.4; /* Setting up the probability of mutation */
     s->pCrossover = 1-(s->pReproduction+s->pMutation); /* Setting up the probability of crossover */
     
-    if (CheckSearchSpace(s, _GP_)) runBGSGP(s, Sphere); /* It minimizes function Sphere */
-    else fprintf(stderr,"\nPlease, check your BGSGP configuration prior running it.\n");
+    if (CheckSearchSpace(s, _GP_)) runGSGP(s, Sphere); /* It minimizes function Sphere */
+    else fprintf(stderr,"\nPlease, check your GSGP configuration prior running it.\n");
 
     PrintTree2File(s, s->T[s->best], "best_tree.txt"); /* It saves the best tree */
 
@@ -71,8 +71,8 @@ int main(int argc, char **argv){
     s = ReadSearchSpaceFromFile(argv[1], _GP_);
     InitializeSearchSpace(s, _GP_);*/ /* It initalizes the search space */
     
-    /*if (CheckSearchSpace(s, _GP_)) runBGSGP(s, Sphere); *//* It minimizes function Sphere */
-    /*else fprintf(stderr,"\nPlease, check your BGSGP configuration prior running it.\n");
+    /*if (CheckSearchSpace(s, _GP_)) runGSGP(s, Sphere); *//* It minimizes function Sphere */
+    /*else fprintf(stderr,"\nPlease, check your GSGP configuration prior running it.\n");
 
     PrintTree2File(s, s->T[s->best], "best_tree.txt"); *//* It saves the best tree */
 
