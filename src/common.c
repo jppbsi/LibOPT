@@ -1676,7 +1676,7 @@ s: search space
 T1: pointer to the first tree
 T2: pointer to the second tree */
 Node *SGXE(SearchSpace *s, Node *T1_tmp, Node *T2_tmp){
-    Node *T3 = NULL, *TR = NULL, *TR_cpy = NULL, *LeftTree = NULL;
+    Node *T3 = NULL, *TR = NULL, *LeftTree = NULL;
     Node *RightTree = NULL, *T1 = NULL, *T2 = NULL, *NOT_TR = NULL;
     int i;
     
@@ -1703,7 +1703,6 @@ Node *SGXE(SearchSpace *s, Node *T1_tmp, Node *T2_tmp){
         
     RightTree = CreateNode("MUL", getFUNCTIONid("MUL"), FUNCTION); /* It creates the tree on the right */
     T3->right = RightTree; RightTree->parent = T3; RightTree->left_son = 0;
-    RightTree->left = NOT_TR; NOT_TR->parent = RightTree;
     
     NOT_TR = CreateNode("TMP", 0, NEW_TERMINAL, s->n);
     for(i = 0; i < s->n; i++)
@@ -1711,7 +1710,6 @@ Node *SGXE(SearchSpace *s, Node *T1_tmp, Node *T2_tmp){
     
     RightTree->left = NOT_TR; NOT_TR->parent = RightTree;
     RightTree->right = T2; T2->parent = RightTree; T2->left_son = 0;
-    NOT_TR->left = TR_cpy; TR_cpy->parent = NOT_TR;
     
     return T3;
 }
@@ -1722,12 +1720,12 @@ s: search space
 T1: pointer to the first tree
 T2: pointer to the second tree */
 Node *SGME(SearchSpace *s, Node *T1_tmp, Node *T2_tmp){
-    Node *T3 = NULL, *TR = NULL, *TR_cpy = NULL, *LeftTree = NULL;
+    Node *T3 = NULL, *TR = NULL, *LeftTree = NULL;
     Node *RightTree = NULL, *T1 = NULL, *T2 = NULL, *NOT_TR = NULL;
     int i, j;
     
     if(!s || !T1_tmp || !T2_tmp){
-        fprintf(stderr,"\nInput error @SGXE.\n");
+        fprintf(stderr,"\nInput error @SGME.\n");
         return NULL;
     }
     
@@ -1767,15 +1765,13 @@ Node *SGME(SearchSpace *s, Node *T1_tmp, Node *T2_tmp){
         
     RightTree = CreateNode("MUL", getFUNCTIONid("MUL"), FUNCTION); /* It creates the tree on the right */
     T3->right = RightTree; RightTree->parent = T3; RightTree->left_son = 0;
-    RightTree->left = NOT_TR; NOT_TR->parent = RightTree;
-    
+
     NOT_TR = CreateNode("TMP", 0, NEW_TERMINAL, s->n);
     for(i = 0; i < s->n; i++)
         NOT_TR->val[i] = 1-TR->val[i]; /* Creating 1-TR */
-    
+ 
     RightTree->left = NOT_TR; NOT_TR->parent = RightTree;
     RightTree->right = T2; T2->parent = RightTree; T2->left_son = 0;
-    NOT_TR->left = TR_cpy; TR_cpy->parent = NOT_TR;
     
     return T3;
 }
