@@ -132,7 +132,7 @@ void runGSGP(SearchSpace *s, prtFun Evaluate, ...){
 	mutation = RouletteSelection(s, n_mutation);
 	
 	/* Calcultating the number of individuals to perform the crossover */
-	n_crossover = s->m-(n_reproduction+n_mutation);
+	n_crossover = round(s->m*s->pCrossover);
 	crossover = RouletteSelection(s, n_crossover);
 	
 	/* It performs the reproduction */
@@ -140,6 +140,7 @@ void runGSGP(SearchSpace *s, prtFun Evaluate, ...){
 	    DestroyTree(&s->T[i]);
 	    s->T[i] = CopyTree(tmpTree[reproduction[i]]);
 	}
+
 	
 	/* It performs the mutation */
 	z = 0;
@@ -150,6 +151,8 @@ void runGSGP(SearchSpace *s, prtFun Evaluate, ...){
 		mother_crosspoint = GenerateUniformRandomNumber(0, n_reproduction);
 		ctr++;
 	    }while((father_cross_point == mother_crosspoint) && (ctr <= 10));
+
+	    fprintf(stderr, "%d %d %d\n", n_reproduction, n_mutation, n_crossover);
 	    
 	    aux = SGME(s, tmpTree[crossover[father_cross_point]], tmpTree[crossover[mother_crosspoint]]); 
 	    DestroyTree(&s->T[j]);
