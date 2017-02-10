@@ -17,6 +17,7 @@ extern "C" {
 #define _WCA_ 9 /* Water Cycle Algorithm */
 #define _MBO_ 10 /* Migrating Bird Optimization */
 #define _ABC_ 11 /* Artificial Bee Colony */
+#define _HS_ 12 /* Harmony Search */
 /**************************/
 
 /* Tensors */

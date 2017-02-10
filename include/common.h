@@ -30,23 +30,23 @@ typedef struct Agent_{
     double *x; /* position */
     double fit; /* fitness value */
     double **t; /* tensor */
-    
+
     /* PSO */
     double *v; /* velocity */
     double *xl; /* local best */
-    
+
     /* AIWPSO */
     double pfit; /* fitness value of the previous iteration */
-    
+
     /* TensorPSO */
     double **t_v; /* tensor velocity */
     double **t_xl; /* tensor local best */
-    
+
     /* BA */
     double f; /* frequency */
     double r; /* pulse rate */
     double A; /* loudness */
-    
+
     /* MBO */
     struct Agent_ **nb; /* array of pointers to neighbours */
 }Agent;
@@ -65,29 +65,29 @@ typedef struct SearchSpace_{
     int best; /* index of the best agent */
     double gfit; /* global best fitness */
     int is_integer_opt; /* integer-valued optimization problem? */
-    
+
     /* PSO */
     double w; /* inertia weight */
     double w_min; /* lower bound for w - used for adaptive inertia weight */
     double w_max; /* upper bound for w - used for adaptive inertia weight */
     double c1; /* c1 parameter */
     double c2; /* c2 parameter */
-    
+
     /* BA */
     double f_min; /* minimum frequency */
     double f_max; /* maximum frequency */
     double r; /* pulse rate */
     double A; /* loudness */
-    
+
     /* FPA */
     double beta; /* used to compute the step based on Levy Flight */
     double p; /* probability of local pollination */
-    
+
     /* FA */
     double alpha; /* randomized parameter */
     double beta_0; /* attractiveness */
     double gamma; /* light absorption */
-    
+
     /* GP and GA */
     double pReproduction; /* probability of reproduction */
     double pMutation; /* probability of mutation */
@@ -96,8 +96,8 @@ typedef struct SearchSpace_{
     /* WCA */
     int nsr; /* number of rivers */
     double dmax; /* raining process maximum distance */
-    
-    /* GP */ 
+
+    /* GP */
     int min_depth; /* minimum depth of a tree */
     int max_depth; /* maximum depth of a tree */
     int n_terminals; /* number of terminals */
@@ -108,15 +108,21 @@ typedef struct SearchSpace_{
     double **constant; /* matrix with the random constants */
     Node **T; /* pointer to the tree */
     double *tree_fit; /* fitness of each tree (in GP, the number of agents is different from the number of trees) */
-    
+
     /* MBO */
     int k; /* number of neighbours solutions to be considered */
     int X; /* number of neighbour solutions to be shared with the next solution */
     int M; /* number of tours, i.e., the number of iterations for the leader */
     int leftSide; /* flag to know which bird will be changed */
-    
+
     /* ABC */
     int limit; /* number of trial limits for each food source */
+
+    /* HS */
+    double HMCR; /* harmony memory considering rate */
+    double PAR; /* pitch adjusting rate */
+    double bw; /* bandwidth */
+
 }SearchSpace;
 
 typedef double (*prtFun)(Agent *, va_list arg); /* Pointer to the function used to evaluate agents */

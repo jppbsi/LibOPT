@@ -15,7 +15,7 @@ Agent *CreateAgent(int n, int opt_id){
         fprintf(stderr,"\nInvalid parameters @CreateAgent.\n");
         return NULL;
     }
-    
+
     Agent *a = NULL;
     a = (Agent *)malloc(sizeof(Agent));
     a->v = NULL;
@@ -30,7 +30,7 @@ Agent *CreateAgent(int n, int opt_id){
     a->nb = NULL;
     a->pfit = DBL_MAX;
     a->n = n;
-    
+
     switch (opt_id){
         case _PSO_:
         case _BA_:
@@ -43,6 +43,7 @@ Agent *CreateAgent(int n, int opt_id){
         case _WCA_:
         case _MBO_:
         case _ABC_:
+        case _HS_:
             a->x = (double *)calloc(n,sizeof(double));
             if(opt_id != _GP_) a->v = (double *)calloc(n,sizeof(double));
             if(opt_id == _PSO_) a->xl = (double *)calloc(n,sizeof(double));
@@ -53,7 +54,7 @@ Agent *CreateAgent(int n, int opt_id){
         return NULL;
         break;
     }
-    
+
     return a;
 }
 
@@ -63,13 +64,13 @@ a: address of the agent to be deallocated
 opt_id: identifier of the optimization technique */
 void DestroyAgent(Agent **a, int opt_id){
     Agent *tmp = NULL;
-    
+
     tmp = *a;
     if(!tmp){
         fprintf(stderr,"\nAgent not allocated @DestroyAgent.\n");
         exit(-1);
     }
-    
+
     switch (opt_id){
         case _PSO_:
         case _BA_:
@@ -82,6 +83,7 @@ void DestroyAgent(Agent **a, int opt_id){
         case _WCA_:
         case _MBO_:
         case _ABC_:
+        case _HS_:
             if(tmp->x) free(tmp->x);
             if(tmp->v) free(tmp->v);
             if(opt_id == _PSO_) if(tmp->xl) free(tmp->xl);
@@ -90,7 +92,7 @@ void DestroyAgent(Agent **a, int opt_id){
             fprintf(stderr,"\nInvalid optimization identifier @DestroyAgent.\n");
         break;
     }
-    
+
     free(tmp);
 }
 
@@ -103,7 +105,7 @@ void CheckAgentLimits(SearchSpace *s, Agent *a){
         fprintf(stderr,"\nInvalid input parameters @CheckAgentLimits.\n");
         exit(-1);
     }
-    
+
     int j;
 
     for(j = 0; j < a->n; j++){
@@ -121,10 +123,10 @@ Agent *CopyAgent(Agent *a, int opt_id){
         fprintf(stderr,"\nAgent not allocated @CopyAgent.\n");
         exit(-1);
     }
-    
+
     Agent *cpy = NULL;
     cpy = CreateAgent(a->n, opt_id);
-    
+
     switch (opt_id){
         case _PSO_:
         case _BA_:
@@ -135,6 +137,7 @@ Agent *CopyAgent(Agent *a, int opt_id){
         case _BHA_:
         case _WCA_:
         case _ABC_:
+        case _HS_:
             memcpy(cpy->x, a->x, a->n*sizeof(double));
             memcpy(cpy->v, a->v, a->n*sizeof(double));
             if(opt_id == _PSO_) memcpy(cpy->xl, a->xl, a->n*sizeof(double));
@@ -146,7 +149,7 @@ Agent *CopyAgent(Agent *a, int opt_id){
             return NULL;
         break;
     }
-    
+
     return cpy;
 }
 
@@ -159,19 +162,20 @@ Agent *GenerateNewAgent(SearchSpace *s, int opt_id){
         fprintf(stderr,"\nSearch space not allocated @GenerateNewAgent.\n");
         exit(-1);
     }
-    
+
     Agent *a = NULL;
-    int j;
-        
+    int i, j;
+    double r, signal;
+
     switch (opt_id){
         case _PSO_:
         break;
         case _BA_:
             a = CreateAgent(s->n, _BA_);
-            
-            /* The factor 0.001 limits the step sizes of random walks */ 
+
+            /* The factor 0.001 limits the step sizes of random walks */
             for(j = 0; j < s->n; j++)
-                a->x[j] = s->g[j]+0.001*GenerateUniformRandomNumber(0,1); 
+                a->x[j] = s->g[j]+0.001*GenerateUniformRandomNumber(0,1);
         break;
         case _FPA_:
         break;
@@ -193,12 +197,34 @@ Agent *GenerateNewAgent(SearchSpace *s, int opt_id){
         case _ABC_:
             a = CreateAgent(s->n, _ABC_);
         break;
+        case _HS_:
+            a = CreateAgent(s->n, _HS_);
+
+            for(j = 0; j < s->n; j++){
+                r = GenerateUniformRandomNumber(0, 1);
+                if(s->HMCR >= r){
+                    i = GenerateUniformRandomNumber(0, s->m-1);
+                    r = GenerateUniformRandomNumber(0, 1);
+                    if(s->PAR >= r){
+                        signal = GenerateUniformRandomNumber(0, 1);
+                        r = GenerateUniformRandomNumber(0, 1);
+                        if(signal >= 0.5)
+                                a->x[j] = s->a[i]->x[j]+r*s->bw;
+                        else
+                                a->x[j] = s->a[i]->x[j]-r*s->bw;
+                    }
+                }else{
+                  r = (s->UB[j] - s->LB[j]) * GenerateUniformRandomNumber(0, 1) + s->LB[j];
+                  a->x[j] = r;
+                }
+            }
+        break;
         default:
             fprintf(stderr,"\nInvalid optimization identifier @GenerateNewAgent.\n");
             return NULL;
         break;
     }
-    
+
     return a;
 }
 
@@ -216,13 +242,13 @@ GP: it requires the minimum and maximum depth of a tree, number of terminals and
 SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...){
     SearchSpace *s = NULL;
     va_list arg;
-    
+
     if((m < 1) || (n < 1) || (opt_id < 1)){
         fprintf(stderr,"\nInvalid parameters @CreateSearchSpace.\n");
         return NULL;
     }
     int i, j;
-    
+
     va_start(arg, opt_id);
     s = (SearchSpace *)malloc(sizeof(SearchSpace));
     s->m = m;
@@ -230,29 +256,29 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...){
     s->gfit = DBL_MAX;
     s->iterations = 0;
     s->is_integer_opt = 1;
-    
+
     /* PSO */
     s->w = NAN;
     s->w_min = NAN;
     s->w_max = NAN;
     s->c1 = NAN;
     s->c2 = NAN;
-    
+
     /* BA */
     s->f_min = NAN;
     s->f_max = NAN;
     s->r = NAN;
     s->A = NAN;
-    
+
     /* FPA */
     s->beta = NAN;
     s->p = NAN;
-    
+
     /* FA */
     s->alpha = NAN;
     s->beta_0 = NAN;
     s->gamma = NAN;
-    
+
     /* GP and GA */
     s->pReproduction = NAN;
     s->pMutation = NAN;
@@ -261,28 +287,33 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...){
     /* WCA */
     s->nsr = 0;
     s->dmax = NAN;
-    
+
     /* MBO */
     s->X = 0;
     s->M = 0;
     s->leftSide = 1;
-    
+
     /* ABC */
     s->limit = 0;
-    
+
+    /* HS */
+    s->HMCR = NAN;
+    s->PAR = NAN;
+    s->bw = NAN;
+
     if(opt_id != _GP_){ /* GP uses a different structure than that of others */
         s->a = (Agent **)malloc(s->m*sizeof(Agent *));
         s->a[0] = CreateAgent(s->n, opt_id);
         if(s->a[0]){ /* Here, we verify whether opt_id is valid or not. In the latter case, function CreateAgent returns NULL. */
             for(i = 1; i < s->m; i++)
                 s->a[i] = CreateAgent(s->n, opt_id);
-		
+
 	if(opt_id == _MBO_){ /* We create the k neighbours of each agent*/
 		s->k = va_arg(arg, int);
 		for(i = 0; i < s->m; i++){
 		    s->a[i]->nb = (Agent **)malloc(s->k*sizeof(Agent *));
 		    for(j = 0; j < s->k; j++)
-			s->a[i]->nb[j] = CreateAgent(s->n, opt_id);	
+			s->a[i]->nb[j] = CreateAgent(s->n, opt_id);
 		}
 	}
     }else{
@@ -291,43 +322,43 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...){
         fprintf(stderr,"\nInvalid optimization identifier @CreateSearchSpace.\n");
         return NULL;
     }
-    
+
     s->g = (double *)calloc(s->n,sizeof(double));
     s->t_g = NULL;
-        
+
     }else{
         if(opt_id == _GP_){
             s->min_depth = va_arg(arg, int);
             s->max_depth = va_arg(arg, int);
             s->n_terminals = va_arg(arg, int);
             s->n_constants = va_arg(arg, int);
-            s->n_functions = va_arg(arg, int);            
+            s->n_functions = va_arg(arg, int);
             s->terminal = va_arg(arg, char **);
             s->constant = va_arg(arg, double **);
             s->function = va_arg(arg, char **);
-    
+
             s->T = (Node **)malloc(s->m*sizeof(Node *));
             for(i = 0; i < s->m; i++)
                 s->T[i] = GROW(s, s->min_depth, s->max_depth);
-                            
+
             s->a = (Agent **)malloc(s->n_terminals*sizeof(Agent *));
             for(i = 0; i < s->n_terminals; i++)
                 s->a[i] = CreateAgent(s->n, opt_id);
-            
+
             s->tree_fit = (double *)malloc(s->m*sizeof(double));
             for(i = 0; i < s->m; i++)
                 s->tree_fit[i] = DBL_MAX;
-                
+
             s->g = (double *)calloc(s->n,sizeof(double));
         }
-        
+
     }
-    
+
     s->LB = (double *)malloc(s->n*sizeof(double));
     s->UB = (double *)malloc(s->n*sizeof(double));
-    
+
     va_end(arg);
-    
+
     return s;
 }
 
@@ -338,26 +369,26 @@ opt_id: identifier of the optimization technique */
 void DestroySearchSpace(SearchSpace **s, int opt_id){
     SearchSpace *tmp = NULL;
     int i, j;
-    
+
     tmp = *s;
     if(!tmp){
         fprintf(stderr,"\nSearch space not allocated @DestroySearchSpace.\n");
         exit(-1);
     }
-    
+
     if(opt_id != _GP_){ /* GP uses a different structure than that of others */
 	if(opt_id == _MBO_){ /* We free the neighbours allocation */
 	    for(i = 0; i < tmp->m; i++){
 		for(j = 0; j < tmp->k; j++)
 		    if(tmp->a[i]->nb[j]) DestroyAgent(&(tmp->a[i]->nb[j]), opt_id);
 		free(tmp->a[i]->nb);
-	    }    
+	    }
 	}
-	
+
         for(i = 0; i < tmp->m; i++)
             if(tmp->a[i]) DestroyAgent(&(tmp->a[i]), opt_id);
         free(tmp->a);
-    
+
         switch (opt_id){
             case _PSO_:
             case _BA_:
@@ -369,11 +400,12 @@ void DestroySearchSpace(SearchSpace **s, int opt_id){
             case _WCA_:
             case _MBO_:
             case _ABC_:
+            case _HS_:
                 if(tmp->g) free(tmp->g);
             break;
             default:
                 fprintf(stderr,"\nInvalid optimization identifier @DestroySearchSpace.\n");
-            break;       
+            break;
         }
     }
     else{
@@ -381,20 +413,20 @@ void DestroySearchSpace(SearchSpace **s, int opt_id){
             for(i = 0; i < tmp->m; i++)
                 if(tmp->T[i]) DestroyTree(&(tmp->T[i]));
             if(tmp->T) free(tmp->T);
-            
+
             for(i = 0; i < tmp->n_terminals; i++){
                 if(tmp->a[i]) DestroyAgent(&(tmp->a[i]), opt_id);
                 if(tmp->terminal[i]) free(tmp->terminal[i]);
             }
             if(tmp->a) free(tmp->a);
             free(tmp->terminal);
-            
+
             if(tmp->function){
                 for(i = 0; i < tmp->n_functions; i++)
                     if(tmp->function[i]) free(tmp->function[i]);
                 free(tmp->function);
             }
-            
+
             if(tmp->constant){
                 for(i = 0; i < tmp->n; i++)
                     if (tmp->constant[i]) free(tmp->constant[i]);
@@ -404,10 +436,10 @@ void DestroySearchSpace(SearchSpace **s, int opt_id){
             if(tmp->g) free(tmp->g);
         }
     }
-    
+
     if(tmp->LB) free(tmp->LB);
     if(tmp->UB) free(tmp->UB);
-    
+
     free(tmp);
     tmp = NULL;
 }
@@ -421,9 +453,9 @@ void InitializeSearchSpace(SearchSpace *s, int opt_id){
         fprintf(stderr,"\nSearch space not allocated @InitializeSearchSpace.\n");
         exit(-1);
     }
-    
+
     int i, j;
-    
+
     switch (opt_id){
         case _PSO_:
         case _BA_:
@@ -435,6 +467,7 @@ void InitializeSearchSpace(SearchSpace *s, int opt_id){
         case _WCA_:
         case _MBO_:
         case _ABC_:
+        case _HS_:
             for(i = 0; i < s->m; i++){
                 for(j = 0; j < s->n; j++)
                     s->a[i]->x[j] = GenerateUniformRandomNumber(s->LB[j], s->UB[j]);
@@ -460,10 +493,10 @@ void ShowSearchSpace(SearchSpace *s, int opt_id){
         fprintf(stderr,"\nSearch space not allocated @ShowSearchSpace.\n");
         exit(-1);
     }
-    
+
     int i, j, k;
     fprintf(stderr,"\nSearch space with %d agents and %d decision variables\n", s->m, s->n);
-    
+
     switch (opt_id){
         case _PSO_:
         case _BA_:
@@ -474,6 +507,7 @@ void ShowSearchSpace(SearchSpace *s, int opt_id){
         case _BHA_:
         case _WCA_:
         case _ABC_:
+        case _HS_:
             for(i = 0; i < s->m; i++){
                 fprintf(stderr,"\nAgent %d-> ", i);
                 for(j = 0; j < s->n; j++)
@@ -491,7 +525,7 @@ void ShowSearchSpace(SearchSpace *s, int opt_id){
                 for(j = 0; j < s->n; j++)
                     fprintf(stderr,"x[%d]: %f   ", j, s->a[i]->x[j]);
                 fprintf(stderr,"fitness value: %f", s->a[i]->fit);
-		
+
 		if(s->a[i]->nb[0] != NULL){ /* It shows the neighbours */
 		    for(k = 0; k < s->k; k++) { /* Leader has k neighbours*/
 	    	    fprintf(stderr,"\n\tNeighbour %d-> ", k);
@@ -522,14 +556,14 @@ void EvaluateSearchSpace(SearchSpace *s, int opt_id, prtFun Evaluate, va_list ar
         fprintf(stderr,"\nSearch space not allocated @EvaluateSearchSpace.\n");
         exit(-1);
     }
-    
+
     int i, j;
     double f, *tmp = NULL;
     Agent *individual = NULL;
     va_list argtmp;
-    
+
     va_copy(argtmp, arg);
-    
+
     switch (opt_id){
         case _BA_:
         case _FPA_:
@@ -538,52 +572,53 @@ void EvaluateSearchSpace(SearchSpace *s, int opt_id, prtFun Evaluate, va_list ar
         case _BHA_:
         case _WCA_:
         case _ABC_:
+        case _HS_:
             for(i = 0; i < s->m; i++){
                 f = Evaluate(s->a[i], arg); /* It executes the fitness function for agent i */
-        
+
                 if(f < s->a[i]->fit) /* It updates the fitness value */
                     s->a[i]->fit = f;
-        
+
                 if(s->a[i]->fit < s->gfit){ /* It updates the global best value and position */
                     s->gfit = s->a[i]->fit;
                     for(j = 0; j < s->n; j++)
                         s->g[j] = s->a[i]->x[j];
                 }
-        
+
                 va_copy(arg, argtmp);
             }
         break;
         case _PSO_:
             for(i = 0; i < s->m; i++){
                 f = Evaluate(s->a[i], arg); /* It executes the fitness function for agent i */
-        
+
                 if(f < s->a[i]->fit){ /* It updates the local best value and position */
-                    s->a[i]->fit = f;    
-                    for(j = 0; j < s->n; j++) 
+                    s->a[i]->fit = f;
+                    for(j = 0; j < s->n; j++)
                         s->a[i]->xl[j] = s->a[i]->x[j];
                 }
-            
+
                 if(s->a[i]->fit < s->gfit){ /* It updates the global best value and position */
                     s->gfit = s->a[i]->fit;
                     for(j = 0; j < s->n; j++)
                         s->g[j] = s->a[i]->x[j];
                 }
-        
+
                 va_copy(arg, argtmp);
             }
         break;
         case _FA_:
             for(i = 0; i < s->m; i++){
                 f = Evaluate(s->a[i], arg); /* It executes the fitness function for agent i */
-        
+
                 s->a[i]->fit = f; /* It updates the fitness value of actual agent i */
-                    
+
                 if(s->a[i]->fit < s->gfit){ /* It updates the global best value and position */
                     s->gfit = s->a[i]->fit;
                     for(j = 0; j < s->n; j++)
                         s->g[j] = s->a[i]->x[j];
                 }
-        
+
                 va_copy(arg, argtmp);
             }
         break;
@@ -593,21 +628,21 @@ void EvaluateSearchSpace(SearchSpace *s, int opt_id, prtFun Evaluate, va_list ar
                 tmp = RunTree(s, s->T[i]);
                 memcpy(individual->x, tmp, s->n*sizeof(double)); /* It runs over a tree computing the output individual (current solution) */
                 free(tmp);
-                
+
                 CheckAgentLimits(s, individual);
-                
+
                 f = Evaluate(individual, arg); /* It executes the fitness function for agent i */
-                
+
                 if(f < s->tree_fit[i]) /* It updates the fitness value */
                     s->tree_fit[i] = f;
-                    
+
                 if(s->tree_fit[i] < s->gfit){ /* It updates the global best value */
                     s->best = i;
                     s->gfit = s->tree_fit[i];
                     for(j = 0; j < s->n; j++)
                         s->g[j] = individual->x[j];
                 }
-                
+
                 va_copy(arg, argtmp);
             }
             DestroyAgent(&individual, _GP_);
@@ -616,7 +651,7 @@ void EvaluateSearchSpace(SearchSpace *s, int opt_id, prtFun Evaluate, va_list ar
             for(i = 0; i < s->m; i++){
                 f = Evaluate(s->a[i], arg); /* It executes the fitness function for agent i */
                 s->a[i]->fit = f; /* It updates the fitness value of actual agent i */
-        
+
                 va_copy(arg, argtmp);
             }
         break;
@@ -635,9 +670,9 @@ char CheckSearchSpace(SearchSpace *s, int opt_id){
         fprintf(stderr,"\nSearch space not allocated @CheckSearchSpace.\n");
         return 0;
     }
-    
+
     char OK = 1;
-    
+
     fprintf(stderr,"\nError summary: ");
     switch (opt_id){
         case _PSO_:
@@ -773,7 +808,21 @@ char CheckSearchSpace(SearchSpace *s, int opt_id){
         break;
         case _ABC_:
             if(s->limit == 0){
-            fprintf(stderr, "\n  -> Number of trial limits must be greater than 0.");
+                fprintf(stderr, "\n  -> Number of trial limits must be greater than 0.");
+            OK = 0;
+            }
+        break;
+        case _HS_:
+            if(isnan(s->HMCR)){
+                fprintf(stderr,"\n  -> Harmony Memory Considering Rate undefined.");
+            OK = 0;
+            }
+            if(isnan(s->PAR)){
+                fprintf(stderr,"\n  -> Pitch Adjusting Rate undefined.");
+            OK = 0;
+            }
+            if(isnan(s->bw)){
+                fprintf(stderr,"\n  -> Bandwidth undefined.");
             OK = 0;
             }
         break;
@@ -786,9 +835,9 @@ char CheckSearchSpace(SearchSpace *s, int opt_id){
         fprintf(stderr,"\nNumber of iterations undefined or less than 0.\n");
         OK = 0;
     }
-    
+
     if(OK) fprintf(stderr,"\nNo errors were found! Enjoy it!\n");
-    
+
     return OK;
 }
 /**************************/
@@ -820,16 +869,16 @@ double *GenerateLevyDistribution(int n, double beta){
     double *L = NULL, sigma_u, sigma_v = 1;
     double *u = NULL, *v = NULL;
     int i;
-    
+
     if(n < 1){
         fprintf(stderr,"Invalid input paramater @GenerateLevyDistribution.\n");
         return NULL;
     }
-    
+
     L = (double *)malloc(n*sizeof(double));
-    
+
     sigma_u = pow((tgamma(1+beta)*sin(M_PI*beta/2))/(tgamma((1+beta)/2)*beta*pow(2,(beta-1)/2)), 1/beta); /* Equation 16 */
-    
+
     u = (double *)malloc(n*sizeof(double));
     v = (double *)malloc(n*sizeof(double));
     sigma_u = pow(sigma_u, 2);
@@ -837,13 +886,13 @@ double *GenerateLevyDistribution(int n, double beta){
         u[i] = GenerateGaussianRandomNumber(0, sigma_u);
         v[i] = GenerateGaussianRandomNumber(0, sigma_v);
     }
-    
+
     for(i = 0; i < n; i++)
         L[i] = 0.01*(u[i]/pow(fabs(v[i]), 1/beta)); /* It computes Equation 14 (part of it) */
-    
+
     free(u);
     free(v);
-    
+
     return L;
 }
 
@@ -854,17 +903,17 @@ y: n-dimension array */
 double EuclideanDistance(double *x, double *y, int n){
     double sum = 0.0;
     int i;
-    
+
     for(i = 0; i < n; i++)
         sum+=pow(x[i]-y[i],2);
-    
+
     return sqrt(sum);
 }
 
 /* It is used to sort by agent's fitness (asceding order of fitness) */
 int SortAgent(const void *a, const void *b){
     const Agent *x = *(Agent **)a, *y = *(Agent **)b;
-    
+
     if(x->fit != y->fit)
         if(x->fit > y->fit)
             return 1;
@@ -875,7 +924,7 @@ int SortAgent(const void *a, const void *b){
 /* It is used to sort an array of Data by asceding order of the variable val */
 int SortDataByVal(const void *a, const void *b){
     const Data *x = (Data *)a, *y = (Data *)b;
-    
+
     if(x->val != y->val)
         if(x->val > y->val)
             return 1;
@@ -888,10 +937,10 @@ Parameters:
 fp = file pointer */
 void WaiveComment(FILE *fp){
     char c;
-    
+
     fscanf(fp, "%c", &c);
     while((c != '\n') && (!feof(fp))) fscanf(fp, "%c", &c);
-    
+
 }
 
 /* It loads a search space with parameters specified in a file
@@ -906,16 +955,16 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
     double pReproduction, pMutation, pCrossover, **constant = NULL, *LB = NULL, *UB = NULL;
     char line[LINE_SIZE], *pline = NULL, **function = NULL, **terminal = NULL;
     Node *head = NULL, *tail = NULL, *aux = NULL;
-    
+
     fp = fopen(fileName, "r");
     if(!fp){
         fprintf(stderr,"\nUnable to open file %s @ReadSearchSpaceFromFile.\n", fileName);
         return NULL;
     }
-    
+
     fscanf(fp, "%d %d %d", &m, &n, &iterations);
     WaiveComment(fp);
-        
+
     switch (opt_id){
         case _PSO_:
             s = CreateSearchSpace(m, n, _PSO_);
@@ -967,41 +1016,47 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
             fscanf(fp, "%d %lf", &(s->nsr), &(s->dmax));
             WaiveComment(fp);
         break;
-	case _MBO_:
-            fscanf(fp, "%d", &k);
-	    s = CreateSearchSpace(m, n, _MBO_, k);
-            s->iterations = iterations;   
-	    fscanf(fp,"%d %d", &(s->X), &(s->M));
-            WaiveComment(fp);
-        break;
-	case _ABC_:
-	    s = CreateSearchSpace(m, n, _ABC_);
-            s->iterations = iterations;
-	    fscanf(fp, "%d", &(s->limit));
-	    WaiveComment(fp);
-	break;
+      	case _MBO_:
+                  fscanf(fp, "%d", &k);
+      	    s = CreateSearchSpace(m, n, _MBO_, k);
+                  s->iterations = iterations;
+      	    fscanf(fp,"%d %d", &(s->X), &(s->M));
+                  WaiveComment(fp);
+              break;
+      	case _ABC_:
+      	    s = CreateSearchSpace(m, n, _ABC_);
+                  s->iterations = iterations;
+      	    fscanf(fp, "%d", &(s->limit));
+      	    WaiveComment(fp);
+      	break;
+        case _HS_:
+      	    s = CreateSearchSpace(m, n, _HS_);
+                  s->iterations = iterations;
+      	    fscanf(fp, "%lf %lf %lf", &(s->HMCR), &(s->PAR), &(s->bw));
+      	    WaiveComment(fp);
+      	break;
         case _GP_:
             fscanf(fp, "%lf %lf %lf", &pReproduction, &pMutation, &pCrossover); WaiveComment(fp);
             fscanf(fp, "%d %d", &min_depth, &max_depth); WaiveComment(fp);
-            
+
             /* Loading function nodes */
             fgets(line, LINE_SIZE, fp);
             pline = strtok (line," \t"); j = 0;
             while ((pline) && (*pline != '#')){
                 aux = CreateNode(pline, 0, 0);
-                
+
                 if(!head) head = aux;
                 else tail->right = aux;
                 tail = aux;
-                
+
                 n_functions++;
                 pline = strtok (NULL, " \t");
             }
-            
+
             function = (char **)malloc(n_functions*sizeof(char *));
             for(j = 0; j < n_functions; j++)
                 function[j] = (char *)malloc(TERMINAL_LENGTH*sizeof(char));
-            
+
             j = 0;
             aux = head;
             while(aux){
@@ -1010,26 +1065,26 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
             }
             DestroyTree(&head);
             /*****************************/
-            
+
             /* Loading terminal nodes */
             fgets(line, LINE_SIZE, fp);
             pline = strtok (line," \t"); j = 0;
             while ((pline) && (*pline != '#')){
                 aux = CreateNode(pline, 0, 0);
                 if(!strcmp(pline, "CONST")) has_constant = 1;
-                
+
                 if(!head) head = aux;
                 else tail->right = aux;
                 tail = aux;
-                
+
                 n_terminals++;
                 pline = strtok (NULL, " \t");
             }
-            
+
             terminal = (char **)malloc(n_terminals*sizeof(char *));
             for(j = 0; j < n_terminals; j++)
                 terminal[j] = (char *)malloc(TERMINAL_LENGTH*sizeof(char));
-            
+
             j = 0;
             aux = head;
             while(aux){
@@ -1038,15 +1093,15 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
             }
             DestroyTree(&head);
             /*****************************/
-        
+
             fscanf(fp, "%d %d", &is_integer_opt, &same_range);
             WaiveComment(fp);
-            
+
             /* loading lower and upper bounds */
             LB = (double *)malloc(n*sizeof(double));
             UB = (double *)malloc(n*sizeof(double));
-            
-            if(same_range){ 
+
+            if(same_range){
                 for(j = 0; j < n; j++){
                     fscanf(fp, "%lf %lf", &(LB[j]), &(UB[j]));
                     WaiveComment(fp);
@@ -1059,27 +1114,27 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
                     UB[j] = UB[0];
                 }
             }
-            
+
             /* loading constants */
             if(has_constant){
                 constant = (double **)malloc(n*sizeof(double *));
                 for(j = 0; j < n; j++)
                     constant[j] = (double *)malloc(N_CONSTANTS*sizeof(double));
-                
+
                 for(i = 0; i < n; i++)
                     for(j = 0; j < N_CONSTANTS; j++)
                         constant[i][j] = GenerateUniformRandomNumber(LB[i],UB[i]);
-                
+
             }
             /*********************/
-            
+
             s = CreateSearchSpace(m, n, _GP_, min_depth, max_depth, n_terminals, N_CONSTANTS, n_functions, terminal, constant, function);
             s->iterations = iterations;
             s->pReproduction = pReproduction;
             s->pMutation = pMutation;
             s->pCrossover = pCrossover;
             s->is_integer_opt = is_integer_opt;
-            
+
             for(j = 0; j < s->n; j++){
                 s->LB[j] = LB[j];
                 s->UB[j] = UB[j];
@@ -1091,16 +1146,16 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
             fprintf(stderr,"\nInvalid optimization identifier @ReadSearchSpaceFromFile.\n");
         break;
     }
-    
+
     if(opt_id != _GP_){
         for(j = 0; j < s->n; j++){
             fscanf(fp, "%lf %lf", &(s->LB[j]), &(s->UB[j]));
             WaiveComment(fp);
         }
     }
-    
+
     fclose(fp);
-    
+
     return s;
 }
 
@@ -1136,41 +1191,41 @@ int *RouletteSelection(SearchSpace *s, int k){
         fprintf(stderr,"\nSearch space not allocated @RouletteSelection.\n");
         return NULL;
     }
-    
+
     if(k < 1){
         fprintf(stderr,"\nInvalid input @RouletteSelection.\n");
         return NULL;
     }
-    
+
     int *elem = NULL, i, j;
     double sum, *accum = NULL, prob;
     Data *D = NULL;
-    
+
     elem = (int *)malloc(k*sizeof(int));
     D = (Data *)malloc(s->m*sizeof(Data));
-    
+
     /* It normalizes the fitness of each agent ***/
     sum = 0;
     for(i = 0; i < s->m; i++){
         D[i].id = i;
         D[i].val = 1/s->tree_fit[i];
         sum+=D[i].val;
-        
+
     }
     for(i = 0; i < s->m; i++)
         D[i].val/=sum;
-            
+
     /* It sorts the population by ascending values of fitness */
     qsort(D, s->m, sizeof(Data), SortDataByVal);
-    
+
     /* It computes the accumulate normalized fitness */
     accum = (double *)calloc(s->m,sizeof(double));
     for(i = 0; i < s->m; i++){
         for(j = i; j >= 0; j--)
             accum[i]+=D[j].val;
     }
-    
-    for(j = 0; j < k; j++){        
+
+    for(j = 0; j < k; j++){
         /* It picks up the selected individual */
         prob = GenerateUniformRandomNumber(0,1);
         i = 0;
@@ -1179,10 +1234,10 @@ int *RouletteSelection(SearchSpace *s, int k){
         else elem[j] = D[i].id;
         elem[j] = D[i].id;
     }
-    
+
     free(D);
     free(accum);
-    
+
     return elem;
 }
 /**************************/
@@ -1199,7 +1254,7 @@ Node *CreateNode(char *value, int node_id, char status, ...){
     tmp = (Node *)malloc(sizeof(Node));
     va_list arg;
     int n_decision_variables;
-    
+
     if(!value){
         fprintf(stderr,"\nInvalid input @CreateNode.\n");
         return NULL;
@@ -1207,19 +1262,19 @@ Node *CreateNode(char *value, int node_id, char status, ...){
 
     va_start(arg, status);
     n_decision_variables = va_arg(arg, int);
-    
+
     tmp->id = node_id;
     tmp->left = tmp->right = tmp->parent = NULL;
     tmp->status = status;
     tmp->left_son = 1; /* by default, every node is a left node */
     tmp->elem = (char *)malloc((strlen(value)+1)*sizeof(char));
     strcpy(tmp->elem, value);
-    
+
     tmp->val = NULL;
     if(status == NEW_TERMINAL) tmp->val = (double *)malloc(n_decision_variables*sizeof(double));
-    
+
     va_end(arg);
-    
+
     return tmp;
 }
 
@@ -1231,12 +1286,12 @@ dmax: maximum depth */
 Node *GROW(SearchSpace *s, int min_depth, int max_depth){
     int i, aux, const_id;
     Node *tmp = NULL, *node = NULL;
-    
+
     if(!s){
         fprintf(stderr,"\nSearch space not allocated @GROW.\n");
         return NULL;
     }
-    
+
     if(min_depth == max_depth){
         aux = round(GenerateUniformRandomNumber(0, s->n_terminals-1));
 	if(!strcmp(s->terminal[aux], "CONST")){
@@ -1293,12 +1348,12 @@ T: pointer to the tree
 fileName: output file name */
 void PrintTree2File(SearchSpace *s, Node *T, char *fileName){
     FILE *fp = NULL;
-    
+
     if(!T){
         fprintf(stderr,"\nTree not allocated @PrintTree2File.\n");
         exit(-1);
     }
-    
+
     fp = fopen(fileName, "a");
     PreFixPrintTree4File(s, T, fp);
     fprintf(fp,"\n");
@@ -1333,11 +1388,11 @@ T: current tree */
 double *RunTree(SearchSpace *s, Node *T){
     double *x = NULL, *y = NULL, *out = NULL;
     int i;
-    
+
     if(T){
 	x = RunTree(s, T->left); /* It runs over the subtree on the left */
 	y = RunTree(s, T->right); /* It runs over the subtree on the right */
-	
+
 	if(T->status == TERMINAL || T->status == CONSTANT || T->status == NEW_TERMINAL){
             out = (double *)calloc(s->n,sizeof(double));
 	    if(T->status == CONSTANT){
@@ -1376,9 +1431,9 @@ double *RunTree(SearchSpace *s, Node *T){
                                                 else if(!strcmp(T->elem,"NOT")){
                                                     if(x) out = f_NOT_(x, s->n);
                                                     else out = f_NOT_(y, s->n);
-                                                }   
+                                                }
 	    /* it deallocates the sons of the current one, since they have been used already */
-	    if (x) free(x); 
+	    if (x) free(x);
 	    if (y) free(y);
 	    return out;
 	}
@@ -1390,7 +1445,7 @@ Parameters:
 T: tree */
 Node *CopyTree(Node *T){
     Node *root = NULL;
-    
+
     if(!T){
         fprintf(stderr,"\nThere is no tree allocated @CopyTree.\n");
         return NULL;
@@ -1399,7 +1454,7 @@ Node *CopyTree(Node *T){
         root->left_son = T->left_son;
         PreFixTravel4Copy(T->left, root);
         PreFixTravel4Copy(T->right, root);
-        
+
         return root;
     }
 }
@@ -1417,7 +1472,7 @@ void PreFixTravel4Copy(Node *T, Node *Parent){
         if(T->left_son) Parent->left = aux;
         else Parent->right = aux;
         aux->parent = Parent;
-        
+
         PreFixTravel4Copy(T->left, aux);
         PreFixTravel4Copy(T->right, aux);
     }
@@ -1441,31 +1496,31 @@ Node *Mutation(SearchSpace *s, Node *T, float p){
         fprintf(stderr,"\nThere is no tree or search space allocated @Mutation.\n");
         return NULL;
     }
-    
+
     Node *NewTree = NULL, *tmp = NULL, *aux = NULL, *MutatedTree = NULL;
     int mutation_point, size_tree = getSizeTree(T), ctr = 0;
     double r;
     char left_son;
-    
+
     MutatedTree = CopyTree(T);
     mutation_point = round(GenerateUniformRandomNumber(2, size_tree)); /* Mutation point cannot be the root */
-    
+
     r = GenerateUniformRandomNumber(0,1);
     if(p > r) NewTree = PreFixPositioningTree(MutatedTree, mutation_point, &left_son, FUNCTION, &ctr); /* the mutation point is a function node */
     else NewTree = PreFixPositioningTree(MutatedTree, mutation_point, &left_son, TERMINAL, &ctr); /* the mutation point is a terminal node */
-    
+
     /* if the mutation point's parent is not a root (this may happen when the mutation point is a function, \
      and PreFixPositioningTree stops at a terminal node whose father is a root */
     if(NewTree){
         aux = GROW(s, s->min_depth, s->max_depth); /* It creates the new subtree */
-    
+
         /* It deletes the old subtree */
 	if(left_son) tmp = NewTree->left;
         else tmp = NewTree->right;
         DestroyTree(&tmp);
 
         /* it connects the new subtree to the mutated tree */
-        if(left_son){    
+        if(left_son){
             NewTree->left = aux;
             aux->left_son = 1;
         }else{
@@ -1473,12 +1528,12 @@ Node *Mutation(SearchSpace *s, Node *T, float p){
             aux->left_son = 0;
         }
         aux->parent = NewTree;
-        
+
     }else{
         DestroyTree(&MutatedTree);
         MutatedTree = GROW(s, s->min_depth, s->max_depth);
     }
-    
+
     return MutatedTree;
 }
 
@@ -1492,31 +1547,31 @@ Node **Crossover(Node *Father, Node *Mother, float p){
     int ctr = 0, crossover_point, size_tree;
     double r;
     char left_son_father, left_son_mother;
-    
+
     if(!Father || !Mother){
         fprintf(stderr,"\nInvalid input data @Crossover.\n");
         return NULL;
     }
-    
+
     offspring = (Node **)malloc(2*sizeof(Node *));
-    
+
     /* It generates the offsprings */
     size_tree = getSizeTree(Father);
     crossover_point = round(GenerateUniformRandomNumber(2, size_tree)); /* Crossover point cannot be the root */
-    offspring[0] = CopyTree(Father); 
+    offspring[0] = CopyTree(Father);
     r = GenerateUniformRandomNumber(0,1);
     if(p >= r) aux_father = PreFixPositioningTree(offspring[0], crossover_point, &left_son_father, FUNCTION, &ctr); /* the mutation point is a function node */
     else aux_father = PreFixPositioningTree(offspring[0], crossover_point, &left_son_father, TERMINAL, &ctr); /* the mutation point is a terminal node */
-    
-    
+
+
     size_tree = getSizeTree(Mother);
     crossover_point = round(GenerateUniformRandomNumber(2, size_tree)); /* Crossover point cannot be the root */
     offspring[1] = CopyTree(Mother); ctr = 0;
     r = GenerateUniformRandomNumber(0,1);
     if(p >= r) aux_mother = PreFixPositioningTree(offspring[1], crossover_point, &left_son_mother, FUNCTION, &ctr); /* the mutation point is a function node */
     else aux_mother = PreFixPositioningTree(offspring[1], crossover_point, &left_son_mother, TERMINAL, &ctr); /* the mutation point is a terminal node */
-    
-    
+
+
     /* If the crossover points have been properly found */
     if((aux_father) && (aux_mother)){
         /* It performs the crossover for offspring #1 */
@@ -1540,7 +1595,7 @@ Node **Crossover(Node *Father, Node *Mother, float p){
             }
         }
         aux_mother->parent = aux_father;
-    
+
         /* it performs the crossover for offspring #2 */
         if(left_son_mother){
             aux_mother->left = tmp;
@@ -1551,7 +1606,7 @@ Node **Crossover(Node *Father, Node *Mother, float p){
         }
         tmp->parent = aux_mother;
     }
-    
+
     return offspring;
 }
 
@@ -1564,7 +1619,7 @@ status: status of the node (FUNCTION|TERMINAL)
 ctr: pointer to the integer used to count nodes through the previx travel */
 Node *PreFixPositioningTree(Node *T, int pos, char *left_son, int status, int *ctr){
     Node *Aux = NULL;
-    
+
     if(T){
         (*ctr)++;
         if(*ctr == pos){
@@ -1572,9 +1627,9 @@ Node *PreFixPositioningTree(Node *T, int pos, char *left_son, int status, int *c
             *ctr = 0;
 
             if(status == TERMINAL) return T->parent;
-        
+
             /* If the node is a terminal and status = FUNCTION, thus the breakpoint will be its father (if this last is not a root),
-             which is certainly a function node */            
+             which is certainly a function node */
             else if((T->parent)->parent){
                     *left_son = (T->parent)->left_son;
                     return (T->parent)->parent;
@@ -1600,34 +1655,34 @@ T2: pointer to the second tree */
 Node *SGXB(SearchSpace *s, Node *T1_tmp, Node *T2_tmp){
     Node *T3 = NULL, *TR = NULL, *TR_cpy = NULL, *LeftTree = NULL;
     Node *RightTree = NULL, *T1 = NULL, *T2 = NULL, *NOT = NULL;
-    
+
     if(!s || !T1_tmp || !T2_tmp){
         fprintf(stderr,"\nInput error @SGXB.\n");
         return NULL;
     }
-    
+
     T1 = CopyTree(T1_tmp);
     T2 = CopyTree(T2_tmp);
-    
+
     /* It generates a random tree. It is expected a random tree with boolean functions if properly defined when creating the search space. */
     TR = GROW(s, s->min_depth, s->max_depth);
     TR_cpy = CopyTree(TR);
-    
+
     T3 = CreateNode("OR", getFUNCTIONid("OR"), FUNCTION); /* It creates the root */
     T3->parent = NULL;
-    
-    LeftTree = CreateNode("AND", getFUNCTIONid("AND"), FUNCTION); /* It creates the tree on the left */    
+
+    LeftTree = CreateNode("AND", getFUNCTIONid("AND"), FUNCTION); /* It creates the tree on the left */
     T3->left = LeftTree; LeftTree->parent = T3;
     LeftTree->left = T1; T1->parent = LeftTree;
     LeftTree->right = TR; TR->parent = LeftTree; TR->left_son = 0;
-        
+
     RightTree = CreateNode("AND", getFUNCTIONid("AND"), FUNCTION); /* It creates the tree on the right */
     T3->right = RightTree; RightTree->parent = T3; RightTree->left_son = 0;
     NOT = CreateNode("NOT", getFUNCTIONid("NOT"), FUNCTION);
     RightTree->left = NOT; NOT->parent = RightTree;
     RightTree->right = T2; T2->parent = RightTree; T2->left_son = 0;
     NOT->left = TR_cpy; TR_cpy->parent = NOT;
-    
+
     return T3;
 }
 
@@ -1639,19 +1694,19 @@ Node *SGMB(SearchSpace *s, Node *T_tmp){
     Node *TM = NULL, *T = NULL, *M = NULL, *NOT = NULL;
     double r;
     int i;
-    
+
     if(!s || !T_tmp){
         fprintf(stderr,"\nInput error @SGMB.\n");
         return NULL;
     }
-    
+
     r = randinter(0,1);
     T = CopyTree(T_tmp);
-    
+
     M = CreateNode("TMP", 0, NEW_TERMINAL, s->n);
     for(i = 0; i < s->n; i++)
         M->val[i] = round(GenerateUniformRandomNumber(s->LB[0], s->UB[0])); /* Creating a random minterm */
-    
+
     if(r <= 0.5){
         TM = CreateNode("OR", getFUNCTIONid("OR"), FUNCTION);
         TM->parent = NULL;
@@ -1665,7 +1720,7 @@ Node *SGMB(SearchSpace *s, Node *T_tmp){
         TM->right = NOT; NOT->parent = TM; NOT->left_son = 0;
         NOT->left = M; M->parent = NOT;
     }
-    
+
     return TM;
 }
 /***********************/
@@ -1679,38 +1734,38 @@ Node *SGXE(SearchSpace *s, Node *T1_tmp, Node *T2_tmp){
     Node *T3 = NULL, *TR = NULL, *LeftTree = NULL;
     Node *RightTree = NULL, *T1 = NULL, *T2 = NULL, *NOT_TR = NULL;
     int i;
-    
+
     if(!s || !T1_tmp || !T2_tmp){
         fprintf(stderr,"\nInput error @SGXE.\n");
         return NULL;
     }
-    
+
     T1 = CopyTree(T1_tmp);
     T2 = CopyTree(T2_tmp);
-    
+
     /* It generates an array with random values within [0,1] */
     TR = CreateNode("TMP", 0, NEW_TERMINAL, s->n);
     for(i = 0; i < s->n; i++)
         TR->val[i] = GenerateUniformRandomNumber(0, 1); /* Creating an array composed of random numbers */
-    
+
     T3 = CreateNode("SUM", getFUNCTIONid("SUM"), FUNCTION); /* It creates the root */
     T3->parent = NULL;
-    
-    LeftTree = CreateNode("MUL", getFUNCTIONid("MUL"), FUNCTION); /* It creates the tree on the left */    
+
+    LeftTree = CreateNode("MUL", getFUNCTIONid("MUL"), FUNCTION); /* It creates the tree on the left */
     T3->left = LeftTree; LeftTree->parent = T3;
     LeftTree->left = T1; T1->parent = LeftTree;
     LeftTree->right = TR; TR->parent = LeftTree; TR->left_son = 0;
-        
+
     RightTree = CreateNode("MUL", getFUNCTIONid("MUL"), FUNCTION); /* It creates the tree on the right */
     T3->right = RightTree; RightTree->parent = T3; RightTree->left_son = 0;
-    
+
     NOT_TR = CreateNode("TMP", 0, NEW_TERMINAL, s->n);
     for(i = 0; i < s->n; i++)
         NOT_TR->val[i] = 1-TR->val[i]; /* Creating 1-TR */
-    
+
     RightTree->left = NOT_TR; NOT_TR->parent = RightTree;
     RightTree->right = T2; T2->parent = RightTree; T2->left_son = 0;
-    
+
     return T3;
 }
 
@@ -1723,20 +1778,20 @@ Node *SGME(SearchSpace *s, Node *T1_tmp, Node *T2_tmp){
     Node *T3 = NULL, *TR = NULL, *LeftTree = NULL;
     Node *RightTree = NULL, *T1 = NULL, *T2 = NULL, *NOT_TR = NULL;
     int i, j;
-    
+
     if(!s || !T1_tmp || !T2_tmp){
         fprintf(stderr,"\nInput error @SGME.\n");
         return NULL;
     }
-    
+
     T1 = CopyTree(T1_tmp);
     T2 = CopyTree(T2_tmp);
-    
+
     /* It generates an array with random values within [0,1] */
     TR = CreateNode("TMP", 0, NEW_TERMINAL, s->n);
     for(i = 0; i < s->n; i++)
         TR->val[i] = GenerateUniformRandomNumber(0, 1); /* Creating an array composed of random numbers */
-        
+
     /* Now we choose a random number within [0,2] in order to pick some
     function bounded within [0,1] at random */
     j = round(GenerateUniformRandomNumber(0, 2));
@@ -1754,25 +1809,25 @@ Node *SGME(SearchSpace *s, Node *T1_tmp, Node *T2_tmp){
                 TR->val[i] = cos(sin(TR->val[i]));
             break;
     }
-    
+
     T3 = CreateNode("SUM", getFUNCTIONid("SUM"), FUNCTION); /* It creates the root */
     T3->parent = NULL;
-    
-    LeftTree = CreateNode("MUL", getFUNCTIONid("MUL"), FUNCTION); /* It creates the tree on the left */    
+
+    LeftTree = CreateNode("MUL", getFUNCTIONid("MUL"), FUNCTION); /* It creates the tree on the left */
     T3->left = LeftTree; LeftTree->parent = T3;
     LeftTree->left = T1; T1->parent = LeftTree;
     LeftTree->right = TR; TR->parent = LeftTree; TR->left_son = 0;
-        
+
     RightTree = CreateNode("MUL", getFUNCTIONid("MUL"), FUNCTION); /* It creates the tree on the right */
     T3->right = RightTree; RightTree->parent = T3; RightTree->left_son = 0;
 
     NOT_TR = CreateNode("TMP", 0, NEW_TERMINAL, s->n);
     for(i = 0; i < s->n; i++)
         NOT_TR->val[i] = 1-TR->val[i]; /* Creating 1-TR */
- 
+
     RightTree->left = NOT_TR; NOT_TR->parent = RightTree;
     RightTree->right = T2; T2->parent = RightTree; T2->left_son = 0;
-    
+
     return T3;
 }
 
@@ -1788,7 +1843,7 @@ double **AllocateTensor(int n, int tensor_id){
     }
     double **t;
     int i;
-    
+
     t = (double **)calloc(n, sizeof(double *));
     for (i = 0; i < n; i++)
         t[i] = (double *)calloc(tensor_id, sizeof(double));
@@ -1803,13 +1858,13 @@ n: number of decision variables */
 void DeallocateTensor(double ***t, int n){
     double **tmp = NULL;
     int i;
-    
+
     tmp = *t;
     if(!tmp){
         fprintf(stderr,"\nTensor not allocated @DeallocateTensor.\n");
         exit(-1);
     }
-    
+
     for (i = 0; i < n; i++)
         free(tmp[i]);
     free(tmp);
@@ -1824,9 +1879,9 @@ void InitializeTensorSearchSpace(SearchSpace *s, int tensor_id){
         fprintf(stderr,"\nSearch space not allocated @InitializeTensorSearchSpace.\n");
         exit(-1);
     }
-    
+
     int i, j, k;
-    
+
     for (i = 0; i < s->m; i++){
         for (j = 0; j < s->n; j++){
             for (k = 0; k < tensor_id; k++)
@@ -1834,7 +1889,7 @@ void InitializeTensorSearchSpace(SearchSpace *s, int tensor_id){
             s->a[i]->x[j] = TensorSpan(s->LB[j], s->UB[j], s->a[i]->t[j], tensor_id);
         }
     }
-            
+
 }
 
 /* It shows a search space with tensors
@@ -1846,10 +1901,10 @@ void ShowTensorSearchSpace(SearchSpace *s, int tensor_id){
         fprintf(stderr,"\nSearch space not allocated @ShowTensorSearchSpace.\n");
         exit(-1);
     }
-    
+
     int i, j, k;
     fprintf(stderr,"\nSearch space with %d agents, %d decision variables and %d-D tensors\n", s->m, s->n, tensor_id);
-    
+
     for(i = 0; i < s->m; i++){
         fprintf(stderr,"\nAgent %d->\n", i);
         for(j = 0; j < s->n; j++){
@@ -1871,7 +1926,7 @@ void CheckTensorLimits(SearchSpace *s, double **t, int tensor_id){
         fprintf(stderr,"\nInvalid input parameters @CheckTensorLimits.\n");
         exit(-1);
     }
-    
+
     int j, k;
 
     for(j = 0; j < s->n; j++){
@@ -1894,14 +1949,14 @@ double **CopyTensor(double **t, int n, int tensor_id){
         fprintf(stderr,"\nNo tensor allocated @CopyTensor.\n");
         exit(-1);
     }
-    
+
     int i;
     double **cpy = NULL;
-    
-    cpy = AllocateTensor(n, tensor_id); 
+
+    cpy = AllocateTensor(n, tensor_id);
     for(i = 0; i < n; i++)
         memcpy(cpy[i], t[i], tensor_id*sizeof(double));
-        
+
     return cpy;
 }
 
@@ -1914,14 +1969,14 @@ double TensorNorm(double *t, int tensor_id){
         fprintf(stderr,"\nInvalid parameters @TensorNorm.\n");
         return -1;
     }
-    
+
     double norm = 0;
     int i;
 
     for (i = 0; i < tensor_id; i++)
         norm += pow(t[i], 2);
     norm = sqrt(norm);
-            
+
     return norm;
 }
 
@@ -1934,15 +1989,15 @@ double **GenerateNewTensor(SearchSpace *s, int tensor_id){
         fprintf(stderr,"\nSearch space not allocated @GenerateNewTensor.\n");
         exit(-1);
     }
-    
+
     double **t = NULL;
     int j, k;
-    
+
     t = AllocateTensor(s->n, tensor_id);
     for (j = 0; j < s->n; j++)
         for (k = 0; k < tensor_id; k++)
             t[j][k] = GenerateUniformRandomNumber(0, 1);
-            
+
     return t;
 }
 
@@ -1957,12 +2012,12 @@ double TensorSpan(double L, double U, double *t, int tensor_id){
         fprintf(stderr,"\nInvalid parameters @TensorSpan.\n");
         return -1;
     }
-    
+
     double span = 0;
     int i;
 
-    span = (U-L)*(TensorNorm(t, tensor_id)/sqrt(tensor_id))+L; 
-     
+    span = (U-L)*(TensorNorm(t, tensor_id)/sqrt(tensor_id))+L;
+
     return span;
 }
 
@@ -1977,19 +2032,19 @@ double TensorEuclideanDistance(double **t, double **s, int n, int tensor_id){
         fprintf(stderr,"\nInvalid parameters @TensorEuclideanDistance.\n");
         return -1;
     }
-    
+
     double distance = 0, p_distance = 0;
     int j, k;
-    
+
     for(j = 0; j < n; j++){
         for(k = 0; k < tensor_id; k++)
             p_distance += pow(t[j][k] - s[j][k], 2);
-        distance += sqrt(p_distance); 
+        distance += sqrt(p_distance);
         p_distance = 0;
     }
-    
+
     distance = sqrt(distance);
-      
+
     return distance;
 }
 
@@ -2007,49 +2062,50 @@ void EvaluateTensorSearchSpace(SearchSpace *s, int opt_id, int tensor_id, prtFun
         fprintf(stderr,"\nSearch space not allocated @EvaluateTensorSearchSpace.\n");
         exit(-1);
     }
-    
+
     int i, j, k;
     double f, *tmp = NULL;
     Agent *individual = NULL;
     va_list argtmp;
-    
+
     va_copy(argtmp, arg);
-    
+
     switch (opt_id){
         case _BA_:
         case _FPA_:
         case _CS_:
         case _BHA_:
         case _ABC_:
+        case _HS_:
             for(i = 0; i < s->m; i++){
                 f = Evaluate(s->a[i], arg); /* It executes the fitness function for agent i */
-    
+
                 if(f < s->a[i]->fit) /* It updates the fitness value */
                     s->a[i]->fit = f;
-        
+
                 if(s->a[i]->fit < s->gfit){ /* It updates the global best value and position */
                     s->gfit = s->a[i]->fit;
                     for(j = 0; j < s->n; j++){
                         s->g[j] = s->a[i]->x[j];
                         for(k = 0; k < tensor_id; k++)
                             s->t_g[j][k] = s->a[i]->t[j][k];
-                    }   
+                    }
                 }
-        
+
                 va_copy(arg, argtmp);
             }
         break;
         case _PSO_:
             for(i = 0; i < s->m; i++){
                 f = Evaluate(s->a[i], arg); /* It executes the fitness function for agent i */
-                
+
                 if(f < s->a[i]->fit){ /* It updates the local best value and position */
-                    s->a[i]->fit = f;    
+                    s->a[i]->fit = f;
                     for(j = 0; j < s->n; j++)
                         for(k = 0; k < tensor_id; k++)
                             s->a[i]->t_xl[j][k] = s->a[i]->t[j][k];
                 }
-                
+
                 if(s->a[i]->fit < s->gfit){ /* It updates the global best value and position */
                     s->gfit = s->a[i]->fit;
                     for(j = 0; j < s->n; j++){
@@ -2064,9 +2120,9 @@ void EvaluateTensorSearchSpace(SearchSpace *s, int opt_id, int tensor_id, prtFun
         case _FA_:
             for(i = 0; i < s->m; i++){
                 f = Evaluate(s->a[i], arg); /* It executes the fitness function for agent i */
-        
+
                 s->a[i]->fit = f; /* It updates the fitness value of actual agent i */
-                    
+
                 if(s->a[i]->fit < s->gfit){ /* It updates the global best value and position */
                     s->gfit = s->a[i]->fit;
                     for(j = 0; j < s->n; j++){
@@ -2075,7 +2131,7 @@ void EvaluateTensorSearchSpace(SearchSpace *s, int opt_id, int tensor_id, prtFun
                             s->t_g[j][k] = s->a[i]->t[j][k];
                     }
                 }
-        
+
                 va_copy(arg, argtmp);
             }
         break;
