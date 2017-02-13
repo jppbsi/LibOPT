@@ -580,6 +580,7 @@ void EvaluateSearchSpace(SearchSpace *s, int opt_id, prtFun Evaluate, va_list ar
                     s->a[i]->fit = f;
 
                 if(s->a[i]->fit < s->gfit){ /* It updates the global best value and position */
+                    s->best = i;
                     s->gfit = s->a[i]->fit;
                     for(j = 0; j < s->n; j++)
                         s->g[j] = s->a[i]->x[j];
