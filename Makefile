@@ -8,7 +8,7 @@ CC=gcc
 FLAGS=  -g -O0
 CFLAGS=''
 
-all: libopt-plus PSO AIWPSO BA FPA FA CS GP GA BHA WCA MBO GSGP BGSGP ABC HS TensorPSO TensorBA TensorFPA TensorFA TensorCS TensorBHA TensorABC TensorHS
+all: libopt-plus PSO AIWPSO BA FPA FA CS GP GA BHA WCA MBO GSGP BGSGP ABC HS IHS PSF-HS TensorPSO TensorBA TensorFPA TensorFA TensorCS TensorBHA TensorABC TensorHS TensorIHS
 
 libopt-plus: $(LIB)/libopt-plus.a
 	echo "libopt-plus.a built..."
@@ -137,6 +137,12 @@ ABC: examples/ABC.c
 HS: examples/HS.c
 	$(CC) $(FLAGS) examples/HS.c -o examples/bin/HS -I $(INCLUDE) -L $(LIB) -lopt-plus -lm;
 
+IHS: examples/IHS.c
+	$(CC) $(FLAGS) examples/IHS.c -o examples/bin/IHS -I $(INCLUDE) -L $(LIB) -lopt-plus -lm;
+
+PSF-HS: examples/PSF-HS.c
+	$(CC) $(FLAGS) examples/PSF-HS.c -o examples/bin/PSF-HS -I $(INCLUDE) -L $(LIB) -lopt-plus -lm;
+
 TensorPSO: examples/TensorPSO.c
 	$(CC) $(FLAGS) examples/TensorPSO.c -o examples/bin/TensorPSO -I $(INCLUDE) -L $(LIB) -lopt-plus -lm;
 
@@ -160,6 +166,9 @@ TensorABC: examples/TensorABC.c
 
 TensorHS: examples/TensorHS.c
 	$(CC) $(FLAGS) examples/TensorHS.c -o examples/bin/TensorHS -I $(INCLUDE) -L $(LIB) -lopt-plus -lm;
+
+TensorIHS: examples/TensorIHS.c
+	$(CC) $(FLAGS) examples/TensorIHS.c -o examples/bin/TensorIHS -I $(INCLUDE) -L $(LIB) -lopt-plus -lm;
 
 clean:
 	rm -f $(LIB)/lib*.a; rm -f $(OBJ)/*.o; rm -rf examples/bin/*

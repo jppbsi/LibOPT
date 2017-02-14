@@ -301,27 +301,30 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...){
     s->PAR = NAN;
     s->bw = NAN;
 
+    /* IHS */
+    s->PAR_min = NAN; s->PAR_max = NAN;
+    s->bw_min = NAN; s->bw_max = NAN;
+
     if(opt_id != _GP_){ /* GP uses a different structure than that of others */
         s->a = (Agent **)malloc(s->m*sizeof(Agent *));
         s->a[0] = CreateAgent(s->n, opt_id);
         if(s->a[0]){ /* Here, we verify whether opt_id is valid or not. In the latter case, function CreateAgent returns NULL. */
             for(i = 1; i < s->m; i++)
                 s->a[i] = CreateAgent(s->n, opt_id);
-
-	if(opt_id == _MBO_){ /* We create the k neighbours of each agent*/
-		s->k = va_arg(arg, int);
-		for(i = 0; i < s->m; i++){
-		    s->a[i]->nb = (Agent **)malloc(s->k*sizeof(Agent *));
-		    for(j = 0; j < s->k; j++)
-			s->a[i]->nb[j] = CreateAgent(s->n, opt_id);
-		}
-	}
-    }else{
-        free(s->a);
-        free(s);
-        fprintf(stderr,"\nInvalid optimization identifier @CreateSearchSpace.\n");
-        return NULL;
-    }
+        	if(opt_id == _MBO_){ /* We create the k neighbours of each agent*/
+        		s->k = va_arg(arg, int);
+        		for(i = 0; i < s->m; i++){
+        		    s->a[i]->nb = (Agent **)malloc(s->k*sizeof(Agent *));
+        		    for(j = 0; j < s->k; j++)
+        			s->a[i]->nb[j] = CreateAgent(s->n, opt_id);
+        		}
+        	}
+        }else{
+            free(s->a);
+            free(s);
+            fprintf(stderr,"\nInvalid optimization identifier @CreateSearchSpace.\n");
+            return NULL;
+        }
 
     s->g = (double *)calloc(s->n,sizeof(double));
     s->t_g = NULL;
@@ -822,8 +825,24 @@ char CheckSearchSpace(SearchSpace *s, int opt_id){
                 fprintf(stderr,"\n  -> Pitch Adjusting Rate undefined.");
             OK = 0;
             }
+            if(isnan(s->PAR_min)){
+                fprintf(stderr,"\n  -> Minimum Pitch Adjusting Rate undefined.");
+            OK = 0;
+            }
+            if(isnan(s->PAR_max)){
+                fprintf(stderr,"\n  -> Maximum Pitch Adjusting Rate undefined.");
+            OK = 0;
+            }
             if(isnan(s->bw)){
                 fprintf(stderr,"\n  -> Bandwidth undefined.");
+            OK = 0;
+            }
+            if(isnan(s->bw_min)){
+                fprintf(stderr,"\n  -> Minimum Bandwidth undefined.");
+            OK = 0;
+            }
+            if(isnan(s->bw_max)){
+                fprintf(stderr,"\n  -> Maximum Bandwidth undefined.");
             OK = 0;
             }
         break;
@@ -1018,23 +1037,27 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
             WaiveComment(fp);
         break;
       	case _MBO_:
-                  fscanf(fp, "%d", &k);
+            fscanf(fp, "%d", &k);
       	    s = CreateSearchSpace(m, n, _MBO_, k);
-                  s->iterations = iterations;
+            s->iterations = iterations;
       	    fscanf(fp,"%d %d", &(s->X), &(s->M));
-                  WaiveComment(fp);
-              break;
+            WaiveComment(fp);
+        break;
       	case _ABC_:
       	    s = CreateSearchSpace(m, n, _ABC_);
-                  s->iterations = iterations;
+                s->iterations = iterations;
       	    fscanf(fp, "%d", &(s->limit));
       	    WaiveComment(fp);
       	break;
         case _HS_:
       	    s = CreateSearchSpace(m, n, _HS_);
-                  s->iterations = iterations;
-      	    fscanf(fp, "%lf %lf %lf", &(s->HMCR), &(s->PAR), &(s->bw));
+            s->iterations = iterations;
+      	    fscanf(fp, "%lf", &(s->HMCR));
+            WaiveComment(fp);
+            fscanf(fp, "%lf %lf %lf", &(s->PAR), &(s->PAR_min), &(s->PAR_max));
       	    WaiveComment(fp);
+            fscanf(fp, "%lf %lf %lf", &(s->bw), &(s->bw_min), &(s->bw_max));
+            WaiveComment(fp);
       	break;
         case _GP_:
             fscanf(fp, "%lf %lf %lf", &pReproduction, &pMutation, &pCrossover); WaiveComment(fp);

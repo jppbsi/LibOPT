@@ -123,6 +123,10 @@ typedef struct SearchSpace_{
     double PAR; /* pitch adjusting rate */
     double bw; /* bandwidth */
 
+    /* IHS */
+    double PAR_min, PAR_max; /* minimum and maximum pitch adjusting rate */
+    double bw_min, bw_max; /* minimum and maximum bandwidth */
+
 }SearchSpace;
 
 typedef double (*prtFun)(Agent *, va_list arg); /* Pointer to the function used to evaluate agents */
