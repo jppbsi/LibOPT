@@ -137,9 +137,7 @@ void UpdateIndividualTensorHMCR_PAR(SearchSpace *s, int tensor_id, char ***rehea
 
     for(j = 0; j < s->n; j++){
         for(k = 0; k < tensor_id; k++){
-            ctr[0][0] = ctr[0][1] = ctr[0][2] = 0;
-            ctr[1][0] = ctr[1][1] = ctr[1][2] = 0;
-            ctr[2][0] = ctr[2][1] = ctr[2][2] = 0;
+            ctr[0][k] = ctr[1][k] = ctr[2][k] = 0;
     		for(i = 0; i < s->m; i++)
     		      ctr[(int)rehearsal[i][j][k]][k]++;
             HMCR[j][k] = ctr[PSF_MEMORY][k]/(double)s->m;
