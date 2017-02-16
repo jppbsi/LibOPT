@@ -125,6 +125,29 @@ void UpdateIndividualHMCR_PAR(SearchSpace *s, char **rehearsal, double *HMCR, do
 	}
 }
 
+/* It updates the individual values of HMCR and PAR concerning Tensor-based PSF-HS
+Parameters:
+s: search space
+tensor_id: identifier of tensor's dimension
+rehearsal: rehearsal matrix
+HMCR: harmony memory considering rate
+PAR: pitch adjustemt rate */
+void UpdateIndividualTensorHMCR_PAR(SearchSpace *s, int tensor_id, char ***rehearsal, double **HMCR, double **PAR){
+    int i, j, k, ctr[3][tensor_id];
+
+    for(j = 0; j < s->n; j++){
+        for(k = 0; k < tensor_id; k++){
+            ctr[0][0] = ctr[0][1] = ctr[0][2] = 0;
+            ctr[1][0] = ctr[1][1] = ctr[1][2] = 0;
+            ctr[2][0] = ctr[2][1] = ctr[2][2] = 0;
+    		for(i = 0; i < s->m; i++)
+    		      ctr[(int)rehearsal[i][j][k]][k]++;
+            HMCR[j][k] = ctr[PSF_MEMORY][k]/(double)s->m;
+            PAR[j][k] = ctr[PSF_PITCH][k]/(double)s->m;
+        }
+	}
+}
+
 /* It generates a new PSF agent
 Paremeters:
 s: search space
@@ -176,7 +199,7 @@ tensor_id: identifier of tensor's dimension
 HMCR: harmony memory considering rate
 PAR: pitch adjustemt rate
 op_type: vector that contains the operation that the harmony was generated */
-double **GenerateNewPSFTensor(SearchSpace *s, int tensor_id, double *HMCR, double *PAR, char *op_type){
+double **GenerateNewPSFTensor(SearchSpace *s, int tensor_id, double **HMCR, double **PAR, char **op_type){
     if(!s){
         fprintf(stderr,"\nSearch space not allocated @GenerateNewPSFTensor.\n");
         exit(-1);
@@ -191,24 +214,24 @@ double **GenerateNewPSFTensor(SearchSpace *s, int tensor_id, double *HMCR, doubl
     for(j = 0; j < s->n; j++){
         for(k = 0; k < tensor_id; k++){
             r = GenerateUniformRandomNumber(0, 1);
-            if(HMCR[j] >= r){
+            if(HMCR[j][k] >= r){
                 i = GenerateUniformRandomNumber(0, s->m);
                 r = GenerateUniformRandomNumber(0, 1);
                 t[j][k] = s->a[i]->t[j][k];
-                op_type[j] = PSF_MEMORY;
-                if(PAR[j] >= r){
+                op_type[j][k] = PSF_MEMORY;
+                if(PAR[j][k] >= r){
                     signal = GenerateUniformRandomNumber(0, 1);
                     r = GenerateUniformRandomNumber(0, 1);
                     if(signal >= 0.5)
                             t[j][k] = s->a[i]->t[j][k]+r*s->bw;
                     else
                             t[j][k] = s->a[i]->t[j][k]-r*s->bw;
-                    op_type[j] = PSF_PITCH;
+                    op_type[j][k] = PSF_PITCH;
                 }
             }else{
               r = (s->UB[j] - s->LB[j]) * GenerateUniformRandomNumber(0, 1) + s->LB[j];
               t[j][k] = r;
-              op_type[j] = PSF_RANDOM;
+              op_type[j][k] = PSF_RANDOM;
             }
         }
     }
@@ -490,8 +513,8 @@ arg: list of additional arguments */
 void runTensorPSF_HS(SearchSpace *s, int tensor_id, prtFun Evaluate, ...){
     va_list arg, argtmp;
     int i, j, l, t;
-    double fitValue, r, signal, *HMCR, *PAR, **tmp_t = NULL;
-    char *op_type, **rehearsal;
+    double fitValue, r, signal, **HMCR, **PAR, **tmp_t = NULL;
+    char **op_type, ***rehearsal;
     Agent *tmp = NULL;
 
     va_start(arg, Evaluate);
@@ -504,12 +527,20 @@ void runTensorPSF_HS(SearchSpace *s, int tensor_id, prtFun Evaluate, ...){
 
     EvaluateTensorSearchSpace(s, _HS_, tensor_id, Evaluate, arg); /* Initial evaluation of the search space */
 
-    rehearsal = (char **)calloc(s->m, sizeof(char *));
-    for(i = 0; i < s->m; i++)
-        rehearsal[i] = (char *)calloc(s->n, sizeof(char));
-    HMCR = (double *)calloc(s->n, sizeof(double));
-    PAR = (double *)calloc(s->n, sizeof(double));
-    op_type = (char *)calloc(s->n, sizeof(char));
+    rehearsal = (char ***)calloc(s->m, sizeof(char **));
+    for(i = 0; i < s->m; i++){
+        rehearsal[i] = (char **)calloc(s->n, sizeof(char *));
+        for(j = 0; j < s->n; j++)
+            rehearsal[i][j] = (char *)calloc(tensor_id, sizeof(char));
+    }
+    HMCR = (double **)calloc(s->n, sizeof(double *));
+    PAR = (double **)calloc(s->n, sizeof(double *));
+    op_type = (char **)calloc(s->n, sizeof(char *));
+    for(j = 0; j < s->n; j++){
+        HMCR[j] = (double *)calloc(tensor_id, sizeof(double));
+        PAR[j] = (double *)calloc(tensor_id, sizeof(double));
+        op_type[j] = (char *)calloc(tensor_id, sizeof(char));
+    }
 
     for(t = 1; t <= s->iterations; t++){
       fprintf(stderr,"\nRunning iteration %d/%d ... ", t, s->iterations);
@@ -519,8 +550,10 @@ void runTensorPSF_HS(SearchSpace *s, int tensor_id, prtFun Evaluate, ...){
       if (t == 1){
           for(i = 0; i < s->m; i++){
               for(j = 0; j < s->n; j++){
-                  HMCR[j] = s->HMCR;
-                  PAR[j] = s->PAR;
+                  for(l = 0; l < tensor_id; l++){
+                      HMCR[j][l] = s->HMCR;
+                      PAR[j][l] = s->PAR;
+                  }
               }
               tmp = CreateAgent(s->n, _HS_);
               tmp_t = GenerateNewPSFTensor(s, tensor_id, HMCR, PAR, op_type);
@@ -529,9 +562,10 @@ void runTensorPSF_HS(SearchSpace *s, int tensor_id, prtFun Evaluate, ...){
                   tmp->x[j] = TensorSpan(s->LB[j], s->UB[j], tmp_t[j], tensor_id);
               CheckAgentLimits(s, tmp);
               for(j = 0; j < s->n; j++)
-                rehearsal[i][j] = op_type[j];
-              DestroyAgent(&(s->a[i]), _HS_);
+                for(l = 0; l < tensor_id; l++)
+                    rehearsal[i][j][l] = op_type[j][l];
               DeallocateTensor(&s->a[i]->t, s->n);
+              DestroyAgent(&(s->a[i]), _HS_);
               s->a[i] = CopyAgent(tmp, _HS_);
               s->a[i]->t = CopyTensor(tmp_t, s->n, tensor_id);
               DestroyAgent(&tmp, _HS_);
@@ -548,7 +582,7 @@ void runTensorPSF_HS(SearchSpace *s, int tensor_id, prtFun Evaluate, ...){
       for(j = 0; j < s->n; j++)
           tmp->x[j] = TensorSpan(s->LB[j], s->UB[j], tmp_t[j], tensor_id);
       CheckAgentLimits(s, tmp);
-      UpdateIndividualHMCR_PAR(s, rehearsal, HMCR, PAR);
+      UpdateIndividualTensorHMCR_PAR(s, tensor_id, rehearsal, HMCR, PAR);
 
       fitValue = Evaluate(tmp, arg); /* It executes the fitness function for agent tmp */
 
@@ -559,7 +593,8 @@ void runTensorPSF_HS(SearchSpace *s, int tensor_id, prtFun Evaluate, ...){
         s->a[s->m-1]->fit = fitValue;
         s->a[s->m-1]->t = CopyTensor(tmp_t, s->n, tensor_id);
         for(j = 0; j < s->n; j++)
-          rehearsal[s->m-1][j] = op_type[j];
+            for(l = 0; l < tensor_id; l++)
+                rehearsal[s->m-1][j][l] = op_type[j][l];
       }
 
       if(fitValue < s->gfit){ /* update the global best */
@@ -575,8 +610,17 @@ void runTensorPSF_HS(SearchSpace *s, int tensor_id, prtFun Evaluate, ...){
 
     }
 
-    for(i = 0; i < s->m; i++)
-      free(rehearsal[i]);
+    for(i = 0; i < s->m; i++){
+        for(j = 0; j < s->n; j++){
+            free(rehearsal[i][j]);
+            if (i == 0){
+                free(HMCR[j]);
+                free(PAR[j]);
+                free(op_type[j]);
+            }
+        }
+        free(rehearsal[i]);
+    }
     free(rehearsal);
     free(HMCR);
     free(PAR);
