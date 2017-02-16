@@ -141,8 +141,9 @@ Agent *GenerateNewPSF(SearchSpace *s, double *HMCR, double *PAR, char *op_type){
     for(j = 0; j < s->n; j++){
         r = GenerateUniformRandomNumber(0, 1);
         if(HMCR[j] >= r){
-            i = GenerateUniformRandomNumber(0, s->m-1);
+            i = GenerateUniformRandomNumber(0, s->m);
             r = GenerateUniformRandomNumber(0, 1);
+            a->x[j] = s->a[i]->x[j];
             op_type[j] = PSF_MEMORY;
             if(PAR[j] >= r){
                 signal = GenerateUniformRandomNumber(0, 1);
@@ -170,7 +171,7 @@ Evaluate: pointer to the function used to evaluate nests
 arg: list of additional arguments */
 void runPSF_HS(SearchSpace *s, prtFun Evaluate, ...){
     va_list arg, argtmp;
-    int t, i, j;
+    int i, j, t, r;
     double fitValue, *HMCR, *PAR;
     char *op_type, **rehearsal;
     Agent *tmp = NULL;
@@ -192,27 +193,32 @@ void runPSF_HS(SearchSpace *s, prtFun Evaluate, ...){
     PAR = (double *)calloc(s->n, sizeof(double));
     op_type = (char *)calloc(s->n, sizeof(char));
 
-    for(i = 0; i < s->m; i++)
-        for(j = 0; j < s->n; j++)
-            rehearsal[i][j] = PSF_RANDOM;
-
     for(t = 1; t <= s->iterations; t++){
       fprintf(stderr,"\nRunning iteration %d/%d ... ", t, s->iterations);
 
       va_copy(arg, argtmp);
 
-      if(t == 1){
-          for(j = 0; j < s->n; j++){
-              HMCR[j] = s->HMCR;
-              PAR[j] = s->PAR;
+      if (t == 1){
+          for(i = 0; i < s->m; i++){
+              for(j = 0; j < s->n; j++){
+                  HMCR[j] = s->HMCR;
+                  PAR[j] = s->PAR;
+              }
+              tmp = GenerateNewPSF(s, HMCR, PAR, op_type);
+              for(j = 0; j < s->n; j++)
+                rehearsal[i][j] = op_type[j];
+              DestroyAgent(&(s->a[i]), _HS_);
+              s->a[i] = CopyAgent(tmp, _HS_);
+              DestroyAgent(&tmp, _HS_);
           }
+          EvaluateSearchSpace(s, _HS_, Evaluate, arg);
       }
 
       qsort(s->a, s->m, sizeof(Agent**), SortAgent); /* Sorts all harmonies according to their fitness. First position gets the best harmony. */
 
       tmp = GenerateNewPSF(s, HMCR, PAR, op_type);
-      CheckAgentLimits(s, tmp);
       UpdateIndividualHMCR_PAR(s, rehearsal, HMCR, PAR);
+      CheckAgentLimits(s, tmp);
 
       fitValue = Evaluate(tmp, arg); /* It executes the fitness function for agent tmp */
 
@@ -221,7 +227,7 @@ void runPSF_HS(SearchSpace *s, prtFun Evaluate, ...){
         s->a[s->m-1] = CopyAgent(tmp, _HS_);
         s->a[s->m-1]->fit = fitValue;
         for(j = 0; j < s->n; j++)
-          rehearsal[s->m-2][j] = op_type[j];
+          rehearsal[s->m-1][j] = op_type[j];
       }
 
       if(fitValue < s->gfit){ /* update the global best */
@@ -281,8 +287,10 @@ void runTensorHS(SearchSpace *s, int tensor_id, prtFun Evaluate, ...){
       for(j = 0; j < s->n; j++){
           r = GenerateUniformRandomNumber(0, 1);
           if(s->HMCR >= r){
-              i = GenerateUniformRandomNumber(0, s->m-1);
+              i = GenerateUniformRandomNumber(0, s->m);
               r = GenerateUniformRandomNumber(0, 1);
+              for(l = 0; l < tensor_id; l++)
+                  tmp_t[j][l] = s->a[i]->t[j][l];
               if(s->PAR >= r){
                   signal = GenerateUniformRandomNumber(0, 1);
                   r = GenerateUniformRandomNumber(0, 1);
@@ -369,8 +377,10 @@ void runTensorIHS(SearchSpace *s, int tensor_id, prtFun Evaluate, ...){
       for(j = 0; j < s->n; j++){
           r = GenerateUniformRandomNumber(0, 1);
           if(s->HMCR >= r){
-              i = GenerateUniformRandomNumber(0, s->m-1);
+              i = GenerateUniformRandomNumber(0, s->m);
               r = GenerateUniformRandomNumber(0, 1);
+              for(l = 0; l < tensor_id; l++)
+                  tmp_t[j][l] = s->a[i]->t[j][l];
               if(s->PAR >= r){
                   signal = GenerateUniformRandomNumber(0, 1);
                   r = GenerateUniformRandomNumber(0, 1);

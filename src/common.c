@@ -203,8 +203,9 @@ Agent *GenerateNewAgent(SearchSpace *s, int opt_id){
             for(j = 0; j < s->n; j++){
                 r = GenerateUniformRandomNumber(0, 1);
                 if(s->HMCR >= r){
-                    i = GenerateUniformRandomNumber(0, s->m-1);
+                    i = GenerateUniformRandomNumber(0, s->m);
                     r = GenerateUniformRandomNumber(0, 1);
+                    a->x[j] = s->a[i]->x[j];
                     if(s->PAR >= r){
                         signal = GenerateUniformRandomNumber(0, 1);
                         r = GenerateUniformRandomNumber(0, 1);
