@@ -13,7 +13,7 @@ void runPSO(SearchSpace *s, prtFun Evaluate, ...); /* It executes the Particle S
 /*************************/
 
 /* AIWPSO-related functions */
-void runAIWPSO(SearchSpace *s, prtFun Evaluate, ...); /* It executes the Particle Swarm Optimization with Adpative Inertia Weight for function minimization */
+void runAIWPSO(SearchSpace *s, prtFun Evaluate, ...); /* It executes the Particle Swarm Optimization with Adaptive Inertia Weight for function minimization */
 double ComputeSuccess(SearchSpace *s); /* It computes the pecentage of success concerning the whole search space */
 /****************************/
 
@@ -21,6 +21,7 @@ double ComputeSuccess(SearchSpace *s); /* It computes the pecentage of success c
 void UpdateTensorParticleVelocity(SearchSpace *s, int i, int tensor_id); /* It updates the velocity of an tensor (particle) */
 void UpdateTensorParticlePosition(SearchSpace *s, int i, int tensor_id); /* It updates the position of an tensor (particle) */
 void runTensorPSO(SearchSpace *s, int tensor_id, prtFun Evaluate, ...); /* It executes the Tensor-based Particle Swarm Optimization for function minimization */
+void runTensorAIWPSO(SearchSpace *s, int tensor_id, prtFun Evaluate, ...); /* It executes the Particle Swarm Optimization with Adaptive Inertia Weight for function minimization */
 /*************************/
 
 #endif

@@ -8,7 +8,7 @@ CC=gcc
 FLAGS=  -g -O0
 CFLAGS=''
 
-all: libopt-plus PSO AIWPSO BA FPA FA CS GP GA BHA WCA MBO GSGP BGSGP ABC HS IHS PSF-HS TensorPSO TensorBA TensorFPA TensorFA TensorCS TensorBHA TensorABC TensorHS TensorIHS TensorPSF-HS
+all: libopt-plus PSO AIWPSO BA FPA FA CS GP GA BHA WCA MBO GSGP BGSGP ABC HS IHS PSF-HS TensorPSO TensorAIWPSO TensorBA TensorFPA TensorFA TensorCS TensorBHA TensorABC TensorHS TensorIHS TensorPSF-HS
 
 libopt-plus: $(LIB)/libopt-plus.a
 	echo "libopt-plus.a built..."
@@ -145,6 +145,9 @@ PSF-HS: examples/PSF-HS.c
 
 TensorPSO: examples/TensorPSO.c
 	$(CC) $(FLAGS) examples/TensorPSO.c -o examples/bin/TensorPSO -I $(INCLUDE) -L $(LIB) -lopt-plus -lm;
+
+TensorAIWPSO: examples/TensorAIWPSO.c
+	$(CC) $(FLAGS) examples/TensorAIWPSO.c -o examples/bin/TensorAIWPSO -I $(INCLUDE) -L $(LIB) -lopt-plus -lm;
 
 TensorBA: examples/TensorBA.c
 	$(CC) $(FLAGS) examples/TensorBA.c -o examples/bin/TensorBA -I $(INCLUDE) -L $(LIB) -lopt-plus -lm;
