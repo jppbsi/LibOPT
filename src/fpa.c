@@ -35,7 +35,7 @@ void runFPA(SearchSpace *s, prtFun Evaluate, ...){
                 
                 /* Equation 1 */
                 for(j = 0; j < s->n; j++)
-                    tmp->x[j] = tmp->x[j]+L[j]*(tmp->x[j]-s->g[j]);
+                    tmp->x[j] = tmp->x[j]+L[j]*(s->g[j]-tmp->x[j]);
                 /**************/
                 
                 free(L);
@@ -114,7 +114,7 @@ void runTensorFPA(SearchSpace *s, int tensor_id, prtFun Evaluate, ...){
                 /* Equation 1 */
                 for(j = 0; j < s->n; j++)
                     for(k = 0; k < tensor_id; k++)
-                        tmp_t[j][k] = tmp_t[j][k]+L[j][k]*(tmp_t[j][k]-s->t_g[j][k]);
+                        tmp_t[j][k] = tmp_t[j][k]+L[j][k]*(s->t_g[j][k]-tmp_t[j][k]);
                 /**************/
                 for(j = 0; j < s->n; j++)
                     free(L[j]);
