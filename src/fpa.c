@@ -9,7 +9,7 @@ void runFPA(SearchSpace *s, prtFun Evaluate, ...){
     va_list arg, argtmp;
     int t, i, j, flower_j, flower_k;
     double prob, epsilon, *L = NULL, fitValue;
-    Agent *tmp = NULL;
+    Agent *tmp = NULL, **tmp_flowers = NULL;
     		
     va_start(arg, Evaluate);
     va_copy(argtmp, arg);
@@ -20,9 +20,14 @@ void runFPA(SearchSpace *s, prtFun Evaluate, ...){
     }
         
     EvaluateSearchSpace(s, _FPA_, Evaluate, arg); /* Initial evaluation of the search space */
+
+    tmp_flowers = (Agent **)calloc(s->m,sizeof(Agent));
         
     for(t = 1; t <= s->iterations; t++){
         fprintf(stderr,"\nRunning iteration %d/%d ... ", t, s->iterations);
+
+       for(i = 0; i < s->m; i++)
+            tmp_flowers[i] = CopyAgent(s->a[i], _FPA_);
             
         /* for each flower */
        for(i = 0; i < s->m; i++){
@@ -46,28 +51,32 @@ void runFPA(SearchSpace *s, prtFun Evaluate, ...){
                 
                 /* Equation 3 */
                 for(j = 0; j < s->n; j++)
-                    tmp->x[j] = tmp->x[j]+epsilon*(s->a[flower_j]->x[j]-s->a[flower_k]->x[j]);
+                    tmp->x[j] = tmp->x[j]+epsilon*(tmp_flowers[flower_j]->x[j]-tmp_flowers[flower_k]->x[j]);
             }
             CheckAgentLimits(s, tmp);
             
             fitValue = Evaluate(tmp, arg); /* It executes the fitness function for agent i */
             if(fitValue < s->a[i]->fit){ /* We accept the new solution */
-		DestroyAgent(&(s->a[i]), _FPA_);
+		        DestroyAgent(&(s->a[i]), _FPA_);
                 s->a[i] = CopyAgent(tmp, _FPA_);
                 s->a[i]->fit = fitValue;
             }
             
             if(fitValue < s->gfit){ /* update the global best */
-		s->gfit = fitValue;
-		for(j = 0; j < s->n; j++)
-		    s->g[j] = tmp->x[j];
-	    }
-            
+                s->gfit = fitValue;
+                for(j = 0; j < s->n; j++)
+                    s->g[j] = tmp->x[j];
+            }
             DestroyAgent(&tmp, _FPA_);
        }
+
+       for(i = 0; i < s->m; i++)
+            DestroyAgent(&tmp_flowers[i], _FPA_);
        
        fprintf(stderr, "OK (minimum fitness value %lf)", s->gfit);
     }
+
+    free(tmp_flowers);
 
     va_end(arg);
 }
@@ -83,7 +92,7 @@ void runTensorFPA(SearchSpace *s, int tensor_id, prtFun Evaluate, ...){
     va_list arg, argtmp;
     int t, i, j, k, flower_j, flower_k;
     double prob, epsilon, **L = NULL, fitValue;
-    double **tmp_t = NULL;
+    double **tmp_t = NULL, ***tmp_tensors = NULL;
     Agent *tmp = NULL;
     		
     va_start(arg, Evaluate);
@@ -95,9 +104,14 @@ void runTensorFPA(SearchSpace *s, int tensor_id, prtFun Evaluate, ...){
     }
         
     EvaluateTensorSearchSpace(s, _FPA_, tensor_id, Evaluate, arg); /* Initial evaluation of the search space */
+
+    tmp_tensors = (double ***)calloc(s->m,sizeof(double **));
         
     for(t = 1; t <= s->iterations; t++){
         fprintf(stderr,"\nRunning iteration %d/%d ... ", t, s->iterations);
+
+       for(i = 0; i < s->m; i++)
+            tmp_tensors[i] = CopyTensor(s->a[i]->t, s->n, tensor_id);
             
         /* for each flower */
        for(i = 0; i < s->m; i++){
@@ -127,7 +141,7 @@ void runTensorFPA(SearchSpace *s, int tensor_id, prtFun Evaluate, ...){
                 /* Equation 3 */
                 for(j = 0; j < s->n; j++)
                     for(k = 0; k < tensor_id; k++)
-                        tmp_t[j][k] = tmp_t[j][k]+epsilon*(s->a[flower_j]->t[j][k]-s->a[flower_k]->t[j][k]);
+                        tmp_t[j][k] = tmp_t[j][k]+epsilon*(tmp_tensors[flower_j][j][k]-tmp_tensors[flower_k][j][k]);
             }
             CheckTensorLimits(s, tmp_t, tensor_id);
             for(j = 0; j < s->n; j++)
@@ -153,8 +167,15 @@ void runTensorFPA(SearchSpace *s, int tensor_id, prtFun Evaluate, ...){
             DestroyAgent(&tmp, _FPA_);
             DeallocateTensor(&tmp_t, s->n);
        }
+
+       for(i = 0; i < s->m; i++)
+            DeallocateTensor(&tmp_tensors[i], s->n);
        fprintf(stderr, "OK (minimum fitness value %lf)", s->gfit);
+
     }
+
+    free(tmp_tensors);
+
     va_end(arg);
 }
 /****************************/
