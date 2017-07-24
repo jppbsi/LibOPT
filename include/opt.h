@@ -18,6 +18,7 @@ extern "C" {
 #define _MBO_ 10 /* Migrating Bird Optimization */
 #define _ABC_ 11 /* Artificial Bee Colony */
 #define _HS_ 12 /* Harmony Search */
+#define _BSO_ 13 /* Brain Storm Optimization */
 /**************************/
 
 /* Tensors */
