@@ -404,6 +404,7 @@ void DestroySearchSpace(SearchSpace **s, int opt_id){
             case _WCA_:
             case _MBO_:
             case _ABC_:
+            case _BSO_:
             case _HS_:
                 if(tmp->g) free(tmp->g);
             break;
@@ -1060,6 +1061,14 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
             fscanf(fp, "%lf %lf %lf", &(s->bw), &(s->bw_min), &(s->bw_max));
             WaiveComment(fp);
       	break;
+        case _BSO_:
+            s = CreateSearchSpace(m, n, _BSO_);
+            s->iterations = iterations;
+            fscanf(fp, "%lf", &(s->k));
+            WaiveComment(fp);
+            fscanf(fp, "%lf %lf %lf", &(s->p_cluster_center), &(s->p_random_idea), &(s->p_random_combination));
+            WaiveComment(fp);
+        break;
         case _GP_:
             fscanf(fp, "%lf %lf %lf", &pReproduction, &pMutation, &pCrossover); WaiveComment(fp);
             fscanf(fp, "%d %d", &min_depth, &max_depth); WaiveComment(fp);

@@ -110,7 +110,6 @@ typedef struct SearchSpace_{
     double *tree_fit; /* fitness of each tree (in GP, the number of agents is different from the number of trees) */
 
     /* MBO */
-    int k; /* number of neighbours solutions to be considered */
     int X; /* number of neighbour solutions to be shared with the next solution */
     int M; /* number of tours, i.e., the number of iterations for the leader */
     int leftSide; /* flag to know which bird will be changed */
@@ -126,7 +125,15 @@ typedef struct SearchSpace_{
     /* IHS */
     double PAR_min, PAR_max; /* minimum and maximum pitch adjusting rate */
     double bw_min, bw_max; /* minimum and maximum bandwidth */
+    
+    /* BSO */
+    double p_cluster_center; /* probability of selecting a cluster center */
+    double p_random_idea; /* a randomly selected idea from a probabilistic selected cluster */
+    double p_random_combination; /* random combination of two probabilistic selected clusters */
 
+    /* MBO/BSO */
+    int k; /* number of neighbours solutions to be considered for MBO or number of clusters for BSO */
+    
 }SearchSpace;
 
 typedef double (*prtFun)(Agent *, va_list arg); /* Pointer to the function used to evaluate agents */
