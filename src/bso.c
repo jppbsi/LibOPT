@@ -15,7 +15,7 @@ int *k_means(SearchSpace *s, int k){
     }
     
     if (k < 1){
-	fprintf(stderr,"\nInvalid input (k < 1). @k_means.\n");
+	fprintf(stderr,"\nInvalid input (k < 1) @k_means.\n");
         exit(-1);
     }
     
