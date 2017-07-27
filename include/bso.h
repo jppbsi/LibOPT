@@ -6,7 +6,7 @@
 #include "opt.h"
 
 /* BSO-related functions */
-int *k_means(SearchSpace *s, int k); /* It clusters the agents and returns a pointer with the best agent's ID per cluster */
+int *k_means(SearchSpace *s); /* It clusters the agents and returns a pointer with the best agent's ID per cluster */
 /*************************/
 
 #endif

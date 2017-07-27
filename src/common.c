@@ -43,6 +43,7 @@ Agent *CreateAgent(int n, int opt_id){
         case _WCA_:
         case _MBO_:
         case _ABC_:
+        case _BSO_:
         case _HS_:
             a->x = (double *)calloc(n,sizeof(double));
             if(opt_id != _GP_) a->v = (double *)calloc(n,sizeof(double));
@@ -83,6 +84,7 @@ void DestroyAgent(Agent **a, int opt_id){
         case _WCA_:
         case _MBO_:
         case _ABC_:
+        case _BSO_:
         case _HS_:
             if(tmp->x) free(tmp->x);
             if(tmp->v) free(tmp->v);
@@ -472,6 +474,7 @@ void InitializeSearchSpace(SearchSpace *s, int opt_id){
         case _WCA_:
         case _MBO_:
         case _ABC_:
+        case _BSO_:
         case _HS_:
             for(i = 0; i < s->m; i++){
                 for(j = 0; j < s->n; j++)
@@ -512,6 +515,7 @@ void ShowSearchSpace(SearchSpace *s, int opt_id){
         case _BHA_:
         case _WCA_:
         case _ABC_:
+        case _BSO_:
         case _HS_:
             for(i = 0; i < s->m; i++){
                 fprintf(stderr,"\nAgent %d-> ", i);
@@ -848,6 +852,24 @@ char CheckSearchSpace(SearchSpace *s, int opt_id){
             OK = 0;
             }
         break;
+        case _BSO_:
+            if(isnan(s->k) || (s->k < 1)){
+                fprintf(stderr,"\n  -> Number of clusters undefined or invalid.");
+                OK = 0;
+            }
+            if(isnan(s->p_one_cluster)){
+                fprintf(stderr,"\n  -> Probability of selecting a cluster center undefined.");
+                OK = 0;
+            }
+            if(isnan(s->p_one_center)){
+                fprintf(stderr,"\n  -> Probability of randomly selecting an idea from a probabilistic selected cluster undefined.");
+                OK = 0;
+            }
+            if(isnan(s->p_two_centers)){
+                fprintf(stderr,"\n  -> Probability of of creating a random combination of two probabilistic selected clusters undefined.");
+                OK = 0;
+            }
+        break;
         default:
             fprintf(stderr,"\n Invalid optimization identifier @CheckSearchSpace.\n");
             return 0;
@@ -1064,9 +1086,9 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
         case _BSO_:
             s = CreateSearchSpace(m, n, _BSO_);
             s->iterations = iterations;
-            fscanf(fp, "%lf", &(s->k));
+            fscanf(fp, "%d", &(s->k));
             WaiveComment(fp);
-            fscanf(fp, "%lf %lf %lf", &(s->p_cluster_center), &(s->p_random_idea), &(s->p_random_combination));
+            fscanf(fp, "%lf %lf %lf", &(s->p_one_cluster), &(s->p_one_center), &(s->p_two_centers));
             WaiveComment(fp);
         break;
         case _GP_:

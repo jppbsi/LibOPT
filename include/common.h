@@ -127,9 +127,9 @@ typedef struct SearchSpace_{
     double bw_min, bw_max; /* minimum and maximum bandwidth */
     
     /* BSO */
-    double p_cluster_center; /* probability of selecting a cluster center */
-    double p_random_idea; /* a randomly selected idea from a probabilistic selected cluster */
-    double p_random_combination; /* random combination of two probabilistic selected clusters */
+    double p_one_cluster; /* probability of selecting a cluster center */
+    double p_one_center; /* probability of randomly selecting an idea from a probabilistic selected cluster */
+    double p_two_centers; /* probability of of creating a random combination of two probabilistic selected clusters */
 
     /* MBO/BSO */
     int k; /* number of neighbours solutions to be considered for MBO or number of clusters for BSO */

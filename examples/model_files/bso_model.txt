@@ -1,5 +1,5 @@
 10 2 10 # <n_particles> <dimension> <max_iterations>
-3 # number of k clusters
-0.3 0.4 0.3 # <p_cluster_center> <p_random_idea> <p_random_combination>
+3 # <k>
+0.3 0.4 0.3 # <p_one_cluster> <p_one_center> <p_two_centers>
 -5.12 5.12 # <LB> <UB> x[0]
 -5.12 5.12 # <LB> <UB> x[1]
