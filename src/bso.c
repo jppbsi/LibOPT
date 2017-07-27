@@ -6,9 +6,10 @@
 Parameters:
 s: search space */
 int *k_means(SearchSpace *s){
-    int *best = NULL, i, j, r;
+    int *best = NULL, *nearest = NULL, *ctr = NULL, i, j, r;
     char *is_chosen = NULL, OK;
-    double **mean = NULL;
+    double **center = NULL, old_error, error = DBL_MAX, min_distance, distance;
+    double **center_mean = NULL;
     
     if(!s){
         fprintf(stderr,"\nSearch space not allocated @k_means.\n");
@@ -16,12 +17,16 @@ int *k_means(SearchSpace *s){
     }
         
     best = (int *)malloc(s->k*sizeof(int));
-    mean = (double **)malloc(s->k*sizeof(double *));
+    nearest = (int *)malloc(s->m*sizeof(int));
+    ctr = (int *)malloc(s->m*sizeof(int));
+    center = (double **)malloc(s->k*sizeof(double *));
+    center_mean = (double **)malloc(s->k*sizeof(double *));
     is_chosen = (char *)calloc(s->m,sizeof(char));
     
     /* initializing k centers with samples choosen at random */
     for (i = 0; i < s->k; i++){
-	    mean[i] = (double *)malloc(s->n*sizeof(double));
+	    center[i] = (double *)malloc(s->n*sizeof(double));
+	    center_mean[i] = (double *)calloc(s->n,sizeof(double));
 	    OK = j = 0;
 	    do{
 		j++;
@@ -35,13 +40,54 @@ int *k_means(SearchSpace *s){
 		fprintf(stderr,"\nProblems initializing the k centers @k_means. Probably k is too large.\n");
 		exit(-1);
 	    }
-	    for (j = 0; j < s->n; j++) mean[i][j] = s->a[r]->x[j];
+	    for (j = 0; j < s->n; j++) center[i][j] = s->a[r]->x[j];
     }
     
-    for (i = 0; i < s->k; i++)
-   	free(mean[i]);
-    free(mean);
+    /* main algorithm */
+    do{
+	    old_error = error, error = 0;
+
+	    /* for each idea, it finds the nearest center */
+	    for(i = 0; i < s->m; i++){
+		min_distance = DBL_MAX;
+		
+		for (j = 0; j < s->k; j++){
+		    distance = EuclideanDistance(s->a[i]->x, center[j], s->n);
+		    if (distance < min_distance){
+               		nearest[i] = j;
+               		min_distance = distance;
+		    }
+		}
+		
+		/* after finding the nearest center, we accumulate
+		the idea's coordinates at this center */
+         	/*for (j = 0; j < s->n; j++)
+		    center_mean[nearest[i]][j] += s->a[i]->x[j];
+		
+		ctr[nearest[i]]++;
+         	error += min_distance;*/
+	    }
+	    error /= s->m;
+		
+	    /* updating the centers */
+	   /* for (i = 0; i < s->k; i++){
+	        for (j = 0; j < s->n; j++){
+		    if(ctr[i]) center[i][j] = center_mean[i][j]/ctr[i];
+		    else center[i][j] = center_mean[i][j];
+		}
+      	    }
+	   // fprintf(stderr,"\ndelta: %lf", abs(error-old_error));*/
+    }while(abs(error-old_error) > 1e-10);
+    
+    for (i = 0; i < s->k; i++){
+   	free(center[i]);
+	free(center_mean[i]);
+    }
+    free(center);
+    free(center_mean);
     free(is_chosen);
+    free(nearest);
+    free(ctr);
     
     return best;
 }
@@ -54,7 +100,7 @@ Evaluate: pointer to the function used to evaluate particles
 arg: list of additional arguments */
 void runBSO(SearchSpace *s, prtFun Evaluate, ...){
     va_list arg, argtmp;
-    int i, t;
+    int i, t, *best = NULL;
 
     va_start(arg, Evaluate);
     va_copy(argtmp, arg);
@@ -70,13 +116,17 @@ void runBSO(SearchSpace *s, prtFun Evaluate, ...){
         fprintf(stderr,"\nRunning iteration %d/%d ... ", t, s->iterations);
         va_copy(arg, argtmp);
 
+	/* clustering ideas */
+	best = k_means(s);
+	    
         /* for each idea */
-        for(i = 0; i < s->m; i++){
-	    //k_means
-        }
+        //for(i = 0; i < s->m; i++){
+	    
+        //}
 
 	//EvaluateSearchSpace(s, _PSO_, Evaluate, arg);
 
+	free(best);
 	fprintf(stderr, "OK (minimum fitness value %lf)", s->gfit);
     }
 
