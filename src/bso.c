@@ -77,8 +77,7 @@ int *k_means(SearchSpace *s){
 		if(ctr[i]) center[i][j] = center_mean[i][j]/ctr[i];
 		else center[i][j] = center_mean[i][j];
 	    }
-        }
-	fprintf(stderr,"\nerror: %lf    old_error: %lf   abs(error-old_error): %lf", error, old_error, fabs(error-old_error));
+	}
     }while(fabs(error-old_error) > 1e-5);
     
     /* identifying the best idea (smallest fitness) per cluster */
