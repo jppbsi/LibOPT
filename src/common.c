@@ -46,7 +46,7 @@ Agent *CreateAgent(int n, int opt_id){
         case _BSO_:
         case _HS_:
             a->x = (double *)calloc(n,sizeof(double));
-            if(opt_id != _GP_) a->v = (double *)calloc(n,sizeof(double));
+            if((opt_id != _GP_) && (opt_id != _BSO_)) a->v = (double *)calloc(n,sizeof(double));
             if(opt_id == _PSO_) a->xl = (double *)calloc(n,sizeof(double));
         break;
         default:
@@ -307,6 +307,11 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...){
     /* IHS */
     s->PAR_min = NAN; s->PAR_max = NAN;
     s->bw_min = NAN; s->bw_max = NAN;
+    
+    /* BSO */
+    s->p_one_cluster = NAN;
+    s->p_one_center = NAN;
+    s->p_two_centers = NAN;
 
     if(opt_id != _GP_){ /* GP uses a different structure than that of others */
         s->a = (Agent **)malloc(s->m*sizeof(Agent *));
