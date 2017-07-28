@@ -4,9 +4,8 @@
 
 /* It clusters the agents and returns a pointer with the best agent's ID per cluster.
 Parameters:
-s: search space
-c: centers' position to be outputted */
-int *k_means(SearchSpace *s, double **c){
+s: search space */
+int *k_means(SearchSpace *s){
     int *best_cluster = NULL, *nearest = NULL, *ctr = NULL, i, j, r;
     char *is_chosen = NULL, OK;
     double **center = NULL, old_error, error = DBL_MAX, min_distance, distance;
@@ -94,7 +93,6 @@ int *k_means(SearchSpace *s, double **c){
     /*************************************************************/
     
     for (i = 0; i < s->k; i++){
-	for(j = 0; j < s->n; j++) c[i][j] = center[i][j];
    	free(center[i]);
 	free(center_mean[i]);
     }
@@ -117,7 +115,7 @@ arg: list of additional arguments */
 void runBSO(SearchSpace *s, prtFun Evaluate, ...){
     va_list arg, argtmp;
     int i, j, k, t, *best = NULL, c;
-    double p, *nidea = NULL, **center;
+    double p, *nidea = NULL;
 
     va_start(arg, Evaluate);
     va_copy(argtmp, arg);
@@ -128,10 +126,7 @@ void runBSO(SearchSpace *s, prtFun Evaluate, ...){
     }
 
     nidea = (double *)malloc(s->n*sizeof(double));
-    center = (double **)malloc(s->k*sizeof(double *));
-    for(i = 0; i < s->k; i++)
-	center[i] = (double *)malloc(s->n*sizeof(double));
-
+    
     EvaluateSearchSpace(s, _BSO_, Evaluate, arg); /* Initial evaluation */
 
     for(t = 1; t <= s->iterations; t++){
@@ -139,7 +134,7 @@ void runBSO(SearchSpace *s, prtFun Evaluate, ...){
         va_copy(arg, argtmp);
 
 	/* clustering ideas */
-	best = k_means(s, center);
+	best = k_means(s);
 	    
         /* for each idea */
         for(i = 0; i < s->m; i++){
@@ -149,7 +144,7 @@ void runBSO(SearchSpace *s, prtFun Evaluate, ...){
 		p = GenerateUniformRandomNumber(0,1);
 		if(s->p_one_center > p){ /* creating a new idea based on the cluster selected previously */
 		    for(j = 0; j < s->n; j++)
-			nidea[j] = center[c][j]; 
+			nidea[j] = s->a[best[c]]->x[j];
 		}else{ /* creating a new idea based on another idea j selected randomly from cluster c  */
 		    //j = (int)GenerateUniformRandomNumber(0, s->k);
 		}
@@ -162,9 +157,6 @@ void runBSO(SearchSpace *s, prtFun Evaluate, ...){
 	fprintf(stderr, "OK (minimum fitness value %lf)", s->gfit);
     }
 
-    for(i = 0; i < s->k; i++)
-	free(center[i]);
-    free(center);
     free(nidea);
     va_end(arg);
 }
