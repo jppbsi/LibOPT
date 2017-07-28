@@ -7,6 +7,7 @@
 
 /* BSO-related functions */
 int *k_means(SearchSpace *s); /* It clusters the agents and returns a pointer with the best agent's ID per cluster */
+void runBSO(SearchSpace *s, prtFun Evaluate, ...); /* It executes the Brain Storm Optimization for function minimization */
 /*************************/
 
 #endif
