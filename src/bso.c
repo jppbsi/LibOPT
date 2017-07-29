@@ -1,4 +1,5 @@
 #include "bso.h"
+#include "function.h"
 
 /* BSO-related functions */
 
@@ -146,13 +147,14 @@ void runBSO(SearchSpace *s, prtFun Evaluate, ...){
 
     for(t = 1; t <= s->iterations; t++){
         fprintf(stderr,"\nRunning iteration %d/%d ... ", t, s->iterations);
-        va_copy(arg, argtmp);
-
+        
 	/* clustering ideas */
 	k_means(s, best, &ideas_per_cluster);
 	    
         /* for each idea */
         for(i = 0; i < s->m; i++){
+	    va_copy(arg, argtmp);
+	    
 	    p = GenerateUniformRandomNumber(0,1);
 	    if(s->p_one_cluster > p){
 		c1 = (int)GenerateUniformRandomNumber(0, s->k); /* selecting a cluster probabilistically */
@@ -209,17 +211,19 @@ void runBSO(SearchSpace *s, prtFun Evaluate, ...){
 	    /* adding local noise to the new created idea */
 	    p = (0.5*s->iterations-t)/k;
 	    r = GenerateUniformRandomNumber(0,1)*Logistic_Sigmoid(p);
+	    
 	    for(k = 0; k < s->n; k++)
 	        nidea->x[k] += r*randGaussian(0,1);
 	
 	    /* It evaluates the new created idea */
+	    CheckAgentLimits(s, nidea);
 	    p = Evaluate(nidea, arg);
 	    if(p < s->a[i]->fit){ /* if the new idea is better than the current one */ 
 		for(k = 0; k < s->n; k++)
 		    s->a[i]->x[k] = nidea->x[k];
 		s->a[i]->fit = p;
 	    }
-	    
+
 	    if(s->a[i]->fit < s->gfit) s->gfit = s->a[i]->fit;
 	}
 	
