@@ -134,7 +134,7 @@ double *f_NOT_(double *x, int n); /* It computes the logical function NOT of an 
 /*****************************/
 
 /* Math functions */
-double Logistic_Sigmoid(double x); /* It computes the logist sigmoid function */
+double Logistic_Sigmoid(double x); /* It computes the logistic sigmoid function */
 /*****************************/
 
 #endif

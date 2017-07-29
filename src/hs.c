@@ -22,32 +22,31 @@ void runHS(SearchSpace *s, prtFun Evaluate, ...){
     EvaluateSearchSpace(s, _HS_, Evaluate, arg); /* Initial evaluation of the search space */
 
     for(t = 1; t <= s->iterations; t++){
-      fprintf(stderr,"\nRunning iteration %d/%d ... ", t, s->iterations);
+	fprintf(stderr,"\nRunning iteration %d/%d ... ", t, s->iterations);
 
     	va_copy(arg, argtmp);
 
-      qsort(s->a, s->m, sizeof(Agent**), SortAgent); /* Sorts all harmonies according to their fitness. First position gets the best harmony. */
+	qsort(s->a, s->m, sizeof(Agent**), SortAgent); /* Sorts all harmonies according to their fitness. First position gets the best harmony. */
 
-      tmp = GenerateNewAgent(s, _HS_);
-      CheckAgentLimits(s, tmp);
-      fitValue = Evaluate(tmp, arg); /* It executes the fitness function for agent tmp */
+	tmp = GenerateNewAgent(s, _HS_);
+	CheckAgentLimits(s, tmp);
+	fitValue = Evaluate(tmp, arg); /* It executes the fitness function for agent tmp */
 
-      if((fitValue < s->a[s->m-1]->fit)){ /* We accept the new solution */
-        DestroyAgent(&(s->a[s->m-1]), _HS_);
-        s->a[s->m-1] = CopyAgent(tmp, _HS_);
-        s->a[s->m-1]->fit = fitValue;
-      }
+	if((fitValue < s->a[s->m-1]->fit)){ /* We accept the new solution */
+	  DestroyAgent(&(s->a[s->m-1]), _HS_);
+	  s->a[s->m-1] = CopyAgent(tmp, _HS_);
+	  s->a[s->m-1]->fit = fitValue;
+	}
 
-      if(fitValue < s->gfit){ /* update the global best */
-        s->gfit = fitValue;
-        for(j = 0; j < s->n; j++)
-          s->g[j] = tmp->x[j];
-      }
+	if(fitValue < s->gfit){ /* update the global best */
+	  s->gfit = fitValue;
+	  for(j = 0; j < s->n; j++)
+	    s->g[j] = tmp->x[j];
+	}
+    
+	DestroyAgent(&tmp, _HS_);
 
-      DestroyAgent(&tmp, _HS_);
-
-      fprintf(stderr, "OK (minimum fitness value %lf)", s->gfit);
-
+	fprintf(stderr, "OK (minimum fitness value %lf)", s->gfit);
     }
 
     va_end(arg);

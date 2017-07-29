@@ -86,7 +86,6 @@ void *k_means(SearchSpace *s, int *best_ideas, int ***ideas_per_cluster){
 		else center[i][j] = center_mean[i][j];
 	    }
 	}
-	fprintf(stderr,"\nDelta: %lf", fabs(error-old_error));
     }while(fabs(error-old_error) > 1e-5);
     
     /* identifying the best idea (smallest fitness) per cluster */
@@ -127,8 +126,9 @@ Evaluate: pointer to the function used to evaluate particles
 arg: list of additional arguments */
 void runBSO(SearchSpace *s, prtFun Evaluate, ...){
     va_list arg, argtmp;
-    int i, j, k, t, *best = NULL, c, **ideas_per_cluster = NULL;
-    double p, *nidea = NULL;
+    int i, j, z, k, t, *best = NULL, c1, c2, **ideas_per_cluster = NULL;
+    double p, r;
+    Agent *nidea = NULL;
 
     va_start(arg, Evaluate);
     va_copy(argtmp, arg);
@@ -138,9 +138,9 @@ void runBSO(SearchSpace *s, prtFun Evaluate, ...){
         exit(-1);
     }
 
-    nidea = (double *)malloc(s->n*sizeof(double));
     ideas_per_cluster = (int **)malloc(s->k*sizeof(int *));
     best = (int *)malloc(s->k*sizeof(int));
+    nidea = CreateAgent(s->n, _BSO_);
     
     EvaluateSearchSpace(s, _BSO_, Evaluate, arg); /* Initial evaluation */
 
@@ -155,28 +155,82 @@ void runBSO(SearchSpace *s, prtFun Evaluate, ...){
         for(i = 0; i < s->m; i++){
 	    p = GenerateUniformRandomNumber(0,1);
 	    if(s->p_one_cluster > p){
-		c = (int)GenerateUniformRandomNumber(0, s->k); /* selecting a cluster probabilistically */
+		c1 = (int)GenerateUniformRandomNumber(0, s->k); /* selecting a cluster probabilistically */
 		p = GenerateUniformRandomNumber(0,1);
-		if(s->p_one_center > p){ /* creating a new idea based on the cluster selected previously */
-		    for(j = 0; j < s->n; j++)
-			nidea[j] = s->a[best[c]]->x[j];
-		}else{ /* creating a new idea based on another idea j selected randomly from cluster c  */
-		    j = (int)GenerateUniformRandomNumber(1, ideas_per_cluster[c][0]);
-		    j = ideas_per_cluster[c][j];
+		
+		/* creating a new idea based on the cluster selected previously.
+		We also consider if cluster c1 has a single idea, i.e., ideas_per_cluster[c1][0] == 0.
+		Notice we do not consider the cluster's center into that computation @kmeans function, which means a
+		unitary cluster has ideas_per_cluster[c1][0] == 0. */
+		if((s->p_one_center > p) || (ideas_per_cluster[c1][0] == 0)){ 
+		    for(k = 0; k < s->n; k++)
+			nidea->x[k] = s->a[best[c1]]->x[k];
+		}else{ /* creating a new idea based on another idea j selected randomly from cluster c1 */
+		    j = (int)GenerateUniformRandomNumber(1, ideas_per_cluster[c1][0]);
+		    j = ideas_per_cluster[c1][j];
+		    
+		    for(k = 0; k < s->n; k++)
+			nidea->x[k] = s->a[j]->x[k];
 		}
-	    }    
-        }
-
-	//EvaluateSearchSpace(s, _PSO_, Evaluate, arg);
-
+	    }
+	    else{
+		
+		/* selecting two clusters' centers probabilistically */
+		c1 = (int)GenerateUniformRandomNumber(0, s->k);
+		c2 = (int)GenerateUniformRandomNumber(0, s->k);
+		
+		/* selecting two ideas randomly */
+		if(ideas_per_cluster[c1][0] == 0) j = best[c1];
+		else{
+		    j = (int)GenerateUniformRandomNumber(1, ideas_per_cluster[c1][0]);
+		    j = ideas_per_cluster[c1][j];
+		}
+		
+		if(ideas_per_cluster[c2][0] == 0) z = best[c2];
+		else{
+		    z = (int)GenerateUniformRandomNumber(1, ideas_per_cluster[c2][0]);
+		    z = ideas_per_cluster[c2][z];
+		}
+		
+		p = GenerateUniformRandomNumber(0,1);
+		r = GenerateUniformRandomNumber(0,1);
+		
+		/* it creates a new idea based on a random combination of two selected clusters' centers */
+		if(s->p_two_centers > p){
+		    for(k = 0; k < s->n; k++)
+			nidea->x[k] = r*s->a[best[c1]]->x[k] + (1-r)*s->a[best[c2]]->x[k];
+		}
+		else{ /* it creates a new idea based on the ideas selected at random from the clusters previously chosen */
+		    for(k = 0; k < s->n; k++)
+			nidea->x[k] = r*s->a[j]->x[k] + (1-r)*s->a[z]->x[k];
+		}
+	    }
+        
+	    /* adding local noise to the new created idea */
+	    p = (0.5*s->iterations-t)/k;
+	    r = GenerateUniformRandomNumber(0,1)*Logistic_Sigmoid(p);
+	    for(k = 0; k < s->n; k++)
+	        nidea->x[k] += r*randGaussian(0,1);
+	
+	    /* It evaluates the new created idea */
+	    p = Evaluate(nidea, arg);
+	    if(p < s->a[i]->fit){ /* if the new idea is better than the current one */ 
+		for(k = 0; k < s->n; k++)
+		    s->a[i]->x[k] = nidea->x[k];
+		s->a[i]->fit = p;
+	    }
+	    
+	    if(s->a[i]->fit < s->gfit) s->gfit = s->a[i]->fit;
+	}
+	
 	fprintf(stderr, "OK (minimum fitness value %lf)", s->gfit);
     }
 
     for(i = 0; i < s->k; i++)
 	free(ideas_per_cluster[i]);
     free(ideas_per_cluster);
-    free(nidea);
     free(best);
+    DestroyAgent(&nidea, _BSO_);
     va_end(arg);
 }
 /*************************/
