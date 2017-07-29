@@ -224,10 +224,11 @@ void runBSO(SearchSpace *s, prtFun Evaluate, ...){
 	}
 	
 	fprintf(stderr, "OK (minimum fitness value %lf)", s->gfit);
+	
+	for(i = 0; i < s->k; i++)
+	    free(ideas_per_cluster[i]);
     }
 
-    for(i = 0; i < s->k; i++)
-	free(ideas_per_cluster[i]);
     free(ideas_per_cluster);
     free(best);
     DestroyAgent(&nidea, _BSO_);
