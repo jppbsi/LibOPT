@@ -1,4 +1,4 @@
-30 2 300 # <n_particles> <dimension> <max_iterations>
+30 2 1000 # <n_particles> <dimension> <max_iterations>
 5 # <k>
 0.8 0.4 0.5 # <p_one_cluster> <p_one_center> <p_two_centers>
 -5.12 5.12 # <LB> <UB> x[0]
