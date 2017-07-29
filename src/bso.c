@@ -19,7 +19,7 @@ int *k_means(SearchSpace *s){
     best_cluster = (int *)malloc(s->k*sizeof(int));
     best_fitness_cluster = (double *)malloc(s->k*sizeof(double));
     nearest = (int *)malloc(s->m*sizeof(int));
-    ctr = (int *)calloc(s->m,sizeof(int));
+    ctr = (int *)calloc(s->k,sizeof(int));
     center = (double **)malloc(s->k*sizeof(double *));
     center_mean = (double **)malloc(s->k*sizeof(double *));
     is_chosen = (char *)calloc(s->m,sizeof(char));
@@ -49,6 +49,11 @@ int *k_means(SearchSpace *s){
 	old_error = error;
 	error = 0;
 
+	for(i = 0; i < s->k; i++){
+	    ctr[i] = 0;
+	    for(j = 0; j < s->n ; j++) center_mean[i][j] = 0;
+	}
+	
 	/* for each idea, it finds the nearest center */
 	for(i = 0; i < s->m; i++){
 	    min_distance = DBL_MAX;
@@ -78,6 +83,7 @@ int *k_means(SearchSpace *s){
 		else center[i][j] = center_mean[i][j];
 	    }
 	}
+	fprintf(stderr,"\nDelta: %lf", fabs(error-old_error));
     }while(fabs(error-old_error) > 1e-5);
     
     /* identifying the best idea (smallest fitness) per cluster */
