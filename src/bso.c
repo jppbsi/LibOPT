@@ -4,19 +4,22 @@
 
 /* It clusters the agents and returns a pointer with the best agent's ID per cluster.
 Parameters:
-s: search space */
-int *k_means(SearchSpace *s){
-    int *best_cluster = NULL, *nearest = NULL, *ctr = NULL, i, j, r;
+s: search space
+best_ideas: pointer to the ids of the best ideas per cluster (k-sized array)
+ideas_per_cluster: pointer to the ids of the ideas per cluster (k x (Y_i)+1-sized array)
+where Y_i stands for the number of ideas in cluster i. Notice we have one more column (the first one)
+that stores the number of ideas that belongs to cluster i. */
+void *k_means(SearchSpace *s, int *best_ideas, int **ideas_per_cluster){
+    int *nearest = NULL, *ctr = NULL, i, j, r;
     char *is_chosen = NULL, OK;
     double **center = NULL, old_error, error = DBL_MAX, min_distance, distance;
     double **center_mean = NULL, *best_fitness_cluster = NULL;
     
-    if(!s){
-        fprintf(stderr,"\nSearch space not allocated @k_means.\n");
+    if((!s) || (!best_ideas) || (!ideas_per_cluster)){
+        fprintf(stderr,"\nSearch space and/or input arrays not allocated @k_means.\n");
         exit(-1);
     }
         
-    best_cluster = (int *)malloc(s->k*sizeof(int));
     best_fitness_cluster = (double *)malloc(s->k*sizeof(double));
     nearest = (int *)malloc(s->m*sizeof(int));
     ctr = (int *)calloc(s->k,sizeof(int));
@@ -87,13 +90,19 @@ int *k_means(SearchSpace *s){
     }while(fabs(error-old_error) > 1e-5);
     
     /* identifying the best idea (smallest fitness) per cluster */
-    for(i = 0; i < s->k; i++)
+    for(i = 0; i < s->k; i++){
 	best_fitness_cluster[i] = DBL_MAX;
+	
+	/* it allocates an array to store the ids of the ideas of cluster i. The first position stores the number of ideas clustered in cluster i. */
+	ideas_per_cluster[i] = (int *)malloc((ctr[i]+1)*sizeof(int)); 
+    }
     
     for(i = 0; i < s->m; i++){
+	ideas_per_cluster[nearest[i]][ctr[nearest[i]]] = i;
+	ctr[nearest[i]]--;
 	if(s->a[i]->fit < best_fitness_cluster[nearest[i]]){
 	    best_fitness_cluster[nearest[i]] = s->a[i]->fit;
-	    best_cluster[nearest[i]] = i;
+	    best_ideas[nearest[i]] = i;
 	}
     }
     /*************************************************************/
@@ -108,8 +117,6 @@ int *k_means(SearchSpace *s){
     free(nearest);
     free(ctr);
     free(best_fitness_cluster);
-    
-    return best_cluster;
 }
 /****************************/
 
@@ -120,7 +127,7 @@ Evaluate: pointer to the function used to evaluate particles
 arg: list of additional arguments */
 void runBSO(SearchSpace *s, prtFun Evaluate, ...){
     va_list arg, argtmp;
-    int i, j, k, t, *best = NULL, c;
+    int i, j, k, t, *best = NULL, c, **ideas_per_cluster = NULL;
     double p, *nidea = NULL;
 
     va_start(arg, Evaluate);
@@ -132,6 +139,8 @@ void runBSO(SearchSpace *s, prtFun Evaluate, ...){
     }
 
     nidea = (double *)malloc(s->n*sizeof(double));
+    ideas_per_cluster = (int **)malloc(s->k*sizeof(int *));
+    best = (int *)malloc(s->k*sizeof(int));
     
     EvaluateSearchSpace(s, _BSO_, Evaluate, arg); /* Initial evaluation */
 
@@ -140,7 +149,7 @@ void runBSO(SearchSpace *s, prtFun Evaluate, ...){
         va_copy(arg, argtmp);
 
 	/* clustering ideas */
-	best = k_means(s);
+	k_means(s, best, ideas_per_cluster);
 	    
         /* for each idea */
         for(i = 0; i < s->m; i++){
@@ -159,11 +168,14 @@ void runBSO(SearchSpace *s, prtFun Evaluate, ...){
 
 	//EvaluateSearchSpace(s, _PSO_, Evaluate, arg);
 
-	free(best);
 	fprintf(stderr, "OK (minimum fitness value %lf)", s->gfit);
     }
 
+    for(i = 0; i < s->k; i++)
+	free(ideas_per_cluster[i]);
+    free(ideas_per_cluster);
     free(nidea);
+    free(best);
     va_end(arg);
 }
 /*************************/

@@ -6,7 +6,7 @@
 #include "opt.h"
 
 /* BSO-related functions */
-int *k_means(SearchSpace *s); /* It clusters the agents and returns a pointer with the best agent's ID per cluster */
+void *k_means(SearchSpace *s, int *best_ideas, int **ideas_per_cluster); /* It clusters the agents and returns a pointer with the best agent's ID per cluster */
 void runBSO(SearchSpace *s, prtFun Evaluate, ...); /* It executes the Brain Storm Optimization for function minimization */
 /*************************/
 
