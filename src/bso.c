@@ -9,7 +9,7 @@ best_ideas: pointer to the ids of the best ideas per cluster (k-sized array)
 ideas_per_cluster: pointer to the ids of the ideas per cluster (k x (Y_i)+1-sized array)
 where Y_i stands for the number of ideas in cluster i. Notice we have one more column (the first one)
 that stores the number of ideas that belongs to cluster i. */
-void *k_means(SearchSpace *s, int *best_ideas, int **ideas_per_cluster){
+void *k_means(SearchSpace *s, int *best_ideas, int ***ideas_per_cluster){
     int *nearest = NULL, *ctr = NULL, i, j, r;
     char *is_chosen = NULL, OK;
     double **center = NULL, old_error, error = DBL_MAX, min_distance, distance;
@@ -94,11 +94,11 @@ void *k_means(SearchSpace *s, int *best_ideas, int **ideas_per_cluster){
 	best_fitness_cluster[i] = DBL_MAX;
 	
 	/* it allocates an array to store the ids of the ideas of cluster i. The first position stores the number of ideas clustered in cluster i. */
-	ideas_per_cluster[i] = (int *)malloc((ctr[i]+1)*sizeof(int)); 
+	(*ideas_per_cluster)[i] = (int *)calloc((ctr[i]+1),sizeof(int)); 
     }
     
     for(i = 0; i < s->m; i++){
-	ideas_per_cluster[nearest[i]][ctr[nearest[i]]] = i;
+	(*ideas_per_cluster)[nearest[i]][ctr[nearest[i]]] = i;
 	ctr[nearest[i]]--;
 	if(s->a[i]->fit < best_fitness_cluster[nearest[i]]){
 	    best_fitness_cluster[nearest[i]] = s->a[i]->fit;
@@ -149,7 +149,7 @@ void runBSO(SearchSpace *s, prtFun Evaluate, ...){
         va_copy(arg, argtmp);
 
 	/* clustering ideas */
-	k_means(s, best, ideas_per_cluster);
+	k_means(s, best, &ideas_per_cluster);
 	    
         /* for each idea */
         for(i = 0; i < s->m; i++){
@@ -161,7 +161,8 @@ void runBSO(SearchSpace *s, prtFun Evaluate, ...){
 		    for(j = 0; j < s->n; j++)
 			nidea[j] = s->a[best[c]]->x[j];
 		}else{ /* creating a new idea based on another idea j selected randomly from cluster c  */
-		    //j = (int)GenerateUniformRandomNumber(0, s->k);
+		    j = (int)GenerateUniformRandomNumber(1, ideas_per_cluster[c][0]);
+		    j = ideas_per_cluster[c][j];
 		}
 	    }    
         }
