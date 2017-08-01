@@ -10,7 +10,7 @@ best_ideas: pointer to the ids of the best ideas per cluster (k-sized array)
 ideas_per_cluster: pointer to the ids of the ideas per cluster (k x (Y_i)+1-sized array)
 where Y_i stands for the number of ideas in cluster i. Notice we have one more column (the first one)
 that stores the number of ideas that belongs to cluster i. */
-void *k_means(SearchSpace *s, int *best_ideas, int ***ideas_per_cluster){
+void k_means(SearchSpace *s, int *best_ideas, int ***ideas_per_cluster){
     int *nearest = NULL, *ctr = NULL, i, j, r;
     char *is_chosen = NULL, OK;
     double **center = NULL, old_error, error = DBL_MAX, min_distance, distance;
