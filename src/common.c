@@ -692,94 +692,94 @@ char CheckSearchSpace(SearchSpace *s, int opt_id){
     fprintf(stderr,"\nError summary: ");
     switch (opt_id){
         case _PSO_:
-            if(isnan(s->w)){
+            if(isnan((float)s->w)){
                 fprintf(stderr,"\n  -> Inertia weight undefined.");
                 OK = 0;
             }
-            if(isnan(s->w_min)){
+            if(isnan((float)s->w_min)){
                 fprintf(stderr,"\n  -> Minimum inertia weight undefined.");
                 OK = 0;
             }
-            if(isnan(s->w_max)){
+            if(isnan((float)s->w_max)){
                 fprintf(stderr,"\n  -> Maximum inertia weight undefined.");
                 OK = 0;
             }
-            if(isnan(s->c1)){
+            if(isnan((float)s->c1)){
                 fprintf(stderr,"\n  -> C1 parameter undefined.");
                 OK = 0;
             }
-            if(isnan(s->c2)){
+            if(isnan((float)s->c2)){
                 fprintf(stderr,"\n  -> C2 parameter undefined.");
                 OK = 0;
             }
         break;
         case _BA_:
-            if(isnan(s->f_min)){
+            if(isnan((float)s->f_min)){
                 fprintf(stderr,"\n  -> Minimum frequency undefined.");
                 OK = 0;
             }
-            if(isnan(s->f_max)){
+            if(isnan((float)s->f_max)){
                 fprintf(stderr,"\n  -> Maximum frequency undefined.");
                 OK = 0;
             }
-            if(isnan(s->r)){
+            if(isnan((float)s->r)){
                 fprintf(stderr,"\n  -> Pulse rate undefined.");
                 OK = 0;
             }
-            if(isnan(s->A)){
+            if(isnan((float)s->A)){
                 fprintf(stderr,"\n  -> Loudness undefined.");
                 OK = 0;
             }
         break;
         case _FPA_:
-            if(isnan(s->beta)){
+            if(isnan((float)s->beta)){
                 fprintf(stderr,"\n  -> Beta parameter used to compute the step based on Levy Flight undefined.");
                 OK = 0;
             }
-            if(isnan(s->p)){
+            if(isnan((float)s->p)){
                 fprintf(stderr,"\n  -> Probability of local pollination undefined.");
                 OK = 0;
             }
         break;
         case _FA_:
-            if(isnan(s->alpha)){
+            if(isnan((float)s->alpha)){
                 fprintf(stderr,"\n  -> Randomized parameter undefined.");
                 OK = 0;
             }
-            if(isnan(s->beta_0)){
+            if(isnan((float)s->beta_0)){
                 fprintf(stderr,"\n  -> Attractiveness undefined.");
                 OK = 0;
             }
-            if(isnan(s->gamma)){
+            if(isnan((float)s->gamma)){
                 fprintf(stderr,"\n  -> Light absorption undefined.");
                 OK = 0;
             }
         break;
         case _CS_:
-            if(isnan(s->beta)){
+            if(isnan((float)s->beta)){
                 fprintf(stderr,"\n  -> Beta parameter used to compute the step based on Levy Flight undefined.");
                 OK = 0;
             }
-            if(isnan(s->p)){
+            if(isnan((float)s->p)){
                 fprintf(stderr,"\n  -> Switch probability undefined.");
                 OK = 0;
             }
-            if(isnan(s->alpha)){
+            if(isnan((float)s->alpha)){
                 fprintf(stderr,"\n  -> Step size undefined.");
                 OK = 0;
             }
         break;
         case _GP_:
         case _GA_:
-            if(isnan(s->pReproduction)){
+            if(isnan((float)s->pReproduction)){
                 fprintf(stderr,"\n  -> Probability of reproduction undefined.");
                 OK = 0;
             }
-            if(isnan(s->pMutation)){
+            if(isnan((float)s->pMutation)){
                 fprintf(stderr,"\n  -> Probability of mutation undefined.");
                 OK = 0;
             }
-            if(isnan(s->pCrossover)){
+            if(isnan((float)s->pCrossover)){
                 fprintf(stderr,"\n  -> Probability of crossover undefined.");
                 OK = 0;
             }
@@ -795,7 +795,7 @@ char CheckSearchSpace(SearchSpace *s, int opt_id){
                 fprintf(stderr,"\n  -> Number of rivers undefined.");
                 OK = 0;
             }
-            if(isnan(s->dmax)){
+            if(isnan((float)s->dmax)){
                 fprintf(stderr,"\n  -> Raining process maximum distance undefined.");
                 OK = 0;
             }
@@ -829,49 +829,49 @@ char CheckSearchSpace(SearchSpace *s, int opt_id){
             }
         break;
         case _HS_:
-            if(isnan(s->HMCR)){
+            if(isnan((float)s->HMCR)){
                 fprintf(stderr,"\n  -> Harmony Memory Considering Rate undefined.");
             OK = 0;
             }
-            if(isnan(s->PAR)){
+            if(isnan((float)s->PAR)){
                 fprintf(stderr,"\n  -> Pitch Adjusting Rate undefined.");
             OK = 0;
             }
-            if(isnan(s->PAR_min)){
+            if(isnan((float)s->PAR_min)){
                 fprintf(stderr,"\n  -> Minimum Pitch Adjusting Rate undefined.");
             OK = 0;
             }
-            if(isnan(s->PAR_max)){
+            if(isnan((float)s->PAR_max)){
                 fprintf(stderr,"\n  -> Maximum Pitch Adjusting Rate undefined.");
             OK = 0;
             }
-            if(isnan(s->bw)){
+            if(isnan((float)s->bw)){
                 fprintf(stderr,"\n  -> Bandwidth undefined.");
             OK = 0;
             }
-            if(isnan(s->bw_min)){
+            if(isnan((float)s->bw_min)){
                 fprintf(stderr,"\n  -> Minimum Bandwidth undefined.");
             OK = 0;
             }
-            if(isnan(s->bw_max)){
+            if(isnan((float)s->bw_max)){
                 fprintf(stderr,"\n  -> Maximum Bandwidth undefined.");
             OK = 0;
             }
         break;
         case _BSO_:
-            if(isnan(s->k) || (s->k < 1)){
+            if(isnan((float)s->k) || (s->k < 1)){
                 fprintf(stderr,"\n  -> Number of clusters undefined or invalid.");
                 OK = 0;
             }
-            if(isnan(s->p_one_cluster)){
+            if(isnan((float)s->p_one_cluster)){
                 fprintf(stderr,"\n  -> Probability of selecting a cluster center undefined.");
                 OK = 0;
             }
-            if(isnan(s->p_one_center)){
+            if(isnan((float)s->p_one_center)){
                 fprintf(stderr,"\n  -> Probability of randomly selecting an idea from a probabilistic selected cluster undefined.");
                 OK = 0;
             }
-            if(isnan(s->p_two_centers)){
+            if(isnan((float)s->p_two_centers)){
                 fprintf(stderr,"\n  -> Probability of of creating a random combination of two probabilistic selected clusters undefined.");
                 OK = 0;
             }
