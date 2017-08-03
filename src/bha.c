@@ -52,6 +52,8 @@ void runBHA(SearchSpace *s, prtFun Evaluate, ...){
 	    DestroyAgent(&tmp, _BHA_);
 	    sum = sum + s->a[i]->fit;
 	}
+
+    va_copy(arg, argtmp);
 	
 	/* Event Horizon and evaluating the solutions */
 	radius = s->gfit/sum;
@@ -62,9 +64,10 @@ void runBHA(SearchSpace *s, prtFun Evaluate, ...){
 		s->a[i] = GenerateNewAgent(s, _BHA_);
 	    }
 	}
-        
-        EvaluateSearchSpace(s, _BHA_, Evaluate, arg);
-        fprintf(stderr, "OK (minimum fitness value %lf)", s->gfit);
+
+    EvaluateSearchSpace(s, _BHA_, Evaluate, arg);
+    fprintf(stderr, "OK (minimum fitness value %lf)", s->gfit);
+    
     }
     va_end(arg);
 }
@@ -131,6 +134,8 @@ void runTensorBHA(SearchSpace *s, int tensor_id, prtFun Evaluate, ...){
             DeallocateTensor(&tmp_t, s->n);
             sum = sum + s->a[i]->fit;
         }
+
+        va_copy(arg, argtmp);
 	
         /* Event Horizon and evaluating the solutions */
         radius = s->gfit/sum;
