@@ -15,11 +15,13 @@ void UpdateNeighbours(SearchSpace *s, int b, int k, prtFun Evaluate, va_list arg
     int i, j;
     double f;
     va_list argtmp;
+
+    va_copy(argtmp, arg);
     
     for(i = 0; i < k; i++){
         for(j = 0; j < s->n; j++)
             s->a[b]->nb[i]->x[j] = GenerateUniformRandomNumber(s->LB[j], s->UB[j]); 
-        
+
         f = Evaluate(s->a[b]->nb[i], arg); /* It executes the fitness function for neighbour i */
         s->a[b]->nb[i]->fit = f; /* It updates the fitness value of actual neighbour i */
         
@@ -117,6 +119,7 @@ void runMBO(SearchSpace *s, prtFun Evaluate, ...){
             ShareNeighbours(s);
             ImproveBirds(s);
         }
+
         qsort(s->a, s->m, sizeof(Agent **), SortAgent); /* It replaces the leader with the best bird and sorts the birds flock*/       			
 	//ShowSearchSpace(s, _MBO_);
 	fprintf(stderr, "OK (minimum fitness value %lf)", s->a[0]->fit);
