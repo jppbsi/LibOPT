@@ -24,11 +24,13 @@ Agent *CreateAgent(int n, int opt_id){
     a->t = NULL;
     a->t_v = NULL;
     a->t_xl = NULL;
+    a->prev_x = NULL;
     a->f = NAN;
     a->r = NAN;
     a->A = NAN;
     a->nb = NULL;
     a->pfit = DBL_MAX;
+    a->best_fit = DBL_MAX;
     a->n = n;
 
     switch (opt_id){
@@ -48,6 +50,11 @@ Agent *CreateAgent(int n, int opt_id){
             a->x = (double *)calloc(n,sizeof(double));
             if((opt_id != _GP_) && (opt_id != _BSO_)) a->v = (double *)calloc(n,sizeof(double));
             if(opt_id == _PSO_) a->xl = (double *)calloc(n,sizeof(double));
+        break;
+        case _LOA_:
+            a->x = (double *)calloc(n,sizeof(double));
+            a->xl = (double *)calloc(n,sizeof(double));
+            a->prev_x = (double *)calloc(n,sizeof(double));
         break;
         default:
             free(a);
@@ -89,6 +96,12 @@ void DestroyAgent(Agent **a, int opt_id){
             if(tmp->x) free(tmp->x);
             if(tmp->v) free(tmp->v);
             if(opt_id == _PSO_) if(tmp->xl) free(tmp->xl);
+        break;
+        case _LOA_:
+            if(tmp->x) free(tmp->x);
+            if(tmp->v) free(tmp->v);
+            if(tmp->xl) free(tmp->xl);
+            if(tmp->prev_x) free(tmp->prev_x);
         break;
         default:
             fprintf(stderr,"\nInvalid optimization identifier @DestroyAgent.\n");
@@ -153,6 +166,46 @@ Agent *CopyAgent(Agent *a, int opt_id){
     }
 
     return cpy;
+}
+
+/* It evaluate an agent according to each technique
+Parameters:
+s: search space
+a: agent
+opt_id: identifier of optimization technique
+Evaluate: pointer to the function used to evaluate
+arg: list of additional arguments */
+void EvaluateAgent(SearchSpace *s, Agent *a, int opt_id, prtFun Evaluate, va_list arg){
+    int i;
+    va_list argtmp;
+
+    va_copy(argtmp, arg);
+
+    switch (opt_id) {
+        case _LOA_:
+        /* saving the last fitness value */
+        a->pfit = a->fit;
+        /* saving the previous location */
+        for(i = 0; i < s->n; i++)
+                a->prev_x[i] = a->x[i];
+        a->fit = Evaluate(a, arg);
+        va_copy(arg, argtmp);
+        /* if the actual fit is the best fitness so far of the agent */
+        if(a->fit < a->best_fit){
+            a->best_fit = a->fit;
+            /* update the best visited location */
+            for(i = 0; i < s->n; i++)
+            a->xl[i] = a->x[i];
+            /* The this lion is the best solution so far */
+            if (a->fit < s->gfit){
+            s->gfit = a->fit;
+            /* update the global best visited location */
+            for(i = 0; i < s->n; i++)
+                s->g[i] = a->x[i];
+            }
+        }
+        break;
+    }
 }
 
 /* It generates a new agent according to each technique
@@ -313,7 +366,7 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...){
     s->p_one_center = NAN;
     s->p_two_centers = NAN;
 
-    if(opt_id != _GP_){ /* GP uses a different structure than that of others */
+    if((opt_id != _GP_) && (opt_id != _LOA_)){ /* GP and LOA uses a different structure than that of others */
         s->a = (Agent **)malloc(s->m*sizeof(Agent *));
         s->a[0] = CreateAgent(s->n, opt_id);
         if(s->a[0]){ /* Here, we verify whether opt_id is valid or not. In the latter case, function CreateAgent returns NULL. */
@@ -362,7 +415,44 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...){
 
             s->g = (double *)calloc(s->n,sizeof(double));
         }
+        if(opt_id == _LOA_){
+            s->sex_rate = va_arg(arg, double); /* getting the percent of females in each pride, 1-s->sex_rate is the percent of nomad females */
+            s->nomad_percent = va_arg(arg, double); /* getting the percent of nomad lions of the entire population */
+            s->roaming_percent = va_arg(arg, double); /* getting the percentage of the territory that will be visited by resident males*/
+            s->mating_prob = va_arg(arg, double); /* getting the probability of a female mate with a male */
+            s->pMutation = va_arg(arg, double); /* getting the probability of mutation */
+            s->imigration_rate = va_arg(arg, double); /* getting the percent of female lions that will imigrate */
+            s->n_prides = va_arg(arg, int); /* getting the number of prides */
+            s->g = (double *)calloc(s->n,sizeof(double));
+            s->n_female_nomads = round(s->m * s->nomad_percent * (1 - s->sex_rate)); /* determining de number of nomad females */
+            s->female_nomads = (Agent**)malloc(sizeof(Agent*) * s->n_female_nomads); /* allocating the array of nomad females */
+            for (i = 0; i < s->n_female_nomads; i++)
+              s->female_nomads[i] = CreateAgent(s->n, opt_id); /* not using the array of agents */
+            s->n_male_nomads =  round(s->m * s->nomad_percent * s->sex_rate); /* determining de number of nomad males */
+            s->male_nomads = (Agent**)malloc(sizeof(Agent*) * s->n_male_nomads); /* allocating the array of nomad males */
+            for (i = 0; i < s->n_male_nomads; i++)
+              s->male_nomads[i] = CreateAgent(s->n, opt_id); /* not using the array of agents */
 
+            int remained_lions = s->m - s->n_female_nomads - s->n_male_nomads; /* determining how many lions will be in prides */
+
+            /* determining randomly the number of lions on each of the n prides */
+            int *qty_lions_each_pride = (int*)calloc(s->n_prides, sizeof(int)); /* each index represents how many lions are in pride i */
+            for(i = 0; i < remained_lions; i++) /* for each remaning lion that is not nomad... */
+              qty_lions_each_pride[(int)GenerateUniformRandomNumber(0, s->n_prides - 0.001)]++; /* sum one on a random index */
+
+            s->pride_id = (struct Pride*)malloc(sizeof(struct Pride) * s->n_prides); /* allocating the array of prides */
+            for(i = 0; i < s->n_prides; i++){ /* for each pride... */
+                s->pride_id[i].n_females = round(qty_lions_each_pride[i] * s->sex_rate); /* determining de number of females in that pride */
+                s->pride_id[i].females = (Agent**)malloc(sizeof(Agent*) * s->pride_id[i].n_females); /* allocating the array of females from that pride */
+                for (j = 0; j < s->pride_id[i].n_females; j++)
+                s->pride_id[i].females[j] = CreateAgent(s->n, opt_id); /* not using the array of agents */
+                s->pride_id[i].n_males = qty_lions_each_pride[i] - s->pride_id[i].n_females; /* determining de number of males in that pride */
+                s->pride_id[i].males = (Agent**)malloc(sizeof(Agent*) * s->pride_id[i].n_males); /* allocating the array of males from that pride */
+                for (j = 0; j < s->pride_id[i].n_males; j++)
+                s->pride_id[i].males[j] = CreateAgent(s->n, opt_id); /* not using the array of agents */
+            }
+            free(qty_lions_each_pride);
+        }
     }
 
     s->LB = (double *)malloc(s->n*sizeof(double));
@@ -387,14 +477,14 @@ void DestroySearchSpace(SearchSpace **s, int opt_id){
         exit(-1);
     }
 
-    if(opt_id != _GP_){ /* GP uses a different structure than that of others */
-	if(opt_id == _MBO_){ /* We free the neighbours allocation */
-	    for(i = 0; i < tmp->m; i++){
-		for(j = 0; j < tmp->k; j++)
-		    if(tmp->a[i]->nb[j]) DestroyAgent(&(tmp->a[i]->nb[j]), opt_id);
-		free(tmp->a[i]->nb);
-	    }
-	}
+    if((opt_id != _GP_) && (opt_id != _LOA_)){ /* GP and LOA uses a different structure than that of others */
+        if(opt_id == _MBO_){ /* We free the neighbours allocation */
+            for(i = 0; i < tmp->m; i++){
+            for(j = 0; j < tmp->k; j++)
+                if(tmp->a[i]->nb[j]) DestroyAgent(&(tmp->a[i]->nb[j]), opt_id);
+            free(tmp->a[i]->nb);
+            }
+        }
 
         for(i = 0; i < tmp->m; i++)
             if(tmp->a[i]) DestroyAgent(&(tmp->a[i]), opt_id);
@@ -447,6 +537,24 @@ void DestroySearchSpace(SearchSpace **s, int opt_id){
             if(tmp->tree_fit) free(tmp->tree_fit);
             if(tmp->g) free(tmp->g);
         }
+        if(opt_id == _LOA_){
+            for (i = 0; i < tmp->n_female_nomads; i++)
+              DestroyAgent(&(tmp->female_nomads[i]), opt_id);
+            free(tmp->female_nomads);
+            for (i = 0; i < tmp->n_male_nomads; i++)
+              DestroyAgent(&(tmp->male_nomads[i]), opt_id);
+            free(tmp->male_nomads);
+            for(i = 0; i < tmp->n_prides; i++){
+              for (j = 0; j < tmp->pride_id[i].n_females; j++)
+                DestroyAgent(&(tmp->pride_id[i].females[j]), opt_id);
+              free(tmp->pride_id[i].females);
+              for (j = 0; j < tmp->pride_id[i].n_males; j++)
+                DestroyAgent(&(tmp->pride_id[i].males[j]), opt_id);
+              free(tmp->pride_id[i].males);
+            }
+            free(tmp->pride_id);
+	        free(tmp->g);
+        }
     }
 
     if(tmp->LB) free(tmp->LB);
@@ -466,7 +574,7 @@ void InitializeSearchSpace(SearchSpace *s, int opt_id){
         exit(-1);
     }
 
-    int i, j;
+    int i, j, k;
 
     switch (opt_id){
         case _PSO_:
@@ -491,6 +599,20 @@ void InitializeSearchSpace(SearchSpace *s, int opt_id){
                 for(j = 0; j < s->n; j++){
                     if(s->is_integer_opt) s->a[i]->x[j] = round(GenerateUniformRandomNumber(s->LB[j], s->UB[j]));
                     else s->a[i]->x[j] = GenerateUniformRandomNumber(s->LB[j], s->UB[j]);
+                }
+            }
+        break;
+        case _LOA_:
+            for(k = 0; k < s->n; k++){
+                for(i = 0; i < s->n_female_nomads; i++)
+                    s->female_nomads[i]->x[k] = GenerateUniformRandomNumber(s->LB[k], s->UB[k]);
+                for(i = 0; i < s->n_male_nomads; i++)
+                    s->male_nomads[i]->x[k] = GenerateUniformRandomNumber(s->LB[k], s->UB[k]);
+                for(i = 0; i < s->n_prides; i++){
+                    for(j = 0; j < s->pride_id[i].n_females; j++)
+                    s->pride_id[i].females[j]->x[k] = GenerateUniformRandomNumber(s->LB[k], s->UB[k]);
+                    for(j = 0; j < s->pride_id[i].n_males; j++)
+                    s->pride_id[i].males[j]->x[k] = GenerateUniformRandomNumber(s->LB[k], s->UB[k]);
                 }
             }
         break;
@@ -549,6 +671,42 @@ void ShowSearchSpace(SearchSpace *s, int opt_id){
 		    }
 		    fprintf(stderr,"\n");
 		}
+            }
+        break;
+        case _LOA_:
+            fprintf(stderr,"\nNomad Females:");
+            for (i = 0; i < s->n_female_nomads; i++){
+            fprintf(stderr,"\n\tAgent %d-> ", i);
+            for(j = 0; j < s->n; j++)
+                fprintf(stderr,"x[%d]: %f   ", j, s->female_nomads[i]->x[j]);
+            fprintf(stderr,"fitness value: %f", s->female_nomads[i]->fit);
+            }
+
+            fprintf(stderr,"\nNomad Males:");
+            for (i = 0; i < s->n_male_nomads; i++){
+            fprintf(stderr,"\n\tAgent %d-> ", i);
+            for(j = 0; j < s->n; j++)
+                fprintf(stderr,"x[%d]: %f   ", j, s->male_nomads[i]->x[j]);
+            fprintf(stderr,"fitness value: %f", s->male_nomads[i]->fit);
+            }
+
+            fprintf(stderr,"\nIn Prides:");
+            for (i = 0; i < s->n_prides; i++){
+            fprintf(stderr,"\n\tPride %d: ", i);
+            fprintf(stderr,"\n\tResident Males:");
+            for (j = 0; j < s->pride_id[i].n_males; j++){
+                fprintf(stderr,"\n\t\tAgent %d-> ", j);
+                for(k = 0; k < s->n; k++)
+                    fprintf(stderr,"x[%d]: %f   ", k, s->pride_id[i].males[j]->x[k]);
+                fprintf(stderr,"fitness value: %f", s->pride_id[i].males[j]->fit);
+            }
+            fprintf(stderr,"\n\tResident Females:");
+            for (j = 0; j < s->pride_id[i].n_females; j++){
+                fprintf(stderr,"\n\t\tAgent %d-> ", j);
+                for(k = 0; k < s->n; k++)
+                    fprintf(stderr,"x[%d]: %f   ", k, s->pride_id[i].females[j]->x[k]);
+                fprintf(stderr,"fitness value: %f", s->pride_id[i].females[j]->fit);
+            }
             }
         break;
         default:
@@ -669,6 +827,30 @@ void EvaluateSearchSpace(SearchSpace *s, int opt_id, prtFun Evaluate, va_list ar
                 s->a[i]->fit = f; /* It updates the fitness value of actual agent i */
 
                 va_copy(arg, argtmp);
+            }
+        break;
+        case _LOA_:
+            for (i = 0; i < s->n_female_nomads; i++){
+            EvaluateAgent(s, s->female_nomads[i], _LOA_, Evaluate, arg);
+            /* after the firt evaluation pfit still is DBL_MAX, we need to update it */
+            s->female_nomads[i]->pfit = s->female_nomads[i]->fit;
+            }
+            for (i = 0; i < s->n_male_nomads; i++){
+            EvaluateAgent(s, s->male_nomads[i], _LOA_, Evaluate, arg);
+            /* after the firt evaluation pfit still is DBL_MAX, we need to update it */
+            s->male_nomads[i]->pfit = s->male_nomads[i]->fit;
+            }
+            for(i = 0; i < s->n_prides; i++){
+            for (j = 0; j < s->pride_id[i].n_females; j++){
+                EvaluateAgent(s, s->pride_id[i].females[j], _LOA_, Evaluate, arg);
+                /* after the firt evaluation pfit still is DBL_MAX, we need to update it */
+                s->pride_id[i].females[j]->pfit = s->pride_id[i].females[j]->fit;
+            }
+            for (j = 0; j < s->pride_id[i].n_males; j++){
+                EvaluateAgent(s, s->pride_id[i].males[j], _LOA_, Evaluate, arg);
+                /* after the firt evaluation pfit still is DBL_MAX, we need to update it */
+                s->pride_id[i].males[j]->pfit = s->pride_id[i].males[j]->fit;
+            }
             }
         break;
         default:
@@ -876,6 +1058,36 @@ char CheckSearchSpace(SearchSpace *s, int opt_id){
                 OK = 0;
             }
         break;
+        case _LOA_:
+            if(isnan((float)s->sex_rate)){
+                fprintf(stderr,"\n  -> Sex rate undefined.");
+                OK = 0;
+            }
+            if(isnan((float)s->nomad_percent)){
+                fprintf(stderr,"\n  -> Nomad percentage undefined.");
+                OK = 0;
+            }
+            if(isnan((float)s->roaming_percent)){
+                fprintf(stderr,"\n  -> Roaming percentage undefined.");
+                OK = 0;
+            }
+            if(isnan((float)s->mating_prob)){
+                fprintf(stderr,"\n  -> Mating probability undefined.");
+                OK = 0;
+            }
+            if(isnan((float)s->imigration_rate)){
+                fprintf(stderr,"\n  -> Imigration rate undefined.");
+                OK = 0;
+            }
+            if(s->n_prides <= 0){
+                fprintf(stderr,"\n  -> Number of prides not valid.");
+                OK = 0;
+            }
+            if(isnan(s->pMutation)){
+                fprintf(stderr,"\n  -> Mutation probability undefined.");
+                OK = 0;
+            }
+        break;
         default:
             fprintf(stderr,"\n Invalid optimization identifier @CheckSearchSpace.\n");
             return 0;
@@ -960,6 +1172,38 @@ double EuclideanDistance(double *x, double *y, int n){
     return sqrt(sum);
 }
 
+/* It generates a perpendicular vector to a given vector
+Parameters:
+x: n-dimension array
+n: dimension of vector */
+double *GetPerpendicularVector(double *x, int n){
+    double *perp_vector = (double *)calloc(n, sizeof(double));
+    
+    for(int i = 0; i < n - 1; i += 2){
+      perp_vector[i] = -1 * x[i + 1];
+      perp_vector[i + 1] = x[i];
+    }
+  
+    return perp_vector;
+}
+  
+/* It normalizes a given vector
+Parameters:
+x: n-dimension array
+n: dimension of vector */
+void NormalizeVector(double *x, int n){
+    int i;
+    double magnitude = 0;
+
+    for(i = 0; i < n; i++)
+        magnitude += x[i] * x[i];
+
+    magnitude = sqrt(magnitude);
+
+    for(i = 0; i < n; i++)
+        x[i] = x[i] / magnitude;
+}
+
 /* It is used to sort by agent's fitness (asceding order of fitness) */
 int SortAgent(const void *a, const void *b){
     const Agent *x = *(Agent **)a, *y = *(Agent **)b;
@@ -1003,6 +1247,8 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
     int i, j, m, n, k, iterations, n_terminals = 0, n_functions = 0, min_depth, max_depth;
     int has_constant = 0, is_integer_opt, same_range;
     double pReproduction, pMutation, pCrossover, **constant = NULL, *LB = NULL, *UB = NULL;
+    double sex_rate, nomad_percent, roaming_percent, mating_prob, imigration_rate;
+    int n_prides;
     char line[LINE_SIZE], *pline = NULL, **function = NULL, **terminal = NULL;
     Node *head = NULL, *tail = NULL, *aux = NULL;
 
@@ -1203,6 +1449,12 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
             }
             free(LB);
             free(UB);
+        break;
+        case _LOA_:
+            fscanf(fp, "%lf %lf %lf %lf %lf %lf %d", &sex_rate, &nomad_percent, &roaming_percent, &mating_prob, &pMutation, &imigration_rate, &n_prides);
+            s = CreateSearchSpace(m, n, _LOA_, sex_rate, nomad_percent, roaming_percent, mating_prob, pMutation, imigration_rate, n_prides);
+            s->iterations = iterations;
+            WaiveComment(fp);
         break;
         default:
             fprintf(stderr,"\nInvalid optimization identifier @ReadSearchSpaceFromFile.\n");

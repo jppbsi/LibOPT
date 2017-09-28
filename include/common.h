@@ -35,7 +35,7 @@ typedef struct Agent_{
     double *v; /* velocity */
     double *xl; /* local best */
 
-    /* AIWPSO */
+    /* AIWPSO, LOA */
     double pfit; /* fitness value of the previous iteration */
 
     /* TensorPSO */
@@ -49,6 +49,11 @@ typedef struct Agent_{
 
     /* MBO */
     struct Agent_ **nb; /* array of pointers to neighbours */
+
+    /* LOA */
+    double *prev_x; /* position (associated with pfit) */
+    double best_fit; /* best fitness value so far of the agent (associated with xl) */
+
 }Agent;
 
 /* It defines the search space */
@@ -133,6 +138,24 @@ typedef struct SearchSpace_{
 
     /* MBO/BSO */
     int k; /* number of neighbours solutions to be considered for MBO or number of clusters for BSO */
+
+    /* LOA */
+    double sex_rate; /* percentage of female lions in each pride */
+    double nomad_percent; /* percentage of nomad lions in the population */
+    double roaming_percent; /* percentage of pride territory that will be visited by a male lion */
+    double mating_prob; /* probability of a female mate with male */
+    double imigration_rate; /* rate of females in a pride that will become nomads */
+    int n_prides; /* number of prides */
+    struct Pride{
+        int n_females; /* number of females in a pride */
+        int n_males; /* number of males in a pride */
+        Agent **females; /* array of pointers to female lions from a pride */
+        Agent **males; /* array of pointers to male lions from a pride */
+    }*pride_id; /* array of prides */
+    int n_female_nomads; /* number of nomad females */
+    int n_male_nomads; /* number of nomad males */
+    Agent **female_nomads; /* array of pointers to female nomad lions */
+    Agent **male_nomads; /* array of pointers to male nomad lions */
     
 }SearchSpace;
 
@@ -143,6 +166,7 @@ Agent *CreateAgent(int n, int opt_id); /* It creates an agent */
 void DestroyAgent(Agent **a, int opt_id); /* It deallocates an agent */
 void CheckAgentLimits(SearchSpace *s, Agent *a); /* It checks whether a given agent has excedeed boundaries */
 Agent *CopyAgent(Agent *a, int opt_id); /* It copies an agent */
+void EvaluateAgent(SearchSpace *s, Agent *a, int opt_id, prtFun Evaluate, va_list arg); /* It evaluate an agent according to each technique */
 Agent *GenerateNewAgent(SearchSpace *s, int opt_id); /* It generates a new agent according to each technique */
 /**************************/
 
@@ -160,6 +184,8 @@ double GenerateUniformRandomNumber(double low, double high); /* It generates a r
 double GenerateGaussianRandomNumber(double mean, double variance); /* It generates a random number drawn from a Gaussian (normal) distribution */
 double *GenerateLevyDistribution(int n, double beta); /* It generates an n-dimensional array drawn from a Levy distribution */
 double EuclideanDistance(double *x, double *y, int n); /* It computes the Euclidean distance between two n-dimensional arrays */
+double *GetPerpendicularVector(double *x, int n); /* It generates a perpendicular vector to a given vector */
+void NormalizeVector(double *x, int n); /* It normalizes a given vector */
 int SortAgent(const void *a, const void *b); /* It is used to sort by agent's fitness (asceding order of fitness) */
 int SortDataByVal(const void *a, const void *b); /* It is used to sort an array of Data by asceding order of the variable val */
 void WaiveComment(FILE *fp); /* It waives a comment in a model file */
