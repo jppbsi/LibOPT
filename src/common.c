@@ -1177,9 +1177,10 @@ Parameters:
 x: n-dimension array
 n: dimension of vector */
 double *GetPerpendicularVector(double *x, int n){
+    int i;
     double *perp_vector = (double *)calloc(n, sizeof(double));
     
-    for(int i = 0; i < n - 1; i += 2){
+    for(i = 0; i < n - 1; i += 2){
       perp_vector[i] = -1 * x[i + 1];
       perp_vector[i + 1] = x[i];
     }
