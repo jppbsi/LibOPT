@@ -194,7 +194,7 @@ void MovingSafePlace(SearchSpace *s, int pride, int *selected_females, prtFun Ev
           index = (int)GenerateUniformRandomNumber(0, pride_size - 0.001);
         }while(selected[index]);
         selected[index] = 1; /* mark as selected */
-      }
+}
 
       /* determinig the best territory (winner of the tournament) */
       territory_index = 0;
@@ -806,6 +806,7 @@ void runLOA (SearchSpace *s,  prtFun Evaluate, ...){
   EvaluateSearchSpace(s, _LOA_, Evaluate, arg); /* Initial evaluation */
   va_copy(arg, argtmp);
   for(k = 0; k < s->iterations; k++){
+    fprintf(stderr,"\nRunning iteration %d/%d ... ", k + 1, s->iterations);
     /* For each pride */
     extra_male_nomads = 0;
     for(i = 0; i < s->n_prides; i++){
@@ -881,7 +882,6 @@ void runLOA (SearchSpace *s,  prtFun Evaluate, ...){
     /* pointing to the new one */
     s->male_nomads = new_nomads;
 
-    fprintf(stderr,"\nRunning iteration %d/%d ... ", k + 1, s->iterations);
     fprintf(stderr, "OK (minimum fitness value %lf)", s->gfit);
   }
   va_end(arg);

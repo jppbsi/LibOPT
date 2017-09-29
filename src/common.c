@@ -437,16 +437,17 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...){
 
             /* determining randomly the number of lions on each of the n prides */
             int *qty_lions_each_pride = (int*)calloc(s->n_prides, sizeof(int)); /* each index represents how many lions are in pride i */
-            for(i = 0; i < remained_lions; i++) /* for each remaning lion that is not nomad... */
-              qty_lions_each_pride[(int)GenerateUniformRandomNumber(0, s->n_prides - 0.001)]++; /* sum one on a random index */
+            for(i = 0; i < remained_lions; i++) /* for each remaning lion that is not nomad... */{
+              qty_lions_each_pride[(int)GenerateUniformRandomNumber(0, s->n_prides)]++; /* sum one on a random index */
+            }
 
             s->pride_id = (struct Pride*)malloc(sizeof(struct Pride) * s->n_prides); /* allocating the array of prides */
             for(i = 0; i < s->n_prides; i++){ /* for each pride... */
-                s->pride_id[i].n_females = round(qty_lions_each_pride[i] * s->sex_rate); /* determining de number of females in that pride */
+                s->pride_id[i].n_females = round(qty_lions_each_pride[i] * (1 - s->sex_rate)); /* determining de number of females in that pride */
                 s->pride_id[i].females = (Agent**)malloc(sizeof(Agent*) * s->pride_id[i].n_females); /* allocating the array of females from that pride */
                 for (j = 0; j < s->pride_id[i].n_females; j++)
                 s->pride_id[i].females[j] = CreateAgent(s->n, opt_id); /* not using the array of agents */
-                s->pride_id[i].n_males = qty_lions_each_pride[i] - s->pride_id[i].n_females; /* determining de number of males in that pride */
+                s->pride_id[i].n_males = qty_lions_each_pride[i] - s->pride_id[i].n_females; /* determining the number of males in that pride */
                 s->pride_id[i].males = (Agent**)malloc(sizeof(Agent*) * s->pride_id[i].n_males); /* allocating the array of males from that pride */
                 for (j = 0; j < s->pride_id[i].n_males; j++)
                 s->pride_id[i].males[j] = CreateAgent(s->n, opt_id); /* not using the array of agents */
