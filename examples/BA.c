@@ -2,19 +2,20 @@
 #include "function.h"
 #include "ba.h"
 
-int main(){
-    
+int main()
+{
+
     SearchSpace *s = NULL;
     int i;
-    
+
     s = ReadSearchSpaceFromFile("examples/model_files/ba_model.txt", _BA_); /* It reads the model file and creates a search space. We are going to use BA to solve our problem. */
-    
+
     InitializeSearchSpace(s, _BA_); /* It initalizes the search space */
-    
+
     if (CheckSearchSpace(s, _BA_)) /* It checks wether the search space is valid or not */
-        runBA(s, Levy); /* It minimizes function Levy */
-    
+        runBA(s, Levy);            /* It minimizes function Levy */
+
     DestroySearchSpace(&s, _BA_); /* It deallocates the search space */
-        
+
     return 0;
 }

@@ -2,7 +2,8 @@
 #include "function.h"
 #include "hs.h"
 
-int main(){
+int main()
+{
 
     SearchSpace *s = NULL;
     int i;
@@ -12,7 +13,7 @@ int main(){
     InitializeSearchSpace(s, _HS_); /* It initalizes the search space */
 
     if (CheckSearchSpace(s, _HS_)) /* It checks wether the search space is valid or not */
-        runHS(s, Rosenbrock); /* It minimizes function Rosenbrock */
+        runHS(s, Rosenbrock);      /* It minimizes function Rosenbrock */
 
     DestroySearchSpace(&s, _HS_); /* It deallocates the search space */
 

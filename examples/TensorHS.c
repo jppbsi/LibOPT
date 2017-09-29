@@ -2,7 +2,8 @@
 #include "function.h"
 #include "hs.h"
 
-int main(){
+int main()
+{
 
     SearchSpace *s = NULL;
     int i;
@@ -15,7 +16,7 @@ int main(){
 
     InitializeTensorSearchSpace(s, _QUATERNION_); /* It initializes the search space with tensors */
 
-    if (CheckSearchSpace(s, _HS_)) /* It checks whether the search space is valid or not */
+    if (CheckSearchSpace(s, _HS_))                /* It checks whether the search space is valid or not */
         runTensorHS(s, _QUATERNION_, Rosenbrock); /* It minimizes function Rosenbrock */
 
     DeallocateTensor(&s->t_g, s->n);

@@ -2,19 +2,20 @@
 #include "function.h"
 #include "cs.h"
 
-int main(){
-    
+int main()
+{
+
     SearchSpace *s = NULL;
     int i;
-    
+
     s = ReadSearchSpaceFromFile("examples/model_files/cs_model.txt", _CS_); /* It reads the model file and creates a search space. We are going to use CS to solve our problem. */
-    
+
     InitializeSearchSpace(s, _CS_); /* It initalizes the search space */
-            
+
     if (CheckSearchSpace(s, _CS_)) /* It checks wether the search space is valid or not */
-        runCS(s, Rosenbrock); /* It minimizes function Rosenbrock */
-    
+        runCS(s, Rosenbrock);      /* It minimizes function Rosenbrock */
+
     DestroySearchSpace(&s, _CS_); /* It deallocates the search space */
-        
+
     return 0;
 }
