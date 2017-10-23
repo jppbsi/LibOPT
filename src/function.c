@@ -3482,6 +3482,112 @@ double *f_NOT_(double *x, int n)
 }
 /*****************************/
 
+/* Quaternion Genetic Programming general-purpose functions */
+/* It computes the quaternionic sum of two mxn-dimensional tensors
+Parameters:
+x, y:tensors
+m,n n: dimensions */
+double **f_QSUM_(double **x, double **y, int m, int n)
+{
+    if (!x || !y)
+    {
+        fprintf(stderr, "\nInvalid input parametsrs @f_QSUM_.\n");
+        exit(-1);
+    }
+
+    int i, j;
+    double **out = NULL;
+
+    out = (double **)malloc(m * sizeof(double));
+    for (i = 0; i < m; i++){
+	out[i] = (double *)malloc(n * sizeof(double));
+	
+	for(j = 0; j < n; j++)
+	    out[i][j] = x[i][j] + y[i][j];
+    }
+
+    return out;
+}
+
+/* It computes the quaternionic subtraction of two mxn-dimensional tensors
+Parameters:
+x, y:tensors
+m,n n: dimensions */
+double **f_QSUB_(double **x, double **y, int m, int n)
+{
+    if (!x || !y)
+    {
+        fprintf(stderr, "\nInvalid input parametsrs @f_QSUB_.\n");
+        exit(-1);
+    }
+
+    int i, j;
+    double **out = NULL;
+
+    out = (double **)malloc(m * sizeof(double));
+    for (i = 0; i < m; i++){
+	out[i] = (double *)malloc(n * sizeof(double));
+	
+	for(j = 0; j < n; j++)
+	    out[i][j] = x[i][j] - y[i][j];
+    }
+
+    return out;
+}
+
+/* It computes the quaternionic multiplication of two mxn-dimensional tensors
+Parameters:
+x, y:tensors
+m,n n: dimensions */
+double **f_QMUL_(double **x, double **y, int m, int n)
+{
+    if (!x || !y)
+    {
+        fprintf(stderr, "\nInvalid input parametsrs @f_QMUL_.\n");
+        exit(-1);
+    }
+
+    int i, j;
+    double **out = NULL;
+
+    out = (double **)malloc(m * sizeof(double));
+    for (i = 0; i < m; i++){
+	out[i] = (double *)malloc(n * sizeof(double));
+	
+	for(j = 0; j < n; j++)
+	    out[i][j] = x[i][j] * y[i][j];
+    }
+
+    return out;
+}
+
+/* It computes the quaternionic division (protected) of two mxn-dimensional tensors
+Parameters:
+x, y:tensors
+m,n n: dimensions */
+double **f_QDIV_(double **x, double **y, int m, int n)
+{
+    if (!x || !y)
+    {
+        fprintf(stderr, "\nInvalid input parametsrs @f_QDIV_.\n");
+        exit(-1);
+    }
+
+    int i, j;
+    double **out = NULL;
+
+    out = (double **)malloc(m * sizeof(double));
+    for (i = 0; i < m; i++){
+	out[i] = (double *)malloc(n * sizeof(double));
+	
+	for(j = 0; j < n; j++); 
+	    out[i][j] = x[i][j]/(y[i][j]+0.00001); /* It avoids division by 0 */
+    }
+
+    return out;
+}
+/*****************************/
+
 /* Math functions */
 /* It computes the logist sigmoid function
 Parameters:

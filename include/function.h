@@ -122,7 +122,7 @@ double Zirilli(Agent *a, va_list arg); /* It computes the Zirilli's function */
 double *f_SUM_(double *x, double *y, int n); /* It computes the pointwise sum of two n-dimensional arrays */
 double *f_SUB_(double *x, double *y, int n); /* It computes the pointwise subtraction of two n-dimensional arrays */
 double *f_MUL_(double *x, double *y, int n); /* It computes the pointwise multiplication of two n-dimensional arrays */
-double *f_DIV_(double *x, double *y, int n); /* It computes the pointwise division of two n-dimensional arrays */
+double *f_DIV_(double *x, double *y, int n); /* It computes the pointwise (protected) division of two n-dimensional arrays */
 double *f_ABS_(double *x, int n); /* It computes the absolute value of each element from an n-dimensional array */
 double *f_SQRT_(double *x, int n); /* It computes the squared root of each element from a two n-dimensional array */
 double *f_EXP_(double *x, int n); /* It computes the exponential (e) of each element from an n-dimensional array */
@@ -131,6 +131,13 @@ double *f_AND_(double *x, double *y, int n); /* It computes the logical function
 double *f_OR_(double *x, double *y, int n); /* It computes the logical function OR among two n-dimensional arrays */
 double *f_XOR_(double *x, double *y, int n); /* It computes the logical function XOR among two n-dimensional arrays */
 double *f_NOT_(double *x, int n); /* It computes the logical function NOT of an n-dimensional array */
+/*****************************/
+
+/* Quaternion Genetic Programming general-purpose functions */
+double **f_QSUM_(double **x, double **y, int m, int n); /* It computes the quaternionic sum of two mxn-dimensional tensors */
+double **f_QSUB_(double **x, double **y, int m, int n); /* It computes the quaternionic subtraction of two mxn-dimensional tensors */
+double **f_QMUL_(double **x, double **y, int m, int n); /* It computes the quaternionic multiplication of two mxn-dimensional tensors */
+double **f_QDIV_(double **x, double **y, int m, int n); /* It computes the quaternionic division (protected) of two mxn-dimensional tensors */
 /*****************************/
 
 /* Math functions */
