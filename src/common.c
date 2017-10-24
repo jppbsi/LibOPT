@@ -338,12 +338,11 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...)
     SearchSpace *s = NULL;
     va_list arg;
 
-    if ((m < 1) || (n < 1) || (opt_id < 1))
-    {
+    if ((m < 1) || (n < 1) || (opt_id < 1)){
         fprintf(stderr, "\nInvalid parameters @CreateSearchSpace.\n");
         return NULL;
     }
-    int i, j;
+    int i, j, remained_lions;
 
     va_start(arg, opt_id);
     s = (SearchSpace *)malloc(sizeof(SearchSpace));
@@ -408,16 +407,15 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...)
     s->p_one_center = NAN;
     s->p_two_centers = NAN;
 
-    if ((opt_id != _GP_) && (opt_id != _LOA_))
-    { /* GP and LOA uses a different structure than that of others */
+    /* GP and LOA uses a different structure than that of others */
+    if ((opt_id != _GP_) && (opt_id != _LOA_)){
         s->a = (Agent **)malloc(s->m * sizeof(Agent *));
         s->a[0] = CreateAgent(s->n, opt_id);
-        if (s->a[0])
-        { /* Here, we verify whether opt_id is valid or not. In the latter case, function CreateAgent returns NULL. */
+        if (s->a[0]){
+            /* Here, we verify whether opt_id is valid or not. In the latter case, function CreateAgent returns NULL. */
             for (i = 1; i < s->m; i++)
                 s->a[i] = CreateAgent(s->n, opt_id);
-            if (opt_id == _MBO_)
-            { /* We create the k neighbours of each agent*/
+            if (opt_id == _MBO_){ 
                 s->k = va_arg(arg, int);
                 for (i = 0; i < s->m; i++)
                 {
@@ -427,8 +425,7 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...)
                 }
             }
         }
-        else
-        {
+        else{
             free(s->a);
             free(s);
             fprintf(stderr, "\nInvalid optimization identifier @CreateSearchSpace.\n");
@@ -438,10 +435,8 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...)
         s->g = (double *)calloc(s->n, sizeof(double));
         s->t_g = NULL;
     }
-    else
-    {
-        if (opt_id == _GP_)
-        {
+    else{
+        if (opt_id == _GP_){
             s->min_depth = va_arg(arg, int);
             s->max_depth = va_arg(arg, int);
             s->n_terminals = va_arg(arg, int);
@@ -465,8 +460,7 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...)
 
             s->g = (double *)calloc(s->n, sizeof(double));
         }
-        if (opt_id == _LOA_)
-        {
+        if (opt_id == _LOA_){
             s->sex_rate = va_arg(arg, double);        /* getting the percent of females in each pride, 1-s->sex_rate is the percent of nomad females */
             s->nomad_percent = va_arg(arg, double);   /* getting the percent of nomad lions of the entire population */
             s->roaming_percent = va_arg(arg, double); /* getting the percentage of the territory that will be visited by resident males*/
@@ -484,18 +478,15 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...)
             for (i = 0; i < s->n_male_nomads; i++)
                 s->male_nomads[i] = CreateAgent(s->n, opt_id); /* not using the array of agents */
 
-            int remained_lions = s->m - s->n_female_nomads - s->n_male_nomads; /* determining how many lions will be in prides */
+            remained_lions = s->m - s->n_female_nomads - s->n_male_nomads; /* determining how many lions will be in prides */
 
             /* determining randomly the number of lions on each of the n prides */
             int *qty_lions_each_pride = (int *)calloc(s->n_prides, sizeof(int)); /* each index represents how many lions are in pride i */
             for (i = 0; i < remained_lions; i++)                                 /* for each remaning lion that is not nomad... */
-            {
                 qty_lions_each_pride[(int)GenerateUniformRandomNumber(0, s->n_prides)]++; /* sum one on a random index */
-            }
-
+            
             s->pride_id = (struct Pride *)malloc(sizeof(struct Pride) * s->n_prides); /* allocating the array of prides */
-            for (i = 0; i < s->n_prides; i++)
-            {                                                                                          /* for each pride... */
+            for (i = 0; i < s->n_prides; i++){                                                                                          /* for each pride... */
                 s->pride_id[i].n_females = round(qty_lions_each_pride[i] * (1 - s->sex_rate));         /* determining de number of females in that pride */
                 s->pride_id[i].females = (Agent **)malloc(sizeof(Agent *) * s->pride_id[i].n_females); /* allocating the array of females from that pride */
                 for (j = 0; j < s->pride_id[i].n_females; j++)
@@ -1453,230 +1444,213 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id)
     fscanf(fp, "%d %d %d", &m, &n, &iterations);
     WaiveComment(fp);
 
-    switch (opt_id)
-    {
-    case _PSO_:
-        s = CreateSearchSpace(m, n, _PSO_);
-        s->iterations = iterations;
-        fscanf(fp, "%lf %lf", &(s->c1), &(s->c2));
-        WaiveComment(fp);
-        fscanf(fp, "%lf %lf %lf", &(s->w), &(s->w_min), &(s->w_max));
-        WaiveComment(fp);
-        break;
-    case _BA_:
-        s = CreateSearchSpace(m, n, _BA_);
-        s->iterations = iterations;
-        fscanf(fp, "%lf %lf", &(s->f_min), &(s->f_max));
-        WaiveComment(fp);
-        fscanf(fp, "%lf %lf", &(s->A), &(s->r));
-        WaiveComment(fp);
-        break;
-    case _FPA_:
-        s = CreateSearchSpace(m, n, _FPA_);
-        s->iterations = iterations;
-        fscanf(fp, "%lf %lf", &(s->beta), &(s->p));
-        WaiveComment(fp);
-        break;
-    case _FA_:
-        s = CreateSearchSpace(m, n, _FA_);
-        s->iterations = iterations;
-        fscanf(fp, "%lf %lf %lf", &(s->alpha), &(s->beta_0), &(s->gamma));
-        WaiveComment(fp);
-        break;
-    case _CS_:
-        s = CreateSearchSpace(m, n, _CS_);
-        s->iterations = iterations;
-        fscanf(fp, "%lf %lf %lf", &(s->beta), &(s->p), &(s->alpha));
-        WaiveComment(fp);
-        break;
-    case _GA_:
-        s = CreateSearchSpace(m, n, _GA_);
-        s->iterations = iterations;
-        fscanf(fp, "%lf %lf %lf", &(s->pReproduction), &(s->pMutation), &(s->pCrossover));
-        WaiveComment(fp);
-        break;
-    case _BHA_:
-        s = CreateSearchSpace(m, n, _BHA_);
-        s->iterations = iterations;
-        break;
-    case _WCA_:
-        s = CreateSearchSpace(m, n, _WCA_);
-        s->iterations = iterations;
-        fscanf(fp, "%d %lf", &(s->nsr), &(s->dmax));
-        WaiveComment(fp);
-        break;
-    case _MBO_:
-        fscanf(fp, "%d", &k);
-        s = CreateSearchSpace(m, n, _MBO_, k);
-        s->iterations = iterations;
-        fscanf(fp, "%d %d", &(s->X), &(s->M));
-        WaiveComment(fp);
-        break;
-    case _ABC_:
-        s = CreateSearchSpace(m, n, _ABC_);
-        s->iterations = iterations;
-        fscanf(fp, "%d", &(s->limit));
-        WaiveComment(fp);
-        break;
-    case _HS_:
-        s = CreateSearchSpace(m, n, _HS_);
-        s->iterations = iterations;
-        fscanf(fp, "%lf", &(s->HMCR));
-        WaiveComment(fp);
-        fscanf(fp, "%lf %lf %lf", &(s->PAR), &(s->PAR_min), &(s->PAR_max));
-        WaiveComment(fp);
-        fscanf(fp, "%lf %lf %lf", &(s->bw), &(s->bw_min), &(s->bw_max));
-        WaiveComment(fp);
-        break;
-    case _BSO_:
-        s = CreateSearchSpace(m, n, _BSO_);
-        s->iterations = iterations;
-        fscanf(fp, "%d", &(s->k));
-        WaiveComment(fp);
-        fscanf(fp, "%lf %lf %lf", &(s->p_one_cluster), &(s->p_one_center), &(s->p_two_centers));
-        WaiveComment(fp);
-        break;
-    case _GP_:
-        fscanf(fp, "%lf %lf %lf", &pReproduction, &pMutation, &pCrossover);
-        WaiveComment(fp);
-        fscanf(fp, "%d %d", &min_depth, &max_depth);
-        WaiveComment(fp);
-
-        /* Loading function nodes */
-        fgets(line, LINE_SIZE, fp);
-        pline = strtok(line, " \t");
-        j = 0;
-        while ((pline) && (*pline != '#'))
-        {
-            aux = CreateNode(pline, 0, 0);
-
-            if (!head)
-                head = aux;
-            else
-                tail->right = aux;
-            tail = aux;
-
-            n_functions++;
-            pline = strtok(NULL, " \t");
-        }
-
-        function = (char **)malloc(n_functions * sizeof(char *));
-        for (j = 0; j < n_functions; j++)
-            function[j] = (char *)malloc(TERMINAL_LENGTH * sizeof(char));
-
-        j = 0;
-        aux = head;
-        while (aux)
-        {
-            strcpy(function[j++], aux->elem);
-            aux = aux->right;
-        }
-        DestroyTree(&head);
-        /*****************************/
-
-        /* Loading terminal nodes */
-        fgets(line, LINE_SIZE, fp);
-        pline = strtok(line, " \t");
-        j = 0;
-        while ((pline) && (*pline != '#'))
-        {
-            aux = CreateNode(pline, 0, 0);
-            if (!strcmp(pline, "CONST"))
-                has_constant = 1;
-
-            if (!head)
-                head = aux;
-            else
-                tail->right = aux;
-            tail = aux;
-
-            n_terminals++;
-            pline = strtok(NULL, " \t");
-        }
-
-        terminal = (char **)malloc(n_terminals * sizeof(char *));
-        for (j = 0; j < n_terminals; j++)
-            terminal[j] = (char *)malloc(TERMINAL_LENGTH * sizeof(char));
-
-        j = 0;
-        aux = head;
-        while (aux)
-        {
-            strcpy(terminal[j++], aux->elem);
-            aux = aux->right;
-        }
-        DestroyTree(&head);
-        /*****************************/
-
-        fscanf(fp, "%d %d", &is_integer_opt, &same_range);
-        WaiveComment(fp);
-
-        /* loading lower and upper bounds */
-        LB = (double *)malloc(n * sizeof(double));
-        UB = (double *)malloc(n * sizeof(double));
-
-        if (same_range)
-        {
-            for (j = 0; j < n; j++)
-            {
-                fscanf(fp, "%lf %lf", &(LB[j]), &(UB[j]));
-                WaiveComment(fp);
-            }
-        }
-        else
-        {
-            fscanf(fp, "%lf %lf", &(LB[0]), &(UB[0]));
+    switch (opt_id){
+        case _PSO_:
+            s = CreateSearchSpace(m, n, _PSO_);
+            s->iterations = iterations;
+            fscanf(fp, "%lf %lf", &(s->c1), &(s->c2));
             WaiveComment(fp);
-            for (j = 1; j < n; j++)
-            {
-                LB[j] = LB[0];
-                UB[j] = UB[0];
+            fscanf(fp, "%lf %lf %lf", &(s->w), &(s->w_min), &(s->w_max));
+            WaiveComment(fp);
+            break;
+        case _BA_:
+            s = CreateSearchSpace(m, n, _BA_);
+            s->iterations = iterations;
+            fscanf(fp, "%lf %lf", &(s->f_min), &(s->f_max));
+            WaiveComment(fp);
+            fscanf(fp, "%lf %lf", &(s->A), &(s->r));
+            WaiveComment(fp);
+            break;
+        case _FPA_:
+            s = CreateSearchSpace(m, n, _FPA_);
+            s->iterations = iterations;
+            fscanf(fp, "%lf %lf", &(s->beta), &(s->p));
+            WaiveComment(fp);
+            break;
+        case _FA_:
+            s = CreateSearchSpace(m, n, _FA_);
+            s->iterations = iterations;
+            fscanf(fp, "%lf %lf %lf", &(s->alpha), &(s->beta_0), &(s->gamma));
+            WaiveComment(fp);
+            break;
+        case _CS_:
+            s = CreateSearchSpace(m, n, _CS_);
+            s->iterations = iterations;
+            fscanf(fp, "%lf %lf %lf", &(s->beta), &(s->p), &(s->alpha));
+            WaiveComment(fp);
+            break;
+        case _GA_:
+            s = CreateSearchSpace(m, n, _GA_);
+            s->iterations = iterations;
+            fscanf(fp, "%lf %lf %lf", &(s->pReproduction), &(s->pMutation), &(s->pCrossover));
+            WaiveComment(fp);
+            break;
+        case _BHA_:
+            s = CreateSearchSpace(m, n, _BHA_);
+            s->iterations = iterations;
+            break;
+        case _WCA_:
+            s = CreateSearchSpace(m, n, _WCA_);
+            s->iterations = iterations;
+            fscanf(fp, "%d %lf", &(s->nsr), &(s->dmax));
+            WaiveComment(fp);
+            break;
+        case _MBO_:
+            fscanf(fp, "%d", &k);
+            s = CreateSearchSpace(m, n, _MBO_, k);
+            s->iterations = iterations;
+            fscanf(fp, "%d %d", &(s->X), &(s->M));
+            WaiveComment(fp);
+            break;
+        case _ABC_:
+            s = CreateSearchSpace(m, n, _ABC_);
+            s->iterations = iterations;
+            fscanf(fp, "%d", &(s->limit));
+            WaiveComment(fp);
+            break;
+        case _HS_:
+            s = CreateSearchSpace(m, n, _HS_);
+            s->iterations = iterations;
+            fscanf(fp, "%lf", &(s->HMCR));
+            WaiveComment(fp);
+            fscanf(fp, "%lf %lf %lf", &(s->PAR), &(s->PAR_min), &(s->PAR_max));
+            WaiveComment(fp);
+            fscanf(fp, "%lf %lf %lf", &(s->bw), &(s->bw_min), &(s->bw_max));
+            WaiveComment(fp);
+            break;
+        case _BSO_:
+            s = CreateSearchSpace(m, n, _BSO_);
+            s->iterations = iterations;
+            fscanf(fp, "%d", &(s->k));
+            WaiveComment(fp);
+            fscanf(fp, "%lf %lf %lf", &(s->p_one_cluster), &(s->p_one_center), &(s->p_two_centers));
+            WaiveComment(fp);
+            break;
+        case _GP_:
+           fscanf(fp, "%lf %lf %lf", &pReproduction, &pMutation, &pCrossover);
+           WaiveComment(fp);
+           fscanf(fp, "%d %d", &min_depth, &max_depth);
+           WaiveComment(fp);
+
+            /* Loading function nodes */
+            fgets(line, LINE_SIZE, fp);
+            pline = strtok(line, " \t");
+            j = 0;
+            while ((pline) && (*pline != '#')){
+                aux = CreateNode(pline, 0, 0);
+
+                if (!head) head = aux;
+                else tail->right = aux;
+                tail = aux;
+
+                n_functions++;
+                pline = strtok(NULL, " \t");
             }
-        }
 
-        /* loading constants */
-        if (has_constant)
-        {
-            constant = (double **)malloc(n * sizeof(double *));
-            for (j = 0; j < n; j++)
-                constant[j] = (double *)malloc(N_CONSTANTS * sizeof(double));
+            function = (char **)malloc(n_functions * sizeof(char *));
+            for (j = 0; j < n_functions; j++)
+                function[j] = (char *)malloc(TERMINAL_LENGTH * sizeof(char));
 
-            for (i = 0; i < n; i++)
-                for (j = 0; j < N_CONSTANTS; j++)
-                    constant[i][j] = GenerateUniformRandomNumber(LB[i], UB[i]);
-        }
-        /*********************/
+            j = 0;
+            aux = head;
+            while (aux){
+                strcpy(function[j++], aux->elem);
+                aux = aux->right;
+            }   
+            DestroyTree(&head);
+            /*****************************/
 
-        s = CreateSearchSpace(m, n, _GP_, min_depth, max_depth, n_terminals, N_CONSTANTS, n_functions, terminal, constant, function);
-        s->iterations = iterations;
-        s->pReproduction = pReproduction;
-        s->pMutation = pMutation;
-        s->pCrossover = pCrossover;
-        s->is_integer_opt = is_integer_opt;
+            /* Loading terminal nodes */
+            fgets(line, LINE_SIZE, fp);
+            pline = strtok(line, " \t");
+            j = 0;
+            while ((pline) && (*pline != '#')){
+                aux = CreateNode(pline, 0, 0);
+                if (!strcmp(pline, "CONST")) has_constant = 1;
 
-        for (j = 0; j < s->n; j++)
-        {
-            s->LB[j] = LB[j];
-            s->UB[j] = UB[j];
-        }
-        free(LB);
-        free(UB);
-        break;
-    case _LOA_:
-        fscanf(fp, "%lf %lf %lf %lf %lf %lf %d", &sex_rate, &nomad_percent, &roaming_percent, &mating_prob, &pMutation, &imigration_rate, &n_prides);
-        s = CreateSearchSpace(m, n, _LOA_, sex_rate, nomad_percent, roaming_percent, mating_prob, pMutation, imigration_rate, n_prides);
-        s->iterations = iterations;
-        WaiveComment(fp);
-        break;
-    default:
-        fprintf(stderr, "\nInvalid optimization identifier @ReadSearchSpaceFromFile.\n");
-        break;
+                if (!head) head = aux;
+                else
+                    tail->right = aux;
+                tail = aux;
+
+                n_terminals++;
+                pline = strtok(NULL, " \t");
+            }
+
+            terminal = (char **)malloc(n_terminals * sizeof(char *));
+            for (j = 0; j < n_terminals; j++)
+                terminal[j] = (char *)malloc(TERMINAL_LENGTH * sizeof(char));
+
+            j = 0;
+            aux = head;
+            while (aux){
+                strcpy(terminal[j++], aux->elem);
+                aux = aux->right;
+            }
+            DestroyTree(&head);
+            /*****************************/
+
+            fscanf(fp, "%d %d", &is_integer_opt, &same_range);
+            WaiveComment(fp);
+
+            /* loading lower and upper bounds */
+            LB = (double *)malloc(n * sizeof(double));
+            UB = (double *)malloc(n * sizeof(double));
+
+            if (same_range){
+                for (j = 0; j < n; j++){
+                    fscanf(fp, "%lf %lf", &(LB[j]), &(UB[j]));
+                    WaiveComment(fp);
+                }   
+            }
+            else{
+                fscanf(fp, "%lf %lf", &(LB[0]), &(UB[0]));
+                WaiveComment(fp);
+                for (j = 1; j < n; j++){
+                    LB[j] = LB[0];
+                    UB[j] = UB[0];
+                }   
+            }
+
+            /* loading constants */
+            if (has_constant){
+                constant = (double **)malloc(n * sizeof(double *));
+                for (j = 0; j < n; j++)
+                    constant[j] = (double *)malloc(N_CONSTANTS * sizeof(double));
+
+                for (i = 0; i < n; i++)
+                    for (j = 0; j < N_CONSTANTS; j++)
+                        constant[i][j] = GenerateUniformRandomNumber(LB[i], UB[i]);
+            }
+            /*********************/
+
+            s = CreateSearchSpace(m, n, _GP_, min_depth, max_depth, n_terminals, N_CONSTANTS, n_functions, terminal, constant, function);
+            s->iterations = iterations;
+            s->pReproduction = pReproduction;
+            s->pMutation = pMutation;
+            s->pCrossover = pCrossover;
+            s->is_integer_opt = is_integer_opt;
+
+            for (j = 0; j < s->n; j++){
+                s->LB[j] = LB[j];
+                s->UB[j] = UB[j];
+            }
+            free(LB);
+            free(UB);
+            break;
+        case _LOA_:
+            fscanf(fp, "%lf %lf %lf %lf %lf %lf %d", &sex_rate, &nomad_percent, &roaming_percent, &mating_prob, &pMutation, &imigration_rate, &n_prides);
+            s = CreateSearchSpace(m, n, _LOA_, sex_rate, nomad_percent, roaming_percent, mating_prob, pMutation, imigration_rate, n_prides);
+            s->iterations = iterations;
+            WaiveComment(fp);
+            break;
+        default:
+            fprintf(stderr, "\nInvalid optimization identifier @ReadSearchSpaceFromFile.\n");
+            break;
     }
 
-    if (opt_id != _GP_)
-    {
-        for (j = 0; j < s->n; j++)
-        {
+    if (opt_id != _GP_){
+        for (j = 0; j < s->n; j++){
             fscanf(fp, "%lf %lf", &(s->LB[j]), &(s->UB[j]));
             WaiveComment(fp);
         }
@@ -2548,10 +2522,8 @@ Node *SGME(SearchSpace *s, Node *T1_tmp, Node *T2_tmp)
 Parameters:
 n: number of decision variables
 tensor_id: tensor space dimension */
-double **AllocateTensor(int n, int tensor_id)
-{
-    if (tensor_id <= 0)
-    {
+double **AllocateTensor(int n, int tensor_id){
+    if (tensor_id <= 0){
         fprintf(stderr, "\nInvalid parameters @AllocateTensor.\n");
         return NULL;
     }
@@ -2569,14 +2541,12 @@ double **AllocateTensor(int n, int tensor_id)
 Parameters:
 *t: pointer to tensor
 n: number of decision variables */
-void DeallocateTensor(double ***t, int n)
-{
+void DeallocateTensor(double ***t, int n){
     double **tmp = NULL;
     int i;
 
     tmp = *t;
-    if (!tmp)
-    {
+    if (!tmp){
         fprintf(stderr, "\nTensor not allocated @DeallocateTensor.\n");
         exit(-1);
     }
@@ -2590,20 +2560,16 @@ void DeallocateTensor(double ***t, int n)
 Parameters:
 s: search space
 tensor_id: identifier of the tensor space dimension */
-void InitializeTensorSearchSpace(SearchSpace *s, int tensor_id)
-{
-    if (!s)
-    {
+void InitializeTensorSearchSpace(SearchSpace *s, int tensor_id){
+    if (!s){
         fprintf(stderr, "\nSearch space not allocated @InitializeTensorSearchSpace.\n");
         exit(-1);
     }
 
     int i, j, k;
 
-    for (i = 0; i < s->m; i++)
-    {
-        for (j = 0; j < s->n; j++)
-        {
+    for (i = 0; i < s->m; i++){
+        for (j = 0; j < s->n; j++){
             for (k = 0; k < tensor_id; k++)
                 s->a[i]->t[j][k] = GenerateUniformRandomNumber(0, 1);
             s->a[i]->x[j] = TensorSpan(s->LB[j], s->UB[j], s->a[i]->t[j], tensor_id);
@@ -2615,10 +2581,8 @@ void InitializeTensorSearchSpace(SearchSpace *s, int tensor_id)
 Parameters:
 s: search space
 tensor_id: identifier of the tensor space dimension */
-void ShowTensorSearchSpace(SearchSpace *s, int tensor_id)
-{
-    if (!s)
-    {
+void ShowTensorSearchSpace(SearchSpace *s, int tensor_id){
+    if (!s){
         fprintf(stderr, "\nSearch space not allocated @ShowTensorSearchSpace.\n");
         exit(-1);
     }
@@ -2626,11 +2590,9 @@ void ShowTensorSearchSpace(SearchSpace *s, int tensor_id)
     int i, j, k;
     fprintf(stderr, "\nSearch space with %d agents, %d decision variables and %d-D tensors\n", s->m, s->n, tensor_id);
 
-    for (i = 0; i < s->m; i++)
-    {
+    for (i = 0; i < s->m; i++){
         fprintf(stderr, "\nAgent %d->\n", i);
-        for (j = 0; j < s->n; j++)
-        {
+        for (j = 0; j < s->n; j++){
             for (k = 0; k < tensor_id; k++)
                 fprintf(stderr, "t[%d][%d]: %f   ", j, k, s->a[i]->t[j][k]);
             fprintf(stderr, "\n");

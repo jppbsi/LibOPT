@@ -3482,7 +3482,7 @@ double *f_NOT_(double *x, int n)
 }
 /*****************************/
 
-/* Quaternion Genetic Programming general-purpose functions */
+/* Tensor-based Genetic Programming general-purpose functions */
 /* It computes the quaternionic sum of two mxn-dimensional tensors
 Parameters:
 x, y:tensors
