@@ -42,7 +42,7 @@ void runBHA(SearchSpace *s, prtFun Evaluate, ...)
             CheckAgentLimits(s, s->a[i]);
             s->a[i]->fit = Evaluate(s->a[i], arg); /* It executes the fitness function for agent i */
 
-            tmp = CopyAgent(s->a[i], _BHA_);
+            tmp = CopyAgent(s->a[i], _BHA_, _NOTENSOR_);
             if (s->a[i]->fit < s->gfit)
             {
                 fitValue = s->gfit;
@@ -126,7 +126,7 @@ void runTensorBHA(SearchSpace *s, int tensor_id, prtFun Evaluate, ...)
                 s->a[i]->x[j] = TensorSpan(s->LB[j], s->UB[j], s->a[i]->t[j], tensor_id);
             s->a[i]->fit = Evaluate(s->a[i], arg); /* It executes the fitness function for agent i */
 
-            tmp = CopyAgent(s->a[i], _BHA_);
+            tmp = CopyAgent(s->a[i], _BHA_, _NOTENSOR_);
             tmp_t = CopyTensor(s->a[i]->t, s->n, tensor_id);
             if (s->a[i]->fit < s->gfit)
             {

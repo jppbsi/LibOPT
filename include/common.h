@@ -162,10 +162,10 @@ typedef struct SearchSpace_{
 typedef double (*prtFun)(Agent *, va_list arg); /* Pointer to the function used to evaluate agents */
 
 /* Agent-related functions */
-Agent *CreateAgent(int n, int opt_id); /* It creates an agent */
+Agent *CreateAgent(int n, int opt_id, int tensor_dim); /* It creates an agent */
 void DestroyAgent(Agent **a, int opt_id); /* It deallocates an agent */
 void CheckAgentLimits(SearchSpace *s, Agent *a); /* It checks whether a given agent has excedeed boundaries */
-Agent *CopyAgent(Agent *a, int opt_id); /* It copies an agent */
+Agent *CopyAgent(Agent *a, int opt_id, int tensor_dim); /* It copies an agent */
 void EvaluateAgent(SearchSpace *s, Agent *a, int opt_id, prtFun Evaluate, va_list arg); /* It evaluate an agent according to each technique */
 Agent *GenerateNewAgent(SearchSpace *s, int opt_id); /* It generates a new agent according to each technique */
 /**************************/

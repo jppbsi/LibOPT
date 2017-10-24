@@ -2,23 +2,15 @@
 #include "function.h"
 #include "gp.h"
 
-int main()
-{
+int main(){
 
     SearchSpace *s = NULL;
     int i;
 
-    //s = ReadSearchSpaceFromFile("examples/model_files/gp_model.txt", _PSO_); /* It reads the model file and creates a search space. We are going to use PSO to solve our problem. */
+    s = ReadSearchSpaceFromFile("examples/model_files/gp_model.txt", _TGP_); /* It reads the model file and creates a search space. We are going to use Quaternion-based GP to solve our problem. */
 
-    /*s->t_g = AllocateTensor(s->n, _QUATERNION_);
-    for (i = 0; i < s->m; i++)
-    {
-        s->a[i]->t = AllocateTensor(s->n, _QUATERNION_); /* It allocates a new tensor for each agent */
-      /*  s->a[i]->t_v = AllocateTensor(s->n, _QUATERNION_);
-        s->a[i]->t_xl = AllocateTensor(s->n, _QUATERNION_);
-    }
 
-    InitializeTensorSearchSpace(s, _QUATERNION_); /* It initalizes the search space with tensors */
+//    InitializeTensorSearchSpace(s, _QUATERNION_); /* It initalizes the search space with tensors */
 
     //ShowSearchSpace(s, _PSO_); /* It shows the regular search space, with the tensors being mapped with their span function */
 
@@ -31,9 +23,9 @@ int main()
         DeallocateTensor(&s->a[i]->t, s->n); /* It deallocates the tensor for each agent */
      /*   DeallocateTensor(&s->a[i]->t_v, s->n);
         DeallocateTensor(&s->a[i]->t_xl, s->n);
-    }
+    }*/
 
-    DestroySearchSpace(&s, _PSO_); /* It deallocates the search space */
+    DestroySearchSpace(&s, _TGP_); /* It deallocates the search space */
 
     return 0;
 }

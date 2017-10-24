@@ -22,7 +22,11 @@ extern "C" {
 #define _LOA_ 14 /* Lion Optimization Algorithm */
 /**************************/
 
+/* Tensor-based Meta-heuristics */
+#define _TGP_ 106 /* Tensor-based Genetic Programming */
+
 /* Tensors */
+#define _NOTENSOR_ -1 /* No tensor is used */
 #define _QUATERNION_ 4 /* Quaternion Space */
 #define _OCTONION_ 8 /* Octonion Space */
 /**************************/

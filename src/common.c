@@ -9,11 +9,10 @@ const int N_ARGS_FUNCTION[] = {2, 2, 2, 2, 1, 1, 1, 1, 2, 2, 2, 1};
 /* It creates an agent
 Parameters:
 n: number of decision variables
-opt_id: identifier of the optimization technique */
-Agent *CreateAgent(int n, int opt_id)
-{
-    if ((n < 1) || opt_id < 1)
-    {
+opt_id: identifier of the optimization technique
+tensor_dim: dimensionality of the tensor (you should use _NOTENSOR_ if it is not used) */
+Agent *CreateAgent(int n, int opt_id, int tensor_dim){
+    if ((n < 1) || opt_id < 1){
         fprintf(stderr, "\nInvalid parameters @CreateAgent.\n");
         return NULL;
     }
@@ -35,37 +34,43 @@ Agent *CreateAgent(int n, int opt_id)
     a->best_fit = DBL_MAX;
     a->n = n;
 
-    switch (opt_id)
-    {
-    case _PSO_:
-    case _BA_:
-    case _FPA_:
-    case _FA_:
-    case _CS_:
-    case _GP_:
-    case _GA_:
-    case _BHA_:
-    case _WCA_:
-    case _MBO_:
-    case _ABC_:
-    case _BSO_:
-    case _HS_:
-        a->x = (double *)calloc(n, sizeof(double));
-        if ((opt_id != _GP_) && (opt_id != _BSO_))
-            a->v = (double *)calloc(n, sizeof(double));
-        if (opt_id == _PSO_)
+    switch (opt_id){
+        case _PSO_:
+        case _BA_:
+        case _FPA_:
+        case _FA_:
+        case _CS_:
+        case _GP_:
+        case _GA_:
+        case _BHA_:
+        case _WCA_:
+        case _MBO_:
+        case _ABC_:
+        case _BSO_:
+        case _HS_:
+            a->x = (double *)calloc(n, sizeof(double));
+            if ((opt_id != _GP_) && (opt_id != _BSO_))
+                a->v = (double *)calloc(n, sizeof(double));
+            if (opt_id == _PSO_)
+                a->xl = (double *)calloc(n, sizeof(double));
+            break;
+        case _LOA_:
+            a->x = (double *)calloc(n, sizeof(double));
             a->xl = (double *)calloc(n, sizeof(double));
-        break;
-    case _LOA_:
-        a->x = (double *)calloc(n, sizeof(double));
-        a->xl = (double *)calloc(n, sizeof(double));
-        a->prev_x = (double *)calloc(n, sizeof(double));
-        break;
-    default:
-        free(a);
-        fprintf(stderr, "\nInvalid optimization identifier @CreateAgent\n");
-        return NULL;
-        break;
+            a->prev_x = (double *)calloc(n, sizeof(double));
+            break;
+        case _TGP_:
+            if(tensor_dim == _NOTENSOR_){
+                fprintf(stderr, "\nInvalid tensor dimension @CreateAgent\n.");
+                return NULL;
+            }
+            a->t = AllocateTensor(n, tensor_dim);
+            break;
+        default:
+            free(a);
+            fprintf(stderr, "\nInvalid optimization identifier @CreateAgent\n.");
+            return NULL;
+            break;
     }
 
     return a;
@@ -75,53 +80,47 @@ Agent *CreateAgent(int n, int opt_id)
 Parameters:
 a: address of the agent to be deallocated
 opt_id: identifier of the optimization technique */
-void DestroyAgent(Agent **a, int opt_id)
-{
+void DestroyAgent(Agent **a, int opt_id){
     Agent *tmp = NULL;
 
     tmp = *a;
-    if (!tmp)
-    {
+    if (!tmp){
         fprintf(stderr, "\nAgent not allocated @DestroyAgent.\n");
         exit(-1);
     }
 
-    switch (opt_id)
-    {
-    case _PSO_:
-    case _BA_:
-    case _FPA_:
-    case _FA_:
-    case _CS_:
-    case _GP_:
-    case _GA_:
-    case _BHA_:
-    case _WCA_:
-    case _MBO_:
-    case _ABC_:
-    case _BSO_:
-    case _HS_:
-        if (tmp->x)
-            free(tmp->x);
-        if (tmp->v)
-            free(tmp->v);
-        if (opt_id == _PSO_)
-            if (tmp->xl)
-                free(tmp->xl);
-        break;
-    case _LOA_:
-        if (tmp->x)
-            free(tmp->x);
-        if (tmp->v)
-            free(tmp->v);
-        if (tmp->xl)
-            free(tmp->xl);
-        if (tmp->prev_x)
-            free(tmp->prev_x);
-        break;
-    default:
-        fprintf(stderr, "\nInvalid optimization identifier @DestroyAgent.\n");
-        break;
+    switch (opt_id){
+        case _PSO_:
+        case _BA_:
+        case _FPA_:
+        case _FA_:
+        case _CS_:
+        case _GP_:
+        case _GA_:
+        case _BHA_:
+        case _WCA_:
+        case _MBO_:
+        case _ABC_:
+        case _BSO_:
+        case _HS_:
+            if (tmp->x) free(tmp->x);
+            if (tmp->v) free(tmp->v);
+            if (opt_id == _PSO_)
+                if (tmp->xl)
+                    free(tmp->xl);
+            break;
+        case _LOA_:
+            if (tmp->x) free(tmp->x);
+            if (tmp->v) free(tmp->v);
+            if (tmp->xl) free(tmp->xl);
+            if (tmp->prev_x) free(tmp->prev_x);
+            break;
+        case _TGP_:
+            if (tmp->t) DeallocateTensor(&(tmp->t), tmp->n);
+            break;
+        default:
+            fprintf(stderr, "\nInvalid optimization identifier @DestroyAgent.\n");
+            break;
     }
 
     free(tmp);
@@ -153,8 +152,9 @@ void CheckAgentLimits(SearchSpace *s, Agent *a)
 /* It copies an agent
 Parameters:
 a: agent
-opt_id: identifier of the optimization technique */
-Agent *CopyAgent(Agent *a, int opt_id)
+opt_id: identifier of the optimization technique
+tensor_dim: dimensionality of the tensor (it takes the value -1 if it is not used) */
+Agent *CopyAgent(Agent *a, int opt_id, int tensor_dim)
 {
     if (!a)
     {
@@ -163,7 +163,7 @@ Agent *CopyAgent(Agent *a, int opt_id)
     }
 
     Agent *cpy = NULL;
-    cpy = CreateAgent(a->n, opt_id);
+    cpy = CreateAgent(a->n, opt_id, tensor_dim);
 
     switch (opt_id)
     {
@@ -259,7 +259,7 @@ Agent *GenerateNewAgent(SearchSpace *s, int opt_id)
     case _PSO_:
         break;
     case _BA_:
-        a = CreateAgent(s->n, _BA_);
+        a = CreateAgent(s->n, _BA_, _NOTENSOR_);
 
         /* The factor 0.001 limits the step sizes of random walks */
         for (j = 0; j < s->n; j++)
@@ -270,23 +270,23 @@ Agent *GenerateNewAgent(SearchSpace *s, int opt_id)
     case _FA_:
         break;
     case _CS_:
-        a = CreateAgent(s->n, _CS_);
+        a = CreateAgent(s->n, _CS_, _NOTENSOR_);
         break;
     case _GA_:
         break;
     case _BHA_:
-        a = CreateAgent(s->n, _BHA_);
+        a = CreateAgent(s->n, _BHA_, _NOTENSOR_);
         break;
     case _WCA_:
-        a = CreateAgent(s->n, _WCA_);
+        a = CreateAgent(s->n, _WCA_, _NOTENSOR_);
         break;
     case _MBO_:
         break;
     case _ABC_:
-        a = CreateAgent(s->n, _ABC_);
+        a = CreateAgent(s->n, _ABC_, _NOTENSOR_);
         break;
     case _HS_:
-        a = CreateAgent(s->n, _HS_);
+        a = CreateAgent(s->n, _HS_, _NOTENSOR_);
 
         for (j = 0; j < s->n; j++)
         {
@@ -333,8 +333,7 @@ opt_id: identifier of the optimization technique
 additional parameters: related to each technique
 PSO, BA, FPA and FA: do not require additional parameters
 GP: it requires the minimum and maximum depth of a tree, number of terminals and a matrix (char **) with the terminals' names */
-SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...)
-{
+SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...){
     SearchSpace *s = NULL;
     va_list arg;
 
@@ -342,7 +341,7 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...)
         fprintf(stderr, "\nInvalid parameters @CreateSearchSpace.\n");
         return NULL;
     }
-    int i, j, remained_lions;
+    int i, j, remained_lions, tensor_dim;
 
     va_start(arg, opt_id);
     s = (SearchSpace *)malloc(sizeof(SearchSpace));
@@ -408,20 +407,20 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...)
     s->p_two_centers = NAN;
 
     /* GP and LOA uses a different structure than that of others */
-    if ((opt_id != _GP_) && (opt_id != _LOA_)){
+    if ((opt_id != _GP_) && (opt_id != _TGP_) && (opt_id != _LOA_)){
         s->a = (Agent **)malloc(s->m * sizeof(Agent *));
-        s->a[0] = CreateAgent(s->n, opt_id);
+        s->a[0] = CreateAgent(s->n, opt_id, _NOTENSOR_);
         if (s->a[0]){
             /* Here, we verify whether opt_id is valid or not. In the latter case, function CreateAgent returns NULL. */
             for (i = 1; i < s->m; i++)
-                s->a[i] = CreateAgent(s->n, opt_id);
+                s->a[i] = CreateAgent(s->n, opt_id, _NOTENSOR_);
             if (opt_id == _MBO_){ 
                 s->k = va_arg(arg, int);
                 for (i = 0; i < s->m; i++)
                 {
                     s->a[i]->nb = (Agent **)malloc(s->k * sizeof(Agent *));
                     for (j = 0; j < s->k; j++)
-                        s->a[i]->nb[j] = CreateAgent(s->n, opt_id);
+                        s->a[i]->nb[j] = CreateAgent(s->n, opt_id, _NOTENSOR_);
                 }
             }
         }
@@ -436,7 +435,7 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...)
         s->t_g = NULL;
     }
     else{
-        if (opt_id == _GP_){
+        if ((opt_id == _GP_) || (opt_id == _TGP_)){
             s->min_depth = va_arg(arg, int);
             s->max_depth = va_arg(arg, int);
             s->n_terminals = va_arg(arg, int);
@@ -450,10 +449,12 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...)
             for (i = 0; i < s->m; i++)
                 s->T[i] = GROW(s, s->min_depth, s->max_depth);
 
+            if (opt_id != _TGP_) tensor_dim = _NOTENSOR_;
+            else tensor_dim = va_arg(arg, int);
             s->a = (Agent **)malloc(s->n_terminals * sizeof(Agent *));
             for (i = 0; i < s->n_terminals; i++)
-                s->a[i] = CreateAgent(s->n, opt_id);
-
+                    s->a[i] = CreateAgent(s->n, opt_id, tensor_dim);
+            
             s->tree_fit = (double *)malloc(s->m * sizeof(double));
             for (i = 0; i < s->m; i++)
                 s->tree_fit[i] = DBL_MAX;
@@ -472,11 +473,11 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...)
             s->n_female_nomads = round(s->m * s->nomad_percent * (1 - s->sex_rate));   /* determining de number of nomad females */
             s->female_nomads = (Agent **)malloc(sizeof(Agent *) * s->n_female_nomads); /* allocating the array of nomad females */
             for (i = 0; i < s->n_female_nomads; i++)
-                s->female_nomads[i] = CreateAgent(s->n, opt_id);                   /* not using the array of agents */
+                s->female_nomads[i] = CreateAgent(s->n, opt_id, _NOTENSOR_);                   /* not using the array of agents */
             s->n_male_nomads = round(s->m * s->nomad_percent * s->sex_rate);       /* determining de number of nomad males */
             s->male_nomads = (Agent **)malloc(sizeof(Agent *) * s->n_male_nomads); /* allocating the array of nomad males */
             for (i = 0; i < s->n_male_nomads; i++)
-                s->male_nomads[i] = CreateAgent(s->n, opt_id); /* not using the array of agents */
+                s->male_nomads[i] = CreateAgent(s->n, opt_id, _NOTENSOR_); /* not using the array of agents */
 
             remained_lions = s->m - s->n_female_nomads - s->n_male_nomads; /* determining how many lions will be in prides */
 
@@ -490,11 +491,11 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...)
                 s->pride_id[i].n_females = round(qty_lions_each_pride[i] * (1 - s->sex_rate));         /* determining de number of females in that pride */
                 s->pride_id[i].females = (Agent **)malloc(sizeof(Agent *) * s->pride_id[i].n_females); /* allocating the array of females from that pride */
                 for (j = 0; j < s->pride_id[i].n_females; j++)
-                    s->pride_id[i].females[j] = CreateAgent(s->n, opt_id);                         /* not using the array of agents */
+                    s->pride_id[i].females[j] = CreateAgent(s->n, opt_id, _NOTENSOR_);                         /* not using the array of agents */
                 s->pride_id[i].n_males = qty_lions_each_pride[i] - s->pride_id[i].n_females;       /* determining the number of males in that pride */
                 s->pride_id[i].males = (Agent **)malloc(sizeof(Agent *) * s->pride_id[i].n_males); /* allocating the array of males from that pride */
                 for (j = 0; j < s->pride_id[i].n_males; j++)
-                    s->pride_id[i].males[j] = CreateAgent(s->n, opt_id); /* not using the array of agents */
+                    s->pride_id[i].males[j] = CreateAgent(s->n, opt_id, _NOTENSOR_); /* not using the array of agents */
             }
             free(qty_lions_each_pride);
         }
@@ -512,24 +513,20 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...)
 Parameters:
 s: address of the search space to be deallocated
 opt_id: identifier of the optimization technique */
-void DestroySearchSpace(SearchSpace **s, int opt_id)
-{
+void DestroySearchSpace(SearchSpace **s, int opt_id){
     SearchSpace *tmp = NULL;
     int i, j;
 
     tmp = *s;
-    if (!tmp)
-    {
+    if (!tmp){
         fprintf(stderr, "\nSearch space not allocated @DestroySearchSpace.\n");
         exit(-1);
     }
 
-    if ((opt_id != _GP_) && (opt_id != _LOA_))
-    { /* GP and LOA uses a different structure than that of others */
-        if (opt_id == _MBO_)
-        { /* We free the neighbours allocation */
-            for (i = 0; i < tmp->m; i++)
-            {
+    /* GP and LOA uses a different structure than that of others */
+    if ((opt_id != _GP_) && (opt_id != _TGP_) && (opt_id != _LOA_)){ 
+        if (opt_id == _MBO_){ /* We free the neighbours allocation */
+            for (i = 0; i < tmp->m; i++){
                 for (j = 0; j < tmp->k; j++)
                     if (tmp->a[i]->nb[j])
                         DestroyAgent(&(tmp->a[i]->nb[j]), opt_id);
@@ -542,79 +539,63 @@ void DestroySearchSpace(SearchSpace **s, int opt_id)
                 DestroyAgent(&(tmp->a[i]), opt_id);
         free(tmp->a);
 
-        switch (opt_id)
-        {
-        case _PSO_:
-        case _BA_:
-        case _FPA_:
-        case _FA_:
-        case _CS_:
-        case _GA_:
-        case _BHA_:
-        case _WCA_:
-        case _MBO_:
-        case _ABC_:
-        case _BSO_:
-        case _HS_:
-            if (tmp->g)
-                free(tmp->g);
+        switch (opt_id){
+            case _PSO_:
+            case _BA_:
+            case _FPA_:
+            case _FA_:
+            case _CS_:
+            case _GA_:
+            case _BHA_:
+            case _WCA_:
+            case _MBO_:
+            case _ABC_:
+            case _BSO_:
+            case _HS_:
+                if (tmp->g) free(tmp->g);
             break;
-        default:
-            fprintf(stderr, "\nInvalid optimization identifier @DestroySearchSpace.\n");
-            break;
+            default:
+                fprintf(stderr, "\nInvalid optimization identifier @DestroySearchSpace.\n");
+                break;
+            }
         }
-    }
-    else
-    {
-        if (opt_id == _GP_)
-        {
+    else{
+        if ((opt_id == _GP_) || (opt_id == _TGP_)){            
             for (i = 0; i < tmp->m; i++)
-                if (tmp->T[i])
-                    DestroyTree(&(tmp->T[i]));
-            if (tmp->T)
-                free(tmp->T);
+                if (tmp->T[i]) DestroyTree(&(tmp->T[i]));
+            if (tmp->T) free(tmp->T);
 
-            for (i = 0; i < tmp->n_terminals; i++)
-            {
+            for (i = 0; i < tmp->n_terminals; i++){
                 if (tmp->a[i])
                     DestroyAgent(&(tmp->a[i]), opt_id);
                 if (tmp->terminal[i])
                     free(tmp->terminal[i]);
             }
-            if (tmp->a)
-                free(tmp->a);
+            if (tmp->a) free(tmp->a);
             free(tmp->terminal);
 
-            if (tmp->function)
-            {
+            if (tmp->function){
                 for (i = 0; i < tmp->n_functions; i++)
-                    if (tmp->function[i])
-                        free(tmp->function[i]);
+                    if (tmp->function[i]) free(tmp->function[i]);
                 free(tmp->function);
             }
 
-            if (tmp->constant)
-            {
+            if (tmp->constant){
                 for (i = 0; i < tmp->n; i++)
-                    if (tmp->constant[i])
-                        free(tmp->constant[i]);
+                    if (tmp->constant[i]) free(tmp->constant[i]);
                 free(tmp->constant);
             }
-            if (tmp->tree_fit)
-                free(tmp->tree_fit);
-            if (tmp->g)
-                free(tmp->g);
+            if (tmp->tree_fit) free(tmp->tree_fit);
+            if (tmp->g) free(tmp->g);
         }
-        if (opt_id == _LOA_)
-        {
+        if (opt_id == _LOA_){
             for (i = 0; i < tmp->n_female_nomads; i++)
                 DestroyAgent(&(tmp->female_nomads[i]), opt_id);
             free(tmp->female_nomads);
             for (i = 0; i < tmp->n_male_nomads; i++)
                 DestroyAgent(&(tmp->male_nomads[i]), opt_id);
             free(tmp->male_nomads);
-            for (i = 0; i < tmp->n_prides; i++)
-            {
+            for (i = 0; i < tmp->n_prides; i++){
                 for (j = 0; j < tmp->pride_id[i].n_females; j++)
                     DestroyAgent(&(tmp->pride_id[i].females[j]), opt_id);
                 free(tmp->pride_id[i].females);
@@ -627,10 +608,8 @@ void DestroySearchSpace(SearchSpace **s, int opt_id)
         }
     }
 
-    if (tmp->LB)
-        free(tmp->LB);
-    if (tmp->UB)
-        free(tmp->UB);
+    if (tmp->LB) free(tmp->LB);
+    if (tmp->UB) free(tmp->UB);
 
     free(tmp);
     tmp = NULL;
@@ -901,7 +880,7 @@ void EvaluateSearchSpace(SearchSpace *s, int opt_id, prtFun Evaluate, va_list ar
         }
         break;
     case _GP_:
-        individual = CreateAgent(s->n, _GP_);
+        individual = CreateAgent(s->n, _GP_, _NOTENSOR_);
         for (i = 0; i < s->m; i++)
         {
             tmp = RunTree(s, s->T[i]);
@@ -1527,6 +1506,7 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id)
             WaiveComment(fp);
             break;
         case _GP_:
+        case _TGP_:
            fscanf(fp, "%lf %lf %lf", &pReproduction, &pMutation, &pCrossover);
            WaiveComment(fp);
            fscanf(fp, "%d %d", &min_depth, &max_depth);
@@ -2539,7 +2519,7 @@ double **AllocateTensor(int n, int tensor_id){
 
 /* It deallocates a new tensor
 Parameters:
-*t: pointer to tensor
+*t: pointer to the tensor
 n: number of decision variables */
 void DeallocateTensor(double ***t, int n){
     double **tmp = NULL;
