@@ -25,12 +25,12 @@ int main()
     if (CheckSearchSpace(s, _PSO_))            /* It checks whether the search space is valid or not */
         runTensorPSO(s, _QUATERNION_, Sphere); /* It minimizes function Sphere */
 
-    DeallocateTensor(&s->t_g, s->n);
+    DestroyTensor(&s->t_g, s->n);
     for (i = 0; i < s->m; i++)
     {
-        DeallocateTensor(&s->a[i]->t, s->n); /* It deallocates the tensor for each agent */
-        DeallocateTensor(&s->a[i]->t_v, s->n);
-        DeallocateTensor(&s->a[i]->t_xl, s->n);
+        DestroyTensor(&s->a[i]->t, s->n); /* It deallocates the tensor for each agent */
+        DestroyTensor(&s->a[i]->t_v, s->n);
+        DestroyTensor(&s->a[i]->t_xl, s->n);
     }
 
     DestroySearchSpace(&s, _PSO_); /* It deallocates the search space */

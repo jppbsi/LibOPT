@@ -19,9 +19,9 @@ int main()
     if (CheckSearchSpace(s, _FA_))          /* It checks whether the search space is valid or not */
         runTensorFA(s, _QUATERNION_, Levy); /* It minimizes function Levy */
 
-    DeallocateTensor(&s->t_g, s->n);
+    DestroyTensor(&s->t_g, s->n);
     for (i = 0; i < s->m; i++)
-        DeallocateTensor(&s->a[i]->t, s->n); /* It deallocates the tensor for each agent */
+        DestroyTensor(&s->a[i]->t, s->n); /* It deallocates the tensor for each agent */
 
     DestroySearchSpace(&s, _FA_); /* It deallocates the search space */
 

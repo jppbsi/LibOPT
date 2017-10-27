@@ -166,7 +166,7 @@ void runTensorFPA(SearchSpace *s, int tensor_id, prtFun Evaluate, ...)
             fitValue = Evaluate(tmp, arg); /* It executes the fitness function for agent i */
             if (fitValue < s->a[i]->fit)
             { /* We accept the new solution */
-                DeallocateTensor(&s->a[i]->t, s->n);
+                DestroyTensor(&s->a[i]->t, s->n);
                 DestroyAgent(&(s->a[i]), _FPA_);
                 s->a[i] = CopyAgent(tmp, _FPA_, _NOTENSOR_);
                 s->a[i]->fit = fitValue;
@@ -176,18 +176,18 @@ void runTensorFPA(SearchSpace *s, int tensor_id, prtFun Evaluate, ...)
             if (fitValue < s->gfit)
             { /* update the global best */
                 s->gfit = fitValue;
-                DeallocateTensor(&s->t_g, s->n);
+                DestroyTensor(&s->t_g, s->n);
                 s->t_g = CopyTensor(tmp_t, s->n, tensor_id);
                 for (j = 0; j < s->n; j++)
                     s->g[j] = tmp->x[j];
             }
 
             DestroyAgent(&tmp, _FPA_);
-            DeallocateTensor(&tmp_t, s->n);
+            DestroyTensor(&tmp_t, s->n);
         }
 
         for (i = 0; i < s->m; i++)
-            DeallocateTensor(&tmp_tensors[i], s->n);
+            DestroyTensor(&tmp_tensors[i], s->n);
         fprintf(stderr, "OK (minimum fitness value %lf)", s->gfit);
     }
 

@@ -211,7 +211,7 @@ void runTensorABC(SearchSpace *s, int tensor_id, prtFun Evaluate, ...)
             if (fitValue < s->a[i]->fit)
             { /* We accept the new solution */
                 trial[i] = 0;
-                DeallocateTensor(&s->a[i]->t, s->n);
+                DestroyTensor(&s->a[i]->t, s->n);
                 DestroyAgent(&(s->a[i]), _ABC_);
                 s->a[i] = CopyAgent(tmp, _ABC_, _NOTENSOR_);
                 s->a[i]->fit = fitValue;
@@ -224,13 +224,13 @@ void runTensorABC(SearchSpace *s, int tensor_id, prtFun Evaluate, ...)
             if (fitValue < s->gfit)
             { /* Update the global best */
                 s->gfit = fitValue;
-                DeallocateTensor(&s->t_g, s->n);
+                DestroyTensor(&s->t_g, s->n);
                 s->t_g = CopyTensor(tmp_t, s->n, tensor_id);
                 for (j = 0; j < s->n; j++)
                     s->g[j] = tmp->x[j];
             }
             DestroyAgent(&tmp, _ABC_);
-            DeallocateTensor(&tmp_t, s->n);
+            DestroyTensor(&tmp_t, s->n);
         }
 
         /* Calculation of new probabilities */
@@ -269,7 +269,7 @@ void runTensorABC(SearchSpace *s, int tensor_id, prtFun Evaluate, ...)
                 if (fitValue < s->a[i]->fit)
                 { /* We accept the new solution */
                     trial[i] = 0;
-                    DeallocateTensor(&s->a[i]->t, s->n);
+                    DestroyTensor(&s->a[i]->t, s->n);
                     DestroyAgent(&(s->a[i]), _ABC_);
                     s->a[i] = CopyAgent(tmp, _ABC_, _NOTENSOR_);
                     s->a[i]->fit = fitValue;
@@ -282,13 +282,13 @@ void runTensorABC(SearchSpace *s, int tensor_id, prtFun Evaluate, ...)
                 if (fitValue < s->gfit)
                 { /* Update the global best */
                     s->gfit = fitValue;
-                    DeallocateTensor(&s->t_g, s->n);
+                    DestroyTensor(&s->t_g, s->n);
                     s->t_g = CopyTensor(tmp_t, s->n, tensor_id);
                     for (j = 0; j < s->n; j++)
                         s->g[j] = tmp->x[j];
                 }
                 DestroyAgent(&tmp, _ABC_);
-                DeallocateTensor(&tmp_t, s->n);
+                DestroyTensor(&tmp_t, s->n);
             }
             i++;
             if (i == s->m)
@@ -312,7 +312,7 @@ void runTensorABC(SearchSpace *s, int tensor_id, prtFun Evaluate, ...)
             fitValue = Evaluate(tmp, arg); /* It executes the fitness function for new created agent */
             if (fitValue < s->a[max_trial_index]->fit)
             { /* We accept the new solution */
-                DeallocateTensor(&s->a[max_trial_index]->t, s->n);
+                DestroyTensor(&s->a[max_trial_index]->t, s->n);
                 DestroyAgent(&(s->a[max_trial_index]), _ABC_);
                 s->a[max_trial_index] = CopyAgent(tmp, _ABC_, _NOTENSOR_);
                 s->a[max_trial_index]->fit = fitValue;
@@ -321,13 +321,13 @@ void runTensorABC(SearchSpace *s, int tensor_id, prtFun Evaluate, ...)
             if (fitValue < s->gfit)
             { /* update the global best */
                 s->gfit = fitValue;
-                DeallocateTensor(&s->t_g, s->n);
+                DestroyTensor(&s->t_g, s->n);
                 s->t_g = CopyTensor(tmp_t, s->n, tensor_id);
                 for (j = 0; j < s->n; j++)
                     s->g[j] = tmp->x[j];
             }
             DestroyAgent(&tmp, _ABC_);
-            DeallocateTensor(&tmp_t, s->n);
+            DestroyTensor(&tmp_t, s->n);
         }
 
         fprintf(stderr, "OK (minimum fitness value %lf)", s->gfit);

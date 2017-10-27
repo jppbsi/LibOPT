@@ -116,7 +116,7 @@ void DestroyAgent(Agent **a, int opt_id){
             if (tmp->prev_x) free(tmp->prev_x);
             break;
         case _TGP_:
-            if (tmp->t) DeallocateTensor(&(tmp->t), tmp->n);
+            if (tmp->t) DestroyTensor(&(tmp->t), tmp->n);
             break;
         default:
             fprintf(stderr, "\nInvalid optimization identifier @DestroyAgent.\n");
@@ -332,7 +332,8 @@ n: number of decision variables
 opt_id: identifier of the optimization technique
 additional parameters: related to each technique
 PSO, BA, FPA and FA: do not require additional parameters
-GP: it requires the minimum and maximum depth of a tree, number of terminals and a matrix (char **) with the terminals' names */
+GP: it requires the minimum and maximum depth of a tree, number of terminals and a matrix (char **) with the terminals' names
+Tensor-based approaches require the number of dimensions of the tensor, i.e., if it is a quaternion, octonion or sedenion */
 SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...){
     SearchSpace *s = NULL;
     va_list arg;
@@ -566,10 +567,8 @@ void DestroySearchSpace(SearchSpace **s, int opt_id){
             if (tmp->T) free(tmp->T);
 
             for (i = 0; i < tmp->n_terminals; i++){
-                if (tmp->a[i])
-                    DestroyAgent(&(tmp->a[i]), opt_id);
-                if (tmp->terminal[i])
-                    free(tmp->terminal[i]);
+                if (tmp->a[i]) DestroyAgent(&(tmp->a[i]), opt_id);
+                if (tmp->terminal[i]) free(tmp->terminal[i]);
             }
             if (tmp->a) free(tmp->a);
             free(tmp->terminal);
@@ -619,64 +618,67 @@ void DestroySearchSpace(SearchSpace **s, int opt_id){
 Parameters:
 s: search space
 opt_id: identifier of the optimization technique */
-void InitializeSearchSpace(SearchSpace *s, int opt_id)
-{
-    if (!s)
-    {
+void InitializeSearchSpace(SearchSpace *s, int opt_id){
+    if (!s){
         fprintf(stderr, "\nSearch space not allocated @InitializeSearchSpace.\n");
         exit(-1);
     }
 
     int i, j, k;
 
-    switch (opt_id)
-    {
-    case _PSO_:
-    case _BA_:
-    case _FPA_:
-    case _FA_:
-    case _CS_:
-    case _GA_:
-    case _BHA_:
-    case _WCA_:
-    case _MBO_:
-    case _ABC_:
-    case _BSO_:
-    case _HS_:
-        for (i = 0; i < s->m; i++)
-        {
-            for (j = 0; j < s->n; j++)
-                s->a[i]->x[j] = GenerateUniformRandomNumber(s->LB[j], s->UB[j]);
-        }
-        break;
-    case _GP_:
-        for (i = 0; i < s->n_terminals; i++)
-        {
-            for (j = 0; j < s->n; j++)
-            {
-                if (s->is_integer_opt)
-                    s->a[i]->x[j] = round(GenerateUniformRandomNumber(s->LB[j], s->UB[j]));
-                else
+    switch (opt_id){
+        case _PSO_:
+        case _BA_:
+        case _FPA_:
+        case _FA_:
+        case _CS_:
+        case _GA_:
+        case _BHA_:
+        case _WCA_:
+        case _MBO_:
+        case _ABC_:
+        case _BSO_:
+        case _HS_:
+            for (i = 0; i < s->m; i++){
+                for (j = 0; j < s->n; j++)
                     s->a[i]->x[j] = GenerateUniformRandomNumber(s->LB[j], s->UB[j]);
             }
-        }
         break;
-    case _LOA_:
-        for (k = 0; k < s->n; k++)
-        {
-            for (i = 0; i < s->n_female_nomads; i++)
-                s->female_nomads[i]->x[k] = GenerateUniformRandomNumber(s->LB[k], s->UB[k]);
-            for (i = 0; i < s->n_male_nomads; i++)
-                s->male_nomads[i]->x[k] = GenerateUniformRandomNumber(s->LB[k], s->UB[k]);
-            for (i = 0; i < s->n_prides; i++)
-            {
-                for (j = 0; j < s->pride_id[i].n_females; j++)
-                    s->pride_id[i].females[j]->x[k] = GenerateUniformRandomNumber(s->LB[k], s->UB[k]);
-                for (j = 0; j < s->pride_id[i].n_males; j++)
-                    s->pride_id[i].males[j]->x[k] = GenerateUniformRandomNumber(s->LB[k], s->UB[k]);
+        case _GP_:
+            for (i = 0; i < s->n_terminals; i++){
+                for (j = 0; j < s->n; j++){
+                    if (s->is_integer_opt)
+                        s->a[i]->x[j] = round(GenerateUniformRandomNumber(s->LB[j], s->UB[j]));
+                    else
+                        s->a[i]->x[j] = GenerateUniformRandomNumber(s->LB[j], s->UB[j]);
+                }
             }
-        }
-        break;
+            break;
+        case _TGP_:
+            fprintf(stderr,"\ntensor_dim: %d", s->tensor_dim);
+            for (i = 0; i < s->m; i++){
+                for (j = 0; j < s->n; j++){
+                    for (k = 0; k < s->tensor_dim; k++)
+                        s->a[i]->t[j][k] = GenerateUniformRandomNumber(0, 1);
+                    s->a[i]->x[j] = TensorSpan(s->LB[j], s->UB[j], s->a[i]->t[j], s->tensor_dim);
+                    if (s->is_integer_opt) s->a[i]->x[j] = round(s->a[i]->x[j]);
+                }
+            }
+            break;
+        case _LOA_:
+            for (k = 0; k < s->n; k++){
+                for (i = 0; i < s->n_female_nomads; i++)
+                    s->female_nomads[i]->x[k] = GenerateUniformRandomNumber(s->LB[k], s->UB[k]);
+                for (i = 0; i < s->n_male_nomads; i++)
+                    s->male_nomads[i]->x[k] = GenerateUniformRandomNumber(s->LB[k], s->UB[k]);
+                for (i = 0; i < s->n_prides; i++){
+                    for (j = 0; j < s->pride_id[i].n_females; j++)
+                        s->pride_id[i].females[j]->x[k] = GenerateUniformRandomNumber(s->LB[k], s->UB[k]);
+                    for (j = 0; j < s->pride_id[i].n_males; j++)
+                        s->pride_id[i].males[j]->x[k] = GenerateUniformRandomNumber(s->LB[k], s->UB[k]);
+                }
+            }
+            break;
     }
 }
 
@@ -1409,7 +1411,7 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id)
     int has_constant = 0, is_integer_opt, same_range;
     double pReproduction, pMutation, pCrossover, **constant = NULL, *LB = NULL, *UB = NULL;
     double sex_rate, nomad_percent, roaming_percent, mating_prob, imigration_rate;
-    int n_prides;
+    int n_prides, tensor_dim = -1;
     char line[LINE_SIZE], *pline = NULL, **function = NULL, **terminal = NULL;
     Node *head = NULL, *tail = NULL, *aux = NULL;
 
@@ -1507,7 +1509,9 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id)
             break;
         case _GP_:
         case _TGP_:
-           fscanf(fp, "%lf %lf %lf", &pReproduction, &pMutation, &pCrossover);
+            if(opt_id == _GP_) fscanf(fp, "%lf %lf %lf", &pReproduction, &pMutation, &pCrossover);
+            else fscanf(fp, "%lf %lf %lf %d", &pReproduction, &pMutation, &pCrossover, &tensor_dim);
+           fprintf(stderr,"\n***********tensor_dim: %d   opt_id: %d", tensor_dim, opt_id);
            WaiveComment(fp);
            fscanf(fp, "%d %d", &min_depth, &max_depth);
            WaiveComment(fp);
@@ -1610,6 +1614,7 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id)
             s->pMutation = pMutation;
             s->pCrossover = pCrossover;
             s->is_integer_opt = is_integer_opt;
+            s->tensor_dim = tensor_dim;
 
             for (j = 0; j < s->n; j++){
                 s->LB[j] = LB[j];
@@ -1629,7 +1634,8 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id)
             break;
     }
 
-    if (opt_id != _GP_){
+    /* VER AQUI ESTA ESTRANHO ESSE LACO!*/
+    if ((opt_id != _GP_) || (opt_id != _TGP_)){
         for (j = 0; j < s->n; j++){
             fscanf(fp, "%lf %lf", &(s->LB[j]), &(s->UB[j]));
             WaiveComment(fp);
@@ -2521,7 +2527,7 @@ double **AllocateTensor(int n, int tensor_id){
 Parameters:
 *t: pointer to the tensor
 n: number of decision variables */
-void DeallocateTensor(double ***t, int n){
+void DestroyTensor(double ***t, int n){
     double **tmp = NULL;
     int i;
 

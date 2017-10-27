@@ -145,7 +145,7 @@ void runTensorBHA(SearchSpace *s, int tensor_id, prtFun Evaluate, ...)
                 }
             }
             DestroyAgent(&tmp, _BHA_);
-            DeallocateTensor(&tmp_t, s->n);
+            DestroyTensor(&tmp_t, s->n);
             sum = sum + s->a[i]->fit;
         }
 
@@ -158,7 +158,7 @@ void runTensorBHA(SearchSpace *s, int tensor_id, prtFun Evaluate, ...)
             dist = TensorEuclideanDistance(s->t_g, s->a[i]->t, s->n, tensor_id); /* It obtains the euclidean distance */
             if (dist < radius)
             {
-                DeallocateTensor(&s->a[i]->t, s->n);
+                DestroyTensor(&s->a[i]->t, s->n);
                 DestroyAgent(&(s->a[i]), _BHA_);
                 s->a[i] = GenerateNewAgent(s, _BHA_);
                 s->a[i]->t = GenerateNewTensor(s, tensor_id);

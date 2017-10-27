@@ -434,7 +434,7 @@ void runTensorHS(SearchSpace *s, int tensor_id, prtFun Evaluate, ...)
 
         if ((fitValue < s->a[s->m - 1]->fit))
         { /* We accept the new solution */
-            DeallocateTensor(&s->a[s->m - 1]->t, s->n);
+            DestroyTensor(&s->a[s->m - 1]->t, s->n);
             DestroyAgent(&(s->a[s->m - 1]), _HS_);
             s->a[s->m - 1] = CopyAgent(tmp, _HS_, _NOTENSOR_);
             s->a[s->m - 1]->fit = fitValue;
@@ -449,7 +449,7 @@ void runTensorHS(SearchSpace *s, int tensor_id, prtFun Evaluate, ...)
         }
 
         DestroyAgent(&tmp, _HS_);
-        DeallocateTensor(&tmp_t, s->n);
+        DestroyTensor(&tmp_t, s->n);
 
         fprintf(stderr, "OK (minimum fitness value %lf)", s->gfit);
     }
@@ -534,7 +534,7 @@ void runTensorIHS(SearchSpace *s, int tensor_id, prtFun Evaluate, ...)
 
         if ((fitValue < s->a[s->m - 1]->fit))
         { /* We accept the new solution */
-            DeallocateTensor(&s->a[s->m - 1]->t, s->n);
+            DestroyTensor(&s->a[s->m - 1]->t, s->n);
             DestroyAgent(&(s->a[s->m - 1]), _HS_);
             s->a[s->m - 1] = CopyAgent(tmp, _HS_, _NOTENSOR_);
             s->a[s->m - 1]->fit = fitValue;
@@ -549,7 +549,7 @@ void runTensorIHS(SearchSpace *s, int tensor_id, prtFun Evaluate, ...)
         }
 
         DestroyAgent(&tmp, _HS_);
-        DeallocateTensor(&tmp_t, s->n);
+        DestroyTensor(&tmp_t, s->n);
 
         fprintf(stderr, "OK (minimum fitness value %lf)", s->gfit);
     }
@@ -626,12 +626,12 @@ void runTensorPSF_HS(SearchSpace *s, int tensor_id, prtFun Evaluate, ...)
                 for (j = 0; j < s->n; j++)
                     for (l = 0; l < tensor_id; l++)
                         rehearsal[i][j][l] = op_type[j][l];
-                DeallocateTensor(&s->a[i]->t, s->n);
+                DestroyTensor(&s->a[i]->t, s->n);
                 DestroyAgent(&(s->a[i]), _HS_);
                 s->a[i] = CopyAgent(tmp, _HS_, _NOTENSOR_);
                 s->a[i]->t = CopyTensor(tmp_t, s->n, tensor_id);
                 DestroyAgent(&tmp, _HS_);
-                DeallocateTensor(&tmp_t, s->n);
+                DestroyTensor(&tmp_t, s->n);
             }
             EvaluateTensorSearchSpace(s, _HS_, tensor_id, Evaluate, arg);
         }
@@ -650,7 +650,7 @@ void runTensorPSF_HS(SearchSpace *s, int tensor_id, prtFun Evaluate, ...)
 
         if ((fitValue < s->a[s->m - 1]->fit))
         { /* We accept the new solution */
-            DeallocateTensor(&s->a[s->m - 1]->t, s->n);
+            DestroyTensor(&s->a[s->m - 1]->t, s->n);
             DestroyAgent(&(s->a[s->m - 1]), _HS_);
             s->a[s->m - 1] = CopyAgent(tmp, _HS_, _NOTENSOR_);
             s->a[s->m - 1]->fit = fitValue;
@@ -668,7 +668,7 @@ void runTensorPSF_HS(SearchSpace *s, int tensor_id, prtFun Evaluate, ...)
         }
 
         DestroyAgent(&tmp, _HS_);
-        DeallocateTensor(&tmp_t, s->n);
+        DestroyTensor(&tmp_t, s->n);
 
         fprintf(stderr, "OK (minimum fitness value %lf)", s->gfit);
     }

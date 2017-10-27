@@ -70,6 +70,7 @@ typedef struct SearchSpace_{
     int best; /* index of the best agent */
     double gfit; /* global best fitness */
     int is_integer_opt; /* integer-valued optimization problem? */
+    int tensor_dim; /* dimension of the tensor */
 
     /* PSO */
     double w; /* inertia weight */
@@ -215,7 +216,7 @@ Node *SGME(SearchSpace *s, Node *T1_tmp, Node *T2_tmp); /* It performs the Geome
 
 /* Tensor-related functions */
 double **AllocateTensor(int n, int tensor_id); /* It allocates a new tensor */
-void DeallocateTensor(double ***t, int n); /* It deallocates a tensor */
+void DestroyTensor(double ***t, int n); /* It deallocates a tensor */
 void InitializeTensorSearchSpace(SearchSpace *s, int tensor_id); /* It initializes an allocated search space with tensors */
 void ShowTensorSearchSpace(SearchSpace *s, int tensor_id); /* It shows a search space with tensors */
 void CheckTensorLimits(SearchSpace *s, double **t, int tensor_id); /* It checks whether a given tensor has excedeed boundaries */

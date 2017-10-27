@@ -132,7 +132,7 @@ void runTensorFA(SearchSpace *s, int tensor_id, prtFun Evaluate, ...)
             for (j = 0; j < s->n; j++)
                 s->a[i]->x[j] = TensorSpan(s->LB[j], s->UB[j], s->a[i]->t[j], tensor_id);
             DestroyAgent(&tmp[i], _FA_);
-            DeallocateTensor(&tmp_t[i], s->n);
+            DestroyTensor(&tmp_t[i], s->n);
         }
 
         va_copy(arg, argtmp);

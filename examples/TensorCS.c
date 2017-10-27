@@ -19,9 +19,9 @@ int main()
     if (CheckSearchSpace(s, _CS_))                /* It checks whether the search space is valid or not */
         runTensorCS(s, _QUATERNION_, Rosenbrock); /* It minimizes function Rosenbrock */
 
-    DeallocateTensor(&s->t_g, s->n);
+    DestroyTensor(&s->t_g, s->n);
     for (i = 0; i < s->m; i++)
-        DeallocateTensor(&s->a[i]->t, s->n); /* It deallocates the tensor for each agent */
+        DestroyTensor(&s->a[i]->t, s->n); /* It deallocates the tensor for each agent */
 
     DestroySearchSpace(&s, _CS_); /* It deallocates the search space */
 
