@@ -229,7 +229,7 @@ double **GenerateNewPSFTensor(SearchSpace *s, int tensor_id, double **HMCR, doub
     int i, j, k;
     double r, signal;
 
-    t = AllocateTensor(s->n, tensor_id);
+    t = CreateTensor(s->n, tensor_id);
 
     for (j = 0; j < s->n; j++)
     {

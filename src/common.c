@@ -64,7 +64,7 @@ Agent *CreateAgent(int n, int opt_id, int tensor_dim){
                 fprintf(stderr, "\nInvalid tensor dimension @CreateAgent\n.");
                 return NULL;
             }
-            a->t = AllocateTensor(n, tensor_dim);
+            a->t = CreateTensor(n, tensor_dim);
             break;
         default:
             free(a);
@@ -351,6 +351,7 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...){
     s->gfit = DBL_MAX;
     s->iterations = 0;
     s->is_integer_opt = 1;
+    s->tensor_dim = -1;
 
     /* PSO */
     s->w = NAN;
@@ -452,6 +453,7 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...){
 
             if (opt_id != _TGP_) tensor_dim = _NOTENSOR_;
             else tensor_dim = va_arg(arg, int);
+    
             s->a = (Agent **)malloc(s->n_terminals * sizeof(Agent *));
             for (i = 0; i < s->n_terminals; i++)
                     s->a[i] = CreateAgent(s->n, opt_id, tensor_dim);
@@ -1403,8 +1405,7 @@ void WaiveComment(FILE *fp)
 Parameters:
 fileName: path to the file that contains the parameters of the search space
 opt_id: identifier of the optimization technique */
-SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id)
-{
+SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
     FILE *fp = NULL;
     SearchSpace *s = NULL;
     int i, j, m, n, k, iterations, n_terminals = 0, n_functions = 0, min_depth, max_depth;
@@ -1416,15 +1417,15 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id)
     Node *head = NULL, *tail = NULL, *aux = NULL;
 
     fp = fopen(fileName, "r");
-    if (!fp)
-    {
+    if (!fp){
         fprintf(stderr, "\nUnable to open file %s @ReadSearchSpaceFromFile.\n", fileName);
         return NULL;
     }
 
-    fscanf(fp, "%d %d %d", &m, &n, &iterations);
+    if(opt_id != _TGP_) fscanf(fp, "%d %d %d", &m, &n, &iterations);
+    else fscanf(fp, "%d %d %d %d", &m, &n, &iterations, &tensor_dim);
     WaiveComment(fp);
-
+    
     switch (opt_id){
         case _PSO_:
             s = CreateSearchSpace(m, n, _PSO_);
@@ -1509,12 +1510,10 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id)
             break;
         case _GP_:
         case _TGP_:
-            if(opt_id == _GP_) fscanf(fp, "%lf %lf %lf", &pReproduction, &pMutation, &pCrossover);
-            else fscanf(fp, "%lf %lf %lf %d", &pReproduction, &pMutation, &pCrossover, &tensor_dim);
-           fprintf(stderr,"\n***********tensor_dim: %d   opt_id: %d", tensor_dim, opt_id);
-           WaiveComment(fp);
-           fscanf(fp, "%d %d", &min_depth, &max_depth);
-           WaiveComment(fp);
+            fscanf(fp, "%lf %lf %lf", &pReproduction, &pMutation, &pCrossover);
+            WaiveComment(fp);
+            fscanf(fp, "%d %d", &min_depth, &max_depth);
+            WaiveComment(fp);
 
             /* Loading function nodes */
             fgets(line, LINE_SIZE, fp);
@@ -1595,7 +1594,6 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id)
                     UB[j] = UB[0];
                 }   
             }
-
             /* loading constants */
             if (has_constant){
                 constant = (double **)malloc(n * sizeof(double *));
@@ -1608,7 +1606,9 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id)
             }
             /*********************/
 
-            s = CreateSearchSpace(m, n, _GP_, min_depth, max_depth, n_terminals, N_CONSTANTS, n_functions, terminal, constant, function);
+            if(opt_id == _GP_) s = CreateSearchSpace(m, n, _GP_, min_depth, max_depth, n_terminals, N_CONSTANTS, n_functions, terminal, constant, function);
+            else s = CreateSearchSpace(m, n, _TGP_, min_depth, max_depth, n_terminals, N_CONSTANTS, n_functions, terminal, constant, function, tensor_dim);
+            
             s->iterations = iterations;
             s->pReproduction = pReproduction;
             s->pMutation = pMutation;
@@ -1634,8 +1634,7 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id)
             break;
     }
 
-    /* VER AQUI ESTA ESTRANHO ESSE LACO!*/
-    if ((opt_id != _GP_) || (opt_id != _TGP_)){
+    if ((opt_id != _GP_) && (opt_id != _TGP_)){
         for (j = 0; j < s->n; j++){
             fscanf(fp, "%lf %lf", &(s->LB[j]), &(s->UB[j]));
             WaiveComment(fp);
@@ -2507,18 +2506,18 @@ Node *SGME(SearchSpace *s, Node *T1_tmp, Node *T2_tmp)
 /* It allocates a new tensor
 Parameters:
 n: number of decision variables
-tensor_id: tensor space dimension */
-double **AllocateTensor(int n, int tensor_id){
-    if (tensor_id <= 0){
-        fprintf(stderr, "\nInvalid parameters @AllocateTensor.\n");
+tensor_dim: tensor space dimension */
+double **CreateTensor(int n, int tensor_dim){
+    if (tensor_dim <= 0){
+        fprintf(stderr, "\nInvalid parameters @CreateTensor.\n");
         return NULL;
     }
-    double **t;
+    double **t = NULL;
     int i;
 
     t = (double **)calloc(n, sizeof(double *));
     for (i = 0; i < n; i++)
-        t[i] = (double *)calloc(tensor_id, sizeof(double));
+        t[i] = (double *)calloc(tensor_dim, sizeof(double));
 
     return t;
 }
@@ -2630,7 +2629,7 @@ double **CopyTensor(double **t, int n, int tensor_id)
     int i;
     double **cpy = NULL;
 
-    cpy = AllocateTensor(n, tensor_id);
+    cpy = CreateTensor(n, tensor_id);
     for (i = 0; i < n; i++)
         memcpy(cpy[i], t[i], tensor_id * sizeof(double));
 
@@ -2674,7 +2673,7 @@ double **GenerateNewTensor(SearchSpace *s, int tensor_id)
     double **t = NULL;
     int j, k;
 
-    t = AllocateTensor(s->n, tensor_id);
+    t = CreateTensor(s->n, tensor_id);
     for (j = 0; j < s->n; j++)
         for (k = 0; k < tensor_id; k++)
             t[j][k] = GenerateUniformRandomNumber(0, 1);

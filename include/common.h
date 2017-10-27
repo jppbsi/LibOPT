@@ -215,7 +215,7 @@ Node *SGME(SearchSpace *s, Node *T1_tmp, Node *T2_tmp); /* It performs the Geome
 /***********************/
 
 /* Tensor-related functions */
-double **AllocateTensor(int n, int tensor_id); /* It allocates a new tensor */
+double **CreateTensor(int n, int tensor_dim); /* It allocates a new tensor */
 void DestroyTensor(double ***t, int n); /* It deallocates a tensor */
 void InitializeTensorSearchSpace(SearchSpace *s, int tensor_id); /* It initializes an allocated search space with tensors */
 void ShowTensorSearchSpace(SearchSpace *s, int tensor_id); /* It shows a search space with tensors */

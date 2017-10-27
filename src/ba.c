@@ -170,7 +170,7 @@ double **GenerateNewBatTensor(SearchSpace *s, int tensor_id)
     double **t = NULL;
     int j, k;
 
-    t = AllocateTensor(s->n, tensor_id);
+    t = CreateTensor(s->n, tensor_id);
     for (j = 0; j < s->n; j++)
         for (k = 0; k < tensor_id; k++)
             t[j][k] = s->t_g[j][k] + 0.001 * GenerateUniformRandomNumber(-1, 1);
