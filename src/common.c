@@ -1068,6 +1068,7 @@ char CheckSearchSpace(SearchSpace *s, int opt_id)
         }
         break;
     case _GP_:
+    case _TGP_:
     case _GA_:
         if (isnan((float)s->pReproduction))
         {

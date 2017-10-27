@@ -15,9 +15,8 @@ int main(int argc, char **argv){
     s = ReadSearchSpaceFromFile(argv[1], _TGP_); /* It reads the model file and creates a search space. We are going to use Quaternion-based GP to solve our problem. */
     InitializeSearchSpace(s, _TGP_); /* It initalizes the search space */
 
-    //ShowSearchSpace(s, _PSO_); /* It shows the regular search space, with the tensors being mapped with their span function */
-
-    /*if (CheckSearchSpace(s, _PSO_))            /* It checks whether the search space is valid or not */
+    if (CheckSearchSpace(s, _TGP_)) /* It checks whether the search space is valid or not */
+    fprintf(stderr,"\nTeste.");
         //runTensorPSO(s, _QUATERNION_, Sphere); /* It minimizes function Sphere */
 
     /*DeallocateTensor(&s->t_g, s->n);
