@@ -13,9 +13,7 @@ int main(int argc, char **argv){
     int i;
 
     s = ReadSearchSpaceFromFile(argv[1], _TGP_); /* It reads the model file and creates a search space. We are going to use Quaternion-based GP to solve our problem. */
-    //InitializeSearchSpace(s, _TGP_); /* It initalizes the search space */
-
-//    InitializeTensorSearchSpace(s, _QUATERNION_); /* It initalizes the search space with tensors */
+    InitializeSearchSpace(s, _TGP_); /* It initalizes the search space */
 
     //ShowSearchSpace(s, _PSO_); /* It shows the regular search space, with the tensors being mapped with their span function */
 

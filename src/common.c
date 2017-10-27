@@ -49,7 +49,7 @@ Agent *CreateAgent(int n, int opt_id, int tensor_dim){
         case _BSO_:
         case _HS_:
             a->x = (double *)calloc(n, sizeof(double));
-            if ((opt_id != _GP_) && (opt_id != _BSO_))
+            if ((opt_id != _GP_) && (opt_id != _TGP_) & (opt_id != _BSO_))
                 a->v = (double *)calloc(n, sizeof(double));
             if (opt_id == _PSO_)
                 a->xl = (double *)calloc(n, sizeof(double));
@@ -65,6 +65,7 @@ Agent *CreateAgent(int n, int opt_id, int tensor_dim){
                 return NULL;
             }
             a->t = CreateTensor(n, tensor_dim);
+            a->x = (double *)calloc(n, sizeof(double));
             break;
         default:
             free(a);
@@ -116,6 +117,7 @@ void DestroyAgent(Agent **a, int opt_id){
             if (tmp->prev_x) free(tmp->prev_x);
             break;
         case _TGP_:
+            if (tmp->x) free(tmp->x);
             if (tmp->t) DestroyTensor(&(tmp->t), tmp->n);
             break;
         default:
@@ -657,8 +659,7 @@ void InitializeSearchSpace(SearchSpace *s, int opt_id){
             }
             break;
         case _TGP_:
-            fprintf(stderr,"\ntensor_dim: %d", s->tensor_dim);
-            for (i = 0; i < s->m; i++){
+            for (i = 0; i < s->n_terminals; i++){
                 for (j = 0; j < s->n; j++){
                     for (k = 0; k < s->tensor_dim; k++)
                         s->a[i]->t[j][k] = GenerateUniformRandomNumber(0, 1);
