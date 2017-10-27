@@ -332,3 +332,26 @@ void runGP(SearchSpace *s, prtFun Evaluate, ...)
 	va_end(arg);
 }
 /*************************/
+
+/* It executes the Tensor-based Genetic Programming for function minimization
+Parameters:
+s: search space
+Evaluate: pointer to the function used to evaluate particles
+arg: list of additional arguments */
+void runTGP(SearchSpace *s, prtFun Evaluate, ...){
+	va_list arg, argtmp;
+	int t, i, j, z, n_reproduction, n_mutation, n_crossover;
+	int *reproduction = NULL, *mutation = NULL, *crossover = NULL;
+	int father_cross_point, mother_crosspoint, ctr;
+	double beta, prob;
+	Node **tmpTree = NULL, **aux = NULL;
+
+	va_start(arg, Evaluate);
+	va_copy(argtmp, arg);
+
+	if (!s){
+		fprintf(stderr, "\nSearch space not allocated @runTGP.\n");
+		exit(-1);
+	}
+}
+/*************************/
