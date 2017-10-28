@@ -451,8 +451,11 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...){
             s->function = va_arg(arg, char **);
 
             s->T = (Node **)malloc(s->m * sizeof(Node *));
-            for (i = 0; i < s->m; i++)
+            for (i = 0; i < s->m; i++){
+                fprintf(stderr,"\nGrowing tree #%d ... (%d,%d)", i+1, s->min_depth, s->max_depth);
                 s->T[i] = GROW(s, s->min_depth, s->max_depth);
+                fprintf(stderr,"OK");
+            }
 
             if (opt_id != _TGP_) tensor_dim = _NOTENSOR_;
             else tensor_dim = va_arg(arg, int);
