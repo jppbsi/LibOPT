@@ -589,6 +589,16 @@ void DestroySearchSpace(SearchSpace **s, int opt_id){
                     if (tmp->constant[i]) free(tmp->constant[i]);
                 free(tmp->constant);
             }
+            
+            if (tmp->t_constant){
+                for (i = 0; i < N_CONSTANTS; i++){
+                    for(j = 0; j < tmp->n; j++)
+                        if(tmp->t_constant[i][j]) free(tmp->t_constant[i][j]);
+                    if(tmp->t_constant[i]) free(tmp->t_constant[i]);
+                }
+                free(tmp->t_constant);
+            }
+            
             if (tmp->tree_fit) free(tmp->tree_fit);
             if (tmp->g) free(tmp->g);
         }
