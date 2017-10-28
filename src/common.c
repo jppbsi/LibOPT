@@ -821,7 +821,7 @@ void EvaluateSearchSpace(SearchSpace *s, int opt_id, prtFun Evaluate, va_list ar
     }
 
     int i, j;
-    double f, *tmp = NULL;
+    double f, **t_tmp = NULL, *tmp = NULL;
     Agent *individual = NULL;
     va_list argtmp;
 
@@ -924,29 +924,34 @@ void EvaluateSearchSpace(SearchSpace *s, int opt_id, prtFun Evaluate, va_list ar
         break;
     case _TGP_:
         individual = CreateAgent(s->n, _TGP_, s->tensor_dim);
+        tmp = (double *)calloc(s->n, sizeof(double));
         for (i = 0; i < s->m; i++){
-            tmp = RunTree(s, s->T[i]);
+            t_tmp = RunTTree(s, s->T[i]);
+            CheckTensorLimits(s, t_tmp, s->tensor_dim);
+            for(j = 0; j < s->n; j++)
+                tmp[j] = TensorSpan(s->LB[i], s->UB[i], t_tmp[j], s->tensor_dim);
             memcpy(individual->x, tmp, s->n * sizeof(double)); /* It runs over a tree computing the output individual (current solution) */
-            /*free(tmp);
-
+            DestroyTensor(&t_tmp, s->n);
+            
             CheckAgentLimits(s, individual);
 
             f = Evaluate(individual, arg); /* It executes the fitness function for agent i */
 
-            /*if (f < s->tree_fit[i]) /* It updates the fitness value */
-                //s->tree_fit[i] = f;
+            if (f < s->tree_fit[i]) /* It updates the fitness value */
+                s->tree_fit[i] = f;
 
             /* It updates the global best value */
-            /*if (s->tree_fit[i] < s->gfit){ 
+            if (s->tree_fit[i] < s->gfit){ 
                 s->best = i;
                 s->gfit = s->tree_fit[i];
                 for (j = 0; j < s->n; j++)
                     s->g[j] = individual->x[j];
             }
 
-            va_copy(arg, argtmp);*/
+            va_copy(arg, argtmp);
         }
         DestroyAgent(&individual, _TGP_);
+        free(tmp);
         break;
     case _MBO_:
         for (i = 0; i < s->m; i++)
@@ -2655,7 +2660,7 @@ void ShowTensorSearchSpace(SearchSpace *s, int tensor_id){
 Parameters:
 s: search space
 a: tensor */
-void CheckTensorLimits(SearchSpace *s, double **t, int tensor_id)
+void CheckTensorLimits(SearchSpace *s, double **t, int tensor_dim)
 {
     if ((!s) || (!t))
     {
@@ -2667,7 +2672,7 @@ void CheckTensorLimits(SearchSpace *s, double **t, int tensor_id)
 
     for (j = 0; j < s->n; j++)
     {
-        for (k = 0; k < tensor_id; k++)
+        for (k = 0; k < tensor_dim; k++)
         {
             if (t[j][k] < 0)
                 t[j][k] = 0;
@@ -2751,9 +2756,9 @@ L: lower bound
 U: upper bound
 t: tensor vector
 tensor_id: identifier of tensor's dimension */
-double TensorSpan(double L, double U, double *t, int tensor_id)
+double TensorSpan(double L, double U, double *t, int tensor_dim)
 {
-    if (tensor_id <= 0)
+    if (tensor_dim <= 0)
     {
         fprintf(stderr, "\nInvalid parameters @TensorSpan.\n");
         return -1;
@@ -2762,7 +2767,7 @@ double TensorSpan(double L, double U, double *t, int tensor_id)
     double span = 0;
     int i;
 
-    span = (U - L) * (TensorNorm(t, tensor_id) / sqrt(tensor_id)) + L;
+    span = (U - L) * (TensorNorm(t, tensor_dim) / sqrt(tensor_dim)) + L;
 
     return span;
 }

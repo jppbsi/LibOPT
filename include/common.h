@@ -222,11 +222,11 @@ double **CreateTensor(int n, int tensor_dim); /* It allocates a new tensor */
 void DestroyTensor(double ***t, int n); /* It deallocates a tensor */
 void InitializeTensorSearchSpace(SearchSpace *s, int tensor_id); /* It initializes an allocated search space with tensors */
 void ShowTensorSearchSpace(SearchSpace *s, int tensor_id); /* It shows a search space with tensors */
-void CheckTensorLimits(SearchSpace *s, double **t, int tensor_id); /* It checks whether a given tensor has excedeed boundaries */
+void CheckTensorLimits(SearchSpace *s, double **t, int tensor_dim); /* It checks whether a given tensor has excedeed boundaries */
 double **CopyTensor(double **t, int n, int tensor_id); /* It copies a given tensor */
 double **GenerateNewTensor(SearchSpace *s, int tensor_id); /* It generates a new tensor */
-double TensorNorm(double *t, int tensor_id); /* It computes the norm of a given tensor */
-double TensorSpan(double L, double U, double *t, int tensor_id); /* It maps the quaternion value to a real one bounded by [L,U] */
+double TensorNorm(double *t, int tensor_dim); /* It computes the norm of a given tensor */
+double TensorSpan(double L, double U, double *t, int tensor_dim); /* It maps the tensor value to a real one bounded by [L,U] */
 double TensorEuclideanDistance(double **t, double **s, int n, int tensor_id); /* It calculates the Euclidean Distance between tensors */
 void EvaluateTensorSearchSpace(SearchSpace *s, int opt_id, int tensor_id, prtFun Evaluate, va_list arg); /* It evaluates a tensor-based search space */
 double **RunTTree(SearchSpace *s, Node *T); /* It runs a given tensor-based tree and outputs its solution array */
