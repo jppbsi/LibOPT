@@ -937,7 +937,7 @@ void EvaluateSearchSpace(SearchSpace *s, int opt_id, prtFun Evaluate, va_list ar
             CheckAgentLimits(s, individual);
 
             f = Evaluate(individual, arg); /* It executes the fitness function for agent i */
-
+            fprintf(stderr," value: %lf", f);
             if (f < s->tree_fit[i]) /* It updates the fitness value */
                 s->tree_fit[i] = f;
 
@@ -1668,9 +1668,10 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
                 }
             }
             /*********************/
-
+            fprintf(stderr,"\nFLAG 1");
             if(opt_id == _GP_) s = CreateSearchSpace(m, n, _GP_, min_depth, max_depth, n_terminals, N_CONSTANTS, n_functions, terminal, constant, function);
             else s = CreateSearchSpace(m, n, _TGP_, min_depth, max_depth, n_terminals, N_CONSTANTS, n_functions, terminal, t_constant, function, tensor_dim);
+            fprintf(stderr,"\nFLAG 2");
             
             s->iterations = iterations;
             s->pReproduction = pReproduction;

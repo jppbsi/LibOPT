@@ -3491,7 +3491,7 @@ double **f_TSUM_(double **x, double **y, int m, int n)
 {
     if (!x || !y)
     {
-        fprintf(stderr, "\nInvalid input parametsrs @f_TSUM_.\n");
+        fprintf(stderr, "\nInvalid input parameters @f_TSUM_.\n");
         exit(-1);
     }
 
@@ -3517,7 +3517,7 @@ double **f_TSUB_(double **x, double **y, int m, int n)
 {
     if (!x || !y)
     {
-        fprintf(stderr, "\nInvalid input parametsrs @f_TSUB_.\n");
+        fprintf(stderr, "\nInvalid input parameters @f_TSUB_.\n");
         exit(-1);
     }
 
@@ -3543,7 +3543,7 @@ double **f_TMUL_(double **x, double **y, int m, int n)
 {
     if (!x || !y)
     {
-        fprintf(stderr, "\nInvalid input parametsrs @f_TMUL_.\n");
+        fprintf(stderr, "\nInvalid input parameters @f_TMUL_.\n");
         exit(-1);
     }
 
@@ -3569,7 +3569,7 @@ double **f_TDIV_(double **x, double **y, int m, int n)
 {
     if (!x || !y)
     {
-        fprintf(stderr, "\nInvalid input parametsrs @f_TDIV_.\n");
+        fprintf(stderr, "\nInvalid input parameters @f_TDIV_.\n");
         exit(-1);
     }
 
