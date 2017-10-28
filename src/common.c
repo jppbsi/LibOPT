@@ -2866,4 +2866,49 @@ void EvaluateTensorSearchSpace(SearchSpace *s, int opt_id, int tensor_id, prtFun
         break;
     }
 }
+
+/* It runs a given tensor-based tree and outputs its solution array
+Parameters:
+s: search space
+T: current tree */
+double **RunTTree(SearchSpace *s, Node *T){
+    double **x = NULL, **y = NULL, **out = NULL;
+    int i, j;
+
+    if (T){
+        x = RunTTree(s, T->left);  /* It runs over the subtree on the left */
+        y = RunTTree(s, T->right); /* It runs over the subtree on the right */
+
+        if (T->status == TERMINAL || T->status == CONSTANT){
+            out = CreateTensor(s->n, s->tensor_dim);
+            if (T->status == CONSTANT){
+                for (i = 0; i < s->n; i++)
+                    for(j = 0; j < s->tensor_dim; j++)
+                        out[i][j] = s->constant[i][T->id];
+            }
+            else{ /* it is a terminal node */
+                for (i = 0; i < s->n; i++)
+                    for(j = 0; j < s->tensor_dim; j++)
+                        out[i][j] = s->a[T->id]->t[i][j];
+            }
+            return out;
+        }
+        else{
+            if (!strcmp(T->elem, "TSUM"))
+                out = f_TSUM_(x, y, s->n, s->tensor_dim);
+            else if (!strcmp(T->elem, "TSUB"))
+                out = f_TSUB_(x, y, s->n, s->tensor_dim);
+            else if (!strcmp(T->elem, "TMUL"))
+                out = f_TMUL_(x, y, s->n, s->tensor_dim);
+            else if (!strcmp(T->elem, "TDIV"))
+                out = f_TDIV_(x, y, s->n, s->tensor_dim);
+            
+            /* it deallocates the sons of the current one, since they have been used already */
+            if (x) DestroyTensor(&x, s->n);
+            if (y) DestroyTensor(&y, s->n);
+            return out;
+        }
+    }
+    else return NULL;
+}
 /***********************/
