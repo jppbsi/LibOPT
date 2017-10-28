@@ -19,14 +19,6 @@ int main(int argc, char **argv){
     fprintf(stderr,"\nTeste.");
         runTGP(s, Sphere); /* It minimizes function Sphere */
 
-    /*DeallocateTensor(&s->t_g, s->n);
-    for (i = 0; i < s->m; i++)
-    {
-        DeallocateTensor(&s->a[i]->t, s->n); /* It deallocates the tensor for each agent */
-     /*   DeallocateTensor(&s->a[i]->t_v, s->n);
-        DeallocateTensor(&s->a[i]->t_xl, s->n);
-    }*/
-
     DestroySearchSpace(&s, _TGP_); /* It deallocates the search space */
 
     return 0;

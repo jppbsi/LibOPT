@@ -57,6 +57,10 @@ extern "C" {
 #define _OR_ 9
 #define _XOR_ 10
 #define _NOT_ 11
+#define _TSUM_ 12
+#define _TSUB_ 13
+#define _TMUL_ 14
+#define _TDIV_ 15
 /**************************/
 
 #include <stdio.h>

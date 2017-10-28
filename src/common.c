@@ -1633,7 +1633,9 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
                     for (i = 0; i < n; i++)
                         for (j = 0; j < N_CONSTANTS; j++)
                             constant[i][j] = GenerateUniformRandomNumber(LB[i], UB[i]);
+                            
                 }else{ /* tensor-based GP */
+                    /* here we generate N_CONSTANTS random matrices within the range [0,1] */
                     t_constant = (double ***)malloc(N_CONSTANTS * sizeof(double **));
                     for(i = 0; i < N_CONSTANTS; i++){
                         t_constant[i] = (double **)malloc(n * sizeof(double *));
@@ -1719,6 +1721,14 @@ int getFUNCTIONid(char *s)
         return _XOR_;
     else if (!strcmp(s, "NOT"))
         return _NOT_;
+    else if (!strcmp(s, "TSUM"))
+        return _TSUM_;
+    else if (!strcmp(s, "TSUB"))
+        return _TSUB_;
+    else if (!strcmp(s, "TMUL"))
+        return _TMUL_;
+    else if (!strcmp(s, "TDIV"))
+        return _TDIV_;
     else
     {
         fprintf(stderr, "\nUndefined function @getFUNCTIONid.");
@@ -2900,7 +2910,7 @@ double **RunTTree(SearchSpace *s, Node *T){
             if (T->status == CONSTANT){
                 for (i = 0; i < s->n; i++)
                     for(j = 0; j < s->tensor_dim; j++)
-                        out[i][j] = s->constant[i][T->id];
+                        out[i][j] = s->t_constant[T->id][i][j];
             }
             else{ /* it is a terminal node */
                 for (i = 0; i < s->n; i++)
