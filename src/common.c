@@ -2,8 +2,8 @@
 #include "function.h"
 
 /* number of arguments (descendants) required by each terminal function in GP in the following order:
-SUM, SUB, MUL, DIV, EXP, SQRT, LOG, ABS, AND, OR, XOR and NOT */
-const int N_ARGS_FUNCTION[] = {2, 2, 2, 2, 1, 1, 1, 1, 2, 2, 2, 1};
+SUM, SUB, MUL, DIV, EXP, SQRT, LOG, ABS, AND, OR, XOR, NOT, TSUM, TSUB, TMUL and TDIV */
+const int N_ARGS_FUNCTION[] = {2, 2, 2, 2, 1, 1, 1, 1, 2, 2, 2, 1, 2, 2, 2, 2};
 
 /* Agent-related functions */
 /* It creates an agent
