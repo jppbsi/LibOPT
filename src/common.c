@@ -926,6 +926,7 @@ void EvaluateSearchSpace(SearchSpace *s, int opt_id, prtFun Evaluate, va_list ar
         individual = CreateAgent(s->n, _TGP_, s->tensor_dim);
         tmp = (double *)calloc(s->n, sizeof(double));
         for (i = 0; i < s->m; i++){
+            fprintf(stderr,"\nEvaluating tree #%d ... ", i+1);
             t_tmp = RunTTree(s, s->T[i]);
             CheckTensorLimits(s, t_tmp, s->tensor_dim);
             for(j = 0; j < s->n; j++)
@@ -949,6 +950,7 @@ void EvaluateSearchSpace(SearchSpace *s, int opt_id, prtFun Evaluate, va_list ar
             }
 
             va_copy(arg, argtmp);
+            fprintf(stderr,"OK");
         }
         DestroyAgent(&individual, _TGP_);
         free(tmp);
