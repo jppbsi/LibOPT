@@ -911,6 +911,32 @@ void EvaluateSearchSpace(SearchSpace *s, int opt_id, prtFun Evaluate, va_list ar
         }
         DestroyAgent(&individual, _GP_);
         break;
+    case _TGP_:
+        individual = CreateAgent(s->n, _TGP_, s->tensor_dim);
+        for (i = 0; i < s->m; i++){
+            tmp = RunTree(s, s->T[i]);
+            memcpy(individual->x, tmp, s->n * sizeof(double)); /* It runs over a tree computing the output individual (current solution) */
+            /*free(tmp);
+
+            CheckAgentLimits(s, individual);
+
+            f = Evaluate(individual, arg); /* It executes the fitness function for agent i */
+
+            /*if (f < s->tree_fit[i]) /* It updates the fitness value */
+                //s->tree_fit[i] = f;
+
+            /* It updates the global best value */
+            /*if (s->tree_fit[i] < s->gfit){ 
+                s->best = i;
+                s->gfit = s->tree_fit[i];
+                for (j = 0; j < s->n; j++)
+                    s->g[j] = individual->x[j];
+            }
+
+            va_copy(arg, argtmp);*/
+        }
+        DestroyAgent(&individual, _TGP_);
+        break;
     case _MBO_:
         for (i = 0; i < s->m; i++)
         {

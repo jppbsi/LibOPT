@@ -3483,15 +3483,15 @@ double *f_NOT_(double *x, int n)
 /*****************************/
 
 /* Tensor-based Genetic Programming general-purpose functions */
-/* It computes the quaternionic sum of two mxn-dimensional tensors
+/* It computes the tensor sum of two mxn-dimensional tensors
 Parameters:
 x, y:tensors
 m,n n: dimensions */
-double **f_QSUM_(double **x, double **y, int m, int n)
+double **f_TSUM_(double **x, double **y, int m, int n)
 {
     if (!x || !y)
     {
-        fprintf(stderr, "\nInvalid input parametsrs @f_QSUM_.\n");
+        fprintf(stderr, "\nInvalid input parametsrs @f_TSUM_.\n");
         exit(-1);
     }
 
@@ -3509,15 +3509,15 @@ double **f_QSUM_(double **x, double **y, int m, int n)
     return out;
 }
 
-/* It computes the quaternionic subtraction of two mxn-dimensional tensors
+/* It computes the tensor subtraction of two mxn-dimensional tensors
 Parameters:
 x, y:tensors
 m,n n: dimensions */
-double **f_QSUB_(double **x, double **y, int m, int n)
+double **f_TSUB_(double **x, double **y, int m, int n)
 {
     if (!x || !y)
     {
-        fprintf(stderr, "\nInvalid input parametsrs @f_QSUB_.\n");
+        fprintf(stderr, "\nInvalid input parametsrs @f_TSUB_.\n");
         exit(-1);
     }
 
@@ -3535,15 +3535,15 @@ double **f_QSUB_(double **x, double **y, int m, int n)
     return out;
 }
 
-/* It computes the quaternionic multiplication of two mxn-dimensional tensors
+/* It computes the tensor multiplication of two mxn-dimensional tensors
 Parameters:
 x, y:tensors
 m,n n: dimensions */
-double **f_QMUL_(double **x, double **y, int m, int n)
+double **f_TMUL_(double **x, double **y, int m, int n)
 {
     if (!x || !y)
     {
-        fprintf(stderr, "\nInvalid input parametsrs @f_QMUL_.\n");
+        fprintf(stderr, "\nInvalid input parametsrs @f_TMUL_.\n");
         exit(-1);
     }
 
@@ -3561,15 +3561,15 @@ double **f_QMUL_(double **x, double **y, int m, int n)
     return out;
 }
 
-/* It computes the quaternionic division (protected) of two mxn-dimensional tensors
+/* It computes the tensor division (protected) of two mxn-dimensional tensors
 Parameters:
 x, y:tensors
 m,n n: dimensions */
-double **f_QDIV_(double **x, double **y, int m, int n)
+double **f_TDIV_(double **x, double **y, int m, int n)
 {
     if (!x || !y)
     {
-        fprintf(stderr, "\nInvalid input parametsrs @f_QDIV_.\n");
+        fprintf(stderr, "\nInvalid input parametsrs @f_TDIV_.\n");
         exit(-1);
     }
 

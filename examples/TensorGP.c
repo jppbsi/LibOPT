@@ -17,7 +17,7 @@ int main(int argc, char **argv){
 
     if (CheckSearchSpace(s, _TGP_)) /* It checks whether the search space is valid or not */
     fprintf(stderr,"\nTeste.");
-        //runTensorPSO(s, _QUATERNION_, Sphere); /* It minimizes function Sphere */
+        runTGP(s, Sphere); /* It minimizes function Sphere */
 
     /*DeallocateTensor(&s->t_g, s->n);
     for (i = 0; i < s->m; i++)

@@ -353,5 +353,11 @@ void runTGP(SearchSpace *s, prtFun Evaluate, ...){
 		fprintf(stderr, "\nSearch space not allocated @runTGP.\n");
 		exit(-1);
 	}
+	
+	EvaluateSearchSpace(s, _TGP_, Evaluate, arg); /* Initial evaluation */
+	tmpTree = (Node **)malloc(s->m * sizeof(Node *));
+	
+	free(tmpTree);
+	va_end(arg);
 }
 /*************************/

@@ -134,10 +134,10 @@ double *f_NOT_(double *x, int n); /* It computes the logical function NOT of an 
 /*****************************/
 
 /* Tensor-based Genetic Programming general-purpose functions */
-double **f_QSUM_(double **x, double **y, int m, int n); /* It computes the quaternionic sum of two mxn-dimensional tensors */
-double **f_QSUB_(double **x, double **y, int m, int n); /* It computes the quaternionic subtraction of two mxn-dimensional tensors */
-double **f_QMUL_(double **x, double **y, int m, int n); /* It computes the quaternionic multiplication of two mxn-dimensional tensors */
-double **f_QDIV_(double **x, double **y, int m, int n); /* It computes the quaternionic division (protected) of two mxn-dimensional tensors */
+double **f_TSUM_(double **x, double **y, int m, int n); /* It computes the tensor sum of two mxn-dimensional tensors */
+double **f_TSUB_(double **x, double **y, int m, int n); /* It computes the tensor subtraction of two mxn-dimensional tensors */
+double **f_TMUL_(double **x, double **y, int m, int n); /* It computes the tensor multiplication of two mxn-dimensional tensors */
+double **f_TDIV_(double **x, double **y, int m, int n); /* It computes the tensor division (protected) of two mxn-dimensional tensors */
 /*****************************/
 
 /* Math functions */
