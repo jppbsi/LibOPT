@@ -446,7 +446,8 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...){
             s->n_constants = va_arg(arg, int);
             s->n_functions = va_arg(arg, int);
             s->terminal = va_arg(arg, char **);
-            s->constant = va_arg(arg, double **);
+            if(opt_id == _GP_) s->constant = va_arg(arg, double **);
+            else s->t_constant = va_arg(arg, double ***); /* tensor-based GP */
             s->function = va_arg(arg, char **);
 
             s->T = (Node **)malloc(s->m * sizeof(Node *));
@@ -1439,7 +1440,7 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
     int i, j, m, n, k, iterations, n_terminals = 0, n_functions = 0, min_depth, max_depth;
     int has_constant = 0, is_integer_opt, same_range;
     double pReproduction, pMutation, pCrossover, **constant = NULL, *LB = NULL, *UB = NULL;
-    double sex_rate, nomad_percent, roaming_percent, mating_prob, imigration_rate;
+    double ***t_constant = NULL, sex_rate, nomad_percent, roaming_percent, mating_prob, imigration_rate;
     int n_prides, tensor_dim = -1;
     char line[LINE_SIZE], *pline = NULL, **function = NULL, **terminal = NULL;
     Node *head = NULL, *tail = NULL, *aux = NULL;
@@ -1624,18 +1625,33 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
             }
             /* loading constants */
             if (has_constant){
-                constant = (double **)malloc(n * sizeof(double *));
-                for (j = 0; j < n; j++)
-                    constant[j] = (double *)malloc(N_CONSTANTS * sizeof(double));
+                if(opt_id == _GP_){
+                    constant = (double **)malloc(n * sizeof(double *));
+                    for (j = 0; j < n; j++)
+                        constant[j] = (double *)malloc(N_CONSTANTS * sizeof(double));
 
-                for (i = 0; i < n; i++)
-                    for (j = 0; j < N_CONSTANTS; j++)
-                        constant[i][j] = GenerateUniformRandomNumber(LB[i], UB[i]);
+                    for (i = 0; i < n; i++)
+                        for (j = 0; j < N_CONSTANTS; j++)
+                            constant[i][j] = GenerateUniformRandomNumber(LB[i], UB[i]);
+                }else{ /* tensor-based GP */
+                    t_constant = (double ***)malloc(N_CONSTANTS * sizeof(double **));
+                    for(i = 0; i < N_CONSTANTS; i++){
+                        t_constant[i] = (double **)malloc(n * sizeof(double *));
+                        for (j = 0; j < n; j++)
+                            t_constant[i][j] = (double *)malloc(tensor_dim * sizeof(double));
+                    }
+                    
+                    for (i = 0; i < N_CONSTANTS; i++)
+                        for (j = 0; j < n; j++)
+                            for (k = 0; k < tensor_dim; k++)
+                                t_constant[i][j][k] = GenerateUniformRandomNumber(0, 1);
+                            
+                }
             }
             /*********************/
 
             if(opt_id == _GP_) s = CreateSearchSpace(m, n, _GP_, min_depth, max_depth, n_terminals, N_CONSTANTS, n_functions, terminal, constant, function);
-            else s = CreateSearchSpace(m, n, _TGP_, min_depth, max_depth, n_terminals, N_CONSTANTS, n_functions, terminal, constant, function, tensor_dim);
+            else s = CreateSearchSpace(m, n, _TGP_, min_depth, max_depth, n_terminals, N_CONSTANTS, n_functions, terminal, t_constant, function, tensor_dim);
             
             s->iterations = iterations;
             s->pReproduction = pReproduction;

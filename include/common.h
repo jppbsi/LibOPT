@@ -115,6 +115,9 @@ typedef struct SearchSpace_{
     Node **T; /* pointer to the tree */
     double *tree_fit; /* fitness of each tree (in GP, the number of agents is different from the number of trees) */
 
+    /* TGP */
+    double ***t_constant; /* matrix with the tensor-based random constants */
+    
     /* MBO */
     int X; /* number of neighbour solutions to be shared with the next solution */
     int M; /* number of tours, i.e., the number of iterations for the leader */
