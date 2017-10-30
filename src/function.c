@@ -3569,7 +3569,7 @@ double **f_TDIV_(double **x, double **y, int m, int n)
 {
     if (!x || !y)
     {
-        fprintf(stderr, "\nInvalid input parameters @f_TDIV_.\n");
+        fprintf(stderr, "\nInvalid input parameters @f_TMUL_.\n");
         exit(-1);
     }
 
@@ -3580,8 +3580,10 @@ double **f_TDIV_(double **x, double **y, int m, int n)
     for (i = 0; i < m; i++){
 	out[i] = (double *)malloc(n * sizeof(double));
 	
-	for(j = 0; j < n; j++); 
-	    out[i][j] = x[i][j]/(y[i][j]+0.00001); /* It avoids division by 0 */
+	for(j = 0; j < n; j++){
+            if(!y[i][j]) out[i][j] = 0.0;
+            else out[i][j] = x[i][j]/y[i][j];
+	}
     }
 
     return out;
