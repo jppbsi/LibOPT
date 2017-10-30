@@ -451,11 +451,8 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...){
             s->function = va_arg(arg, char **);
 
             s->T = (Node **)malloc(s->m * sizeof(Node *));
-            for (i = 0; i < s->m; i++){
-                fprintf(stderr,"\nGrowing tree #%d ... (%d,%d)", i+1, s->min_depth, s->max_depth);
+            for (i = 0; i < s->m; i++)
                 s->T[i] = GROW(s, s->min_depth, s->max_depth);
-                fprintf(stderr,"OK");
-            }
 
             if (opt_id != _TGP_) tensor_dim = _NOTENSOR_;
             else tensor_dim = va_arg(arg, int);
@@ -569,7 +566,8 @@ void DestroySearchSpace(SearchSpace **s, int opt_id){
             }
         }
     else{
-        if ((opt_id == _GP_) || (opt_id == _TGP_)){            
+        
+        if ((opt_id == _GP_) || (opt_id == _TGP_)){
             for (i = 0; i < tmp->m; i++)
                 if (tmp->T[i]) DestroyTree(&(tmp->T[i]));
             if (tmp->T) free(tmp->T);
@@ -579,7 +577,7 @@ void DestroySearchSpace(SearchSpace **s, int opt_id){
                 if (tmp->terminal[i]) free(tmp->terminal[i]);
             }
             if (tmp->a) free(tmp->a);
-            free(tmp->terminal);
+            if (tmp->terminal) free(tmp->terminal);
 
             if (tmp->function){
                 for (i = 0; i < tmp->n_functions; i++)
@@ -587,21 +585,22 @@ void DestroySearchSpace(SearchSpace **s, int opt_id){
                 free(tmp->function);
             }
 
-            if (tmp->constant){
-                for (i = 0; i < tmp->n; i++)
-                    if (tmp->constant[i]) free(tmp->constant[i]);
-                free(tmp->constant);
-            }
-            
-            if (tmp->t_constant){
-                for (i = 0; i < N_CONSTANTS; i++){
-                    for(j = 0; j < tmp->n; j++)
-                        if(tmp->t_constant[i][j]) free(tmp->t_constant[i][j]);
-                    if(tmp->t_constant[i]) free(tmp->t_constant[i]);
+            if (opt_id == _GP_){
+                if (tmp->constant){
+                    for (i = 0; i < tmp->n; i++)
+                        if (tmp->constant[i]) free(tmp->constant[i]);
+                    free(tmp->constant);
                 }
-                free(tmp->t_constant);
+            }else{ /* Tensor-based GP */
+                if (tmp->t_constant){
+                    for (i = 0; i < N_CONSTANTS; i++){
+                        for(j = 0; j < tmp->n; j++)
+                            if(tmp->t_constant[i][j]) free(tmp->t_constant[i][j]);
+                        if(tmp->t_constant[i]) free(tmp->t_constant[i]);
+                    }
+                    free(tmp->t_constant);
+                }
             }
-            
             if (tmp->tree_fit) free(tmp->tree_fit);
             if (tmp->g) free(tmp->g);
         }
