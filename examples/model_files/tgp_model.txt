@@ -1,4 +1,4 @@
-10 2 7 4 # <n_trees> <dimension> <max_iterations> <tensor_dimension>
+10 2 100 4 # <n_trees> <dimension> <max_iterations> <tensor_dimension>
 0.3 0.3 0.4 # <probability_of_reproduction> <probability_of_mutation> <probability_of_crossover>
 2 5 # <minimum_depth_tree> <maximum_depth_tree>
 TSUM TMUL TDIV TSUB # function nodes
