@@ -928,11 +928,10 @@ void EvaluateSearchSpace(SearchSpace *s, int opt_id, prtFun Evaluate, va_list ar
         individual = CreateAgent(s->n, _TGP_, s->tensor_dim);
         tmp = (double *)calloc(s->n, sizeof(double));
         for (i = 0; i < s->m; i++){
-            fprintf(stderr,"\nEvaluating tree #%d ... ", i+1);
             t_tmp = RunTTree(s, s->T[i]);
             CheckTensorLimits(s, t_tmp, s->tensor_dim);
             for(j = 0; j < s->n; j++)
-                tmp[j] = TensorSpan(s->LB[i], s->UB[i], t_tmp[j], s->tensor_dim);
+                tmp[j] = TensorSpan(s->LB[j], s->UB[j], t_tmp[j], s->tensor_dim);
             memcpy(individual->x, tmp, s->n * sizeof(double)); /* It runs over a tree computing the output individual (current solution) */
             DestroyTensor(&t_tmp, s->n);
             
