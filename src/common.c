@@ -2139,7 +2139,7 @@ int getSizeTree(Node *T)
         return 0;
 }
 
-/* It performs the mutation of a tree T at the p-th node
+/* It performs the mutation of a tree T
 Paremeters:
 s: search space
 T: pointer to the node to be mutated
