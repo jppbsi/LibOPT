@@ -31,6 +31,7 @@ $(OBJ)/abc.o \
 $(OBJ)/hs.o \
 $(OBJ)/bso.o \
 $(OBJ)/loa.o \
+$(OBJ)/de.o \
 
 	ar csr $(LIB)/libopt.a \
 $(OBJ)/common.o \
@@ -50,6 +51,7 @@ $(OBJ)/abc.o \
 $(OBJ)/hs.o \
 $(OBJ)/bso.o \
 $(OBJ)/loa.o \
+$(OBJ)/de.o \
 
 $(OBJ)/common.o: $(SRC)/common.c
 	$(CC) $(FLAGS) -I $(INCLUDE) -c $(SRC)/common.c -o $(OBJ)/common.o
@@ -158,6 +160,9 @@ BSO: examples/BSO.c
 
 LOA: examples/LOA.c
 	$(CC) $(FLAGS) examples/LOA.c -o examples/bin/LOA -I $(INCLUDE) -L $(LIB) -lopt -lm;
+
+DE: examples/DE.c
+	$(CC) $(FLAGS) examples/DE.c -o examples/bin/DE -I $(INCLUDE) -L $(LIB) -lopt -lm;
 
 TensorPSO: examples/TensorPSO.c
 	$(CC) $(FLAGS) examples/TensorPSO.c -o examples/bin/TensorPSO -I $(INCLUDE) -L $(LIB) -lopt -lm;

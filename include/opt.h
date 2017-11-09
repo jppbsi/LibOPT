@@ -20,6 +20,7 @@ extern "C" {
 #define _HS_ 12 /* Harmony Search */
 #define _BSO_ 13 /* Brain Storm Optimization */
 #define _LOA_ 14 /* Lion Optimization Algorithm */
+#define _DE_ 15 /* Differential Evolution */
 /**************************/
 
 /* Tensor-based Meta-heuristics */
