@@ -104,6 +104,9 @@ $(OBJ)/bso.o: $(SRC)/bso.c
 $(OBJ)/loa.o: $(SRC)/loa.c
 	$(CC) $(FLAGS) -I $(INCLUDE) -c $(SRC)/loa.c -o $(OBJ)/loa.o
 
+$(OBJ)/de.o: $(SRC)/de.c
+	$(CC) $(FLAGS) -I $(INCLUDE) -c $(SRC)/de.c -o $(OBJ)/de.o
+
 PSO: examples/PSO.c
 	$(CC) $(FLAGS) examples/PSO.c -o examples/bin/PSO -I $(INCLUDE) -L $(LIB) -lopt -lm;
 
