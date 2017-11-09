@@ -8,7 +8,7 @@ CC=gcc
 FLAGS=  -g -O0
 CFLAGS=''
 
-all: libopt PSO AIWPSO BA FPA FA CS GP GA BHA WCA MBO GSGP BGSGP ABC HS IHS PSF-HS BSO LOA TensorPSO TensorAIWPSO TensorBA TensorFPA TensorFA TensorCS TensorBHA TensorABC TensorHS TensorIHS TensorPSF-HS TensorGP
+all: libopt PSO AIWPSO BA FPA FA CS GP GA BHA WCA MBO GSGP BGSGP ABC HS IHS PSF-HS BSO LOA DE TensorPSO TensorAIWPSO TensorBA TensorFPA TensorFA TensorCS TensorBHA TensorABC TensorHS TensorIHS TensorPSF-HS TensorGP
 
 libopt: $(LIB)/libopt.a
 	echo "libopt.a built..."
