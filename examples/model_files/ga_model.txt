@@ -1,4 +1,4 @@
 10 2 10 # <n_particles> <dimension> <max_iterations>
-0.1 0.4 0.5 # <probability of reproduction> <probability of mutation> <probability of crossover> 
+0.2 # <probability of mutation>
 -1 4 # <LB> <UB> x[0]
 -1 4 # <LB> <UB> x[1]
