@@ -1129,24 +1129,9 @@ char CheckSearchSpace(SearchSpace *s, int opt_id)
     case _GP_:
     case _TGP_:
     case _GA_:
-        if (isnan((float)s->pReproduction))
-        {
-            fprintf(stderr, "\n  -> Probability of reproduction undefined.");
-            OK = 0;
-        }
         if (isnan((float)s->pMutation))
         {
             fprintf(stderr, "\n  -> Probability of mutation undefined.");
-            OK = 0;
-        }
-        if (isnan((float)s->pCrossover))
-        {
-            fprintf(stderr, "\n  -> Probability of crossover undefined.");
-            OK = 0;
-        }
-        if (s->pReproduction + s->pMutation + s->pCrossover != 1)
-        {
-            fprintf(stderr, "\n  -> Summation of probabilites (reproduction, mutation and crossover) should be equal to 1.");
             OK = 0;
         }
         break;
@@ -1525,7 +1510,7 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
         case _GA_:
             s = CreateSearchSpace(m, n, _GA_);
             s->iterations = iterations;
-            fscanf(fp, "%lf %lf %lf", &(s->pReproduction), &(s->pMutation), &(s->pCrossover));
+            fscanf(fp, "%lf", &(s->pMutation));
             WaiveComment(fp);
             break;
         case _BHA_:
@@ -1801,6 +1786,74 @@ int *RouletteSelection(SearchSpace *s, int k)
     {
         D[i].id = i;
         D[i].val = 1 / s->tree_fit[i];
+        sum += D[i].val;
+    }
+    for (i = 0; i < s->m; i++)
+        D[i].val /= sum;
+
+    /* It sorts the population by ascending values of fitness */
+    qsort(D, s->m, sizeof(Data), SortDataByVal);
+
+    /* It computes the accumulate normalized fitness */
+    accum = (double *)calloc(s->m, sizeof(double));
+    for (i = 0; i < s->m; i++)
+    {
+        for (j = i; j >= 0; j--)
+            accum[i] += D[j].val;
+    }
+
+    for (j = 0; j < k; j++)
+    {
+        /* It picks up the selected individual */
+        prob = GenerateUniformRandomNumber(0, 1);
+        i = 0;
+        while ((accum[i] < prob) && (i < s->m))
+            i++;
+        if (i)
+            elem[j] = D[i - 1].id;
+        else
+            elem[j] = D[i].id;
+        elem[j] = D[i].id;
+    }
+
+    free(D);
+    free(accum);
+
+    return elem;
+}
+
+int *RouletteSelectionGA(SearchSpace *s, int k)
+{
+    if (!s)
+    {
+        fprintf(stderr, "\nSearch space not allocated @RouletteSelectionGA.\n");
+        return NULL;
+    }
+
+    if (k < 1)
+    {
+        fprintf(stderr, "\nInvalid input @RouletteSelectionGA.\n");
+        return NULL;
+    }
+
+    int *elem = NULL, i, j;
+    double min, sum, *accum = NULL, prob;
+    Data *D = NULL;
+
+    elem = (int *)malloc(k * sizeof(int));
+    D = (Data *)malloc(s->m * sizeof(Data));
+
+    /* It normalizes the fitness of each agent ***/
+    sum = 0;
+    min = DBL_MAX;
+
+    for(i = 0; i < s->m; i++)
+        min = s->a[i]->fit < min ? s->a[i]->fit : min;
+
+    for (i = 0; i < s->m; i++) {
+        D[i].id = i;
+        D[i].val = s->a[i]->fit + min != 0 ? ((-2)*min) : 0;
+        D[i].val = 1 / D[i].val;
         sum += D[i].val;
     }
     for (i = 0; i < s->m; i++)

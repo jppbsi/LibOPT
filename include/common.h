@@ -211,6 +211,7 @@ void WaiveComment(FILE *fp); /* It waives a comment in a model file */
 SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id); /* It loads a search space with parameters specified in a file */
 int getFUNCTIONid(char *s); /* It returns the identifier of the function used as input */
 int *RouletteSelection(SearchSpace *s, int k); /* It selects k elements based on the roulette selection method */
+int *RouletteSelectionGA(SearchSpace *s, int k); /* It selects k elements based on the roulette selection method */
 /**************************/
 
 /* Tree-related functions */
