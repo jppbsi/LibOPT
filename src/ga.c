@@ -95,6 +95,8 @@ void runGA(SearchSpace *s, prtFun Evaluate, ...)
 		}
 
 		EvaluateSearchSpace(s, _GA_, Evaluate, arg);
+
+		free(selection);
 	}
 
 	fprintf(stderr, "\nOK (minimum fitness value %lf)\n", s->gfit);
@@ -103,7 +105,6 @@ void runGA(SearchSpace *s, prtFun Evaluate, ...)
 		free(tmp[i]);
 
 	free(tmp);
-	free(selection);
 
 
 	va_end(arg);
