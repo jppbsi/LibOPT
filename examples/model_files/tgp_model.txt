@@ -1,8 +1,8 @@
-10 2 7 # <n_trees> <dimension> <max_iterations>
+10 2 100 4 # <n_trees> <dimension> <max_iterations> <tensor_dimension>
 0.3 0.3 0.4 # <probability_of_reproduction> <probability_of_mutation> <probability_of_crossover>
 2 5 # <minimum_depth_tree> <maximum_depth_tree>
-SUM MUL DIV SUB # function nodes
+TSUM TMUL TDIV TSUB # function nodes
 PARAM CONST # terminal nodes
-1 1 # <integer(binary)-optimization problem? 1 - YES|0 - NO> <the variables have different ranges? 1 - YES|0 - NO>
+0 1 # <integer(binary)-optimization problem? 1 - YES|0 - NO> <the variables have different ranges? 1 - YES|0 - NO>
 -5.0 5.0 # <LB> <UB> x[0]
 -7.0 7.0 # <LB> <UB> x[1]

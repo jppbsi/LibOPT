@@ -57,7 +57,7 @@ void runBHA(SearchSpace *s, prtFun Evaluate, ...)
             CheckAgentLimits(s, s->a[i]);
             s->a[i]->fit = Evaluate(s->a[i], arg); /* It executes the fitness function for agent i */
 
-            tmp = CopyAgent(s->a[i], _BHA_);
+            tmp = CopyAgent(s->a[i], _BHA_, _NOTENSOR_);
             if (s->a[i]->fit < s->gfit)
             {
                 fitValue = s->gfit;
@@ -141,7 +141,7 @@ void runTensorBHA(SearchSpace *s, int tensor_id, prtFun Evaluate, ...)
                 s->a[i]->x[j] = TensorSpan(s->LB[j], s->UB[j], s->a[i]->t[j], tensor_id);
             s->a[i]->fit = Evaluate(s->a[i], arg); /* It executes the fitness function for agent i */
 
-            tmp = CopyAgent(s->a[i], _BHA_);
+            tmp = CopyAgent(s->a[i], _BHA_, _NOTENSOR_);
             tmp_t = CopyTensor(s->a[i]->t, s->n, tensor_id);
             if (s->a[i]->fit < s->gfit)
             {
@@ -160,7 +160,7 @@ void runTensorBHA(SearchSpace *s, int tensor_id, prtFun Evaluate, ...)
                 }
             }
             DestroyAgent(&tmp, _BHA_);
-            DeallocateTensor(&tmp_t, s->n);
+            DestroyTensor(&tmp_t, s->n);
             sum = sum + s->a[i]->fit;
         }
 
@@ -173,7 +173,7 @@ void runTensorBHA(SearchSpace *s, int tensor_id, prtFun Evaluate, ...)
             dist = TensorEuclideanDistance(s->t_g, s->a[i]->t, s->n, tensor_id); /* It obtains the euclidean distance */
             if (dist < radius)
             {
-                DeallocateTensor(&s->a[i]->t, s->n);
+                DestroyTensor(&s->a[i]->t, s->n);
                 DestroyAgent(&(s->a[i]), _BHA_);
                 s->a[i] = GenerateNewAgent(s, _BHA_);
                 s->a[i]->t = GenerateNewTensor(s, tensor_id);

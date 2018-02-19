@@ -179,7 +179,7 @@ void runBSO(SearchSpace *s, prtFun Evaluate, ...)
 
 	ideas_per_cluster = (int **)malloc(s->k * sizeof(int *));
 	best = (int *)malloc(s->k * sizeof(int));
-	nidea = CreateAgent(s->n, _BSO_);
+	nidea = CreateAgent(s->n, _BSO_, _NOTENSOR_);
 
 	EvaluateSearchSpace(s, _BSO_, Evaluate, arg); /* Initial evaluation */
 

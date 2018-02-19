@@ -46,7 +46,7 @@ void runFA(SearchSpace *s, prtFun Evaluate, ...)
 
         EvaluateSearchSpace(s, _FA_, Evaluate, arg); /* Initial evaluation of the search space */
         for (i = 0; i < s->m; i++)
-            tmp[i] = CopyAgent(s->a[i], _FA_);
+            tmp[i] = CopyAgent(s->a[i], _FA_, _NOTENSOR_);
         qsort(tmp, s->m, sizeof(Agent **), SortAgent); /* Sorts all fireflies according to their fitness. First position gets the best firefly. */
 
         for (i = 0; i < s->m; i++)
@@ -116,7 +116,7 @@ void runTensorFA(SearchSpace *s, int tensor_id, prtFun Evaluate, ...)
         EvaluateTensorSearchSpace(s, _FA_, tensor_id, Evaluate, arg); /* Initial evaluation of the search space */
         for (i = 0; i < s->m; i++)
         {
-            tmp[i] = CopyAgent(s->a[i], _FA_);
+            tmp[i] = CopyAgent(s->a[i], _FA_, _NOTENSOR_);
             tmp_t[i] = CopyTensor(s->a[i]->t, s->n, tensor_id);
         }
         qsort(tmp, s->m, sizeof(Agent **), SortAgent); /* Sorts all fireflies according to their fitness. First position gets the best firefly. */
@@ -148,7 +148,7 @@ void runTensorFA(SearchSpace *s, int tensor_id, prtFun Evaluate, ...)
             for (j = 0; j < s->n; j++)
                 s->a[i]->x[j] = TensorSpan(s->LB[j], s->UB[j], s->a[i]->t[j], tensor_id);
             DestroyAgent(&tmp[i], _FA_);
-            DeallocateTensor(&tmp_t[i], s->n);
+            DestroyTensor(&tmp_t[i], s->n);
         }
 
         va_copy(arg, argtmp);

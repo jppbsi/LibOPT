@@ -85,6 +85,7 @@ typedef struct SearchSpace_{
     int best; /* index of the best agent */
     double gfit; /* global best fitness */
     int is_integer_opt; /* integer-valued optimization problem? */
+    int tensor_dim; /* dimension of the tensor */
 
     /* PSO */
     double w; /* inertia weight */
@@ -129,6 +130,9 @@ typedef struct SearchSpace_{
     Node **T; /* pointer to the tree */
     double *tree_fit; /* fitness of each tree (in GP, the number of agents is different from the number of trees) */
 
+    /* TGP */
+    double ***t_constant; /* matrix with the tensor-based random constants */
+    
     /* MBO */
     int X; /* number of neighbour solutions to be shared with the next solution */
     int M; /* number of tours, i.e., the number of iterations for the leader */
@@ -177,10 +181,10 @@ typedef struct SearchSpace_{
 typedef double (*prtFun)(Agent *, va_list arg); /* Pointer to the function used to evaluate agents */
 
 /* Agent-related functions */
-Agent *CreateAgent(int n, int opt_id); /* It creates an agent */
+Agent *CreateAgent(int n, int opt_id, int tensor_dim); /* It creates an agent */
 void DestroyAgent(Agent **a, int opt_id); /* It deallocates an agent */
 void CheckAgentLimits(SearchSpace *s, Agent *a); /* It checks whether a given agent has excedeed boundaries */
-Agent *CopyAgent(Agent *a, int opt_id); /* It copies an agent */
+Agent *CopyAgent(Agent *a, int opt_id, int tensor_dim); /* It copies an agent */
 void EvaluateAgent(SearchSpace *s, Agent *a, int opt_id, prtFun Evaluate, va_list arg); /* It evaluate an agent according to each technique */
 Agent *GenerateNewAgent(SearchSpace *s, int opt_id); /* It generates a new agent according to each technique */
 /**************************/
@@ -219,7 +223,7 @@ double *RunTree(SearchSpace *s, Node *T); /* It runs a given tree and outputs it
 Node *CopyTree(Node *T); /* It copies a given tree */
 void PreFixTravel4Copy(Node *T, Node *Parent); /* It performs a prefix travel on a tree */
 int getSizeTree(Node *T); /* It returns the size of a tree (number of nodes) */
-Node *Mutation(SearchSpace *s, Node *T, float p); /* It performs the mutation of a tree T at the p-th node */
+Node *Mutation(SearchSpace *s, Node *T, float p); /* It performs the mutation of a tree T */
 Node **Crossover(Node *Father, Node *Mother, float p); /* It performs the crossover between father and mother trees */
 Node *PreFixPositioningTree(Node *T, int pos, char *left_son, int status, int *ctr); /* It returns the parent of the pos-th node using a prefix travel */
 Node *SGXB(SearchSpace *s, Node *T1_tmp, Node *T2_tmp); /* It performs the Geometric Semantic Genetic Programming crossover operator for boolean functions */
@@ -229,17 +233,18 @@ Node *SGME(SearchSpace *s, Node *T1_tmp, Node *T2_tmp); /* It performs the Geome
 /***********************/
 
 /* Tensor-related functions */
-double **AllocateTensor(int n, int tensor_id); /* It allocates a new tensor */
-void DeallocateTensor(double ***t, int n); /* It deallocates a tensor */
+double **CreateTensor(int n, int tensor_dim); /* It allocates a new tensor */
+void DestroyTensor(double ***t, int n); /* It deallocates a tensor */
 void InitializeTensorSearchSpace(SearchSpace *s, int tensor_id); /* It initializes an allocated search space with tensors */
 void ShowTensorSearchSpace(SearchSpace *s, int tensor_id); /* It shows a search space with tensors */
-void CheckTensorLimits(SearchSpace *s, double **t, int tensor_id); /* It checks whether a given tensor has excedeed boundaries */
+void CheckTensorLimits(SearchSpace *s, double **t, int tensor_dim); /* It checks whether a given tensor has excedeed boundaries */
 double **CopyTensor(double **t, int n, int tensor_id); /* It copies a given tensor */
 double **GenerateNewTensor(SearchSpace *s, int tensor_id); /* It generates a new tensor */
-double TensorNorm(double *t, int tensor_id); /* It computes the norm of a given tensor */
-double TensorSpan(double L, double U, double *t, int tensor_id); /* It maps the quaternion value to a real one bounded by [L,U] */
+double TensorNorm(double *t, int tensor_dim); /* It computes the norm of a given tensor */
+double TensorSpan(double L, double U, double *t, int tensor_dim); /* It maps the tensor value to a real one bounded by [L,U] */
 double TensorEuclideanDistance(double **t, double **s, int n, int tensor_id); /* It calculates the Euclidean Distance between tensors */
 void EvaluateTensorSearchSpace(SearchSpace *s, int opt_id, int tensor_id, prtFun Evaluate, va_list arg); /* It evaluates a tensor-based search space */
+double **RunTTree(SearchSpace *s, Node *T); /* It runs a given tensor-based tree and outputs its solution array */
 /***********************/
 
 #endif

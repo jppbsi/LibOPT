@@ -93,7 +93,7 @@ void runBA(SearchSpace *s, prtFun Evaluate, ...)
 
             /* Equation 3
             Here, we generate a temporary agent (bat) */
-            tmp = CopyAgent(s->a[i], _BA_);
+            tmp = CopyAgent(s->a[i], _BA_, _NOTENSOR_);
             for (j = 0; j < s->n; j++)
                 tmp->x[j] = tmp->x[j] + tmp->v[j];
             /**************/
@@ -111,7 +111,7 @@ void runBA(SearchSpace *s, prtFun Evaluate, ...)
             if ((fitValue < s->a[i]->fit) && (prob < s->a[i]->A))
             { /* We accept the new solution */
                 DestroyAgent(&(s->a[i]), _BA_);
-                s->a[i] = CopyAgent(tmp, _BA_);
+                s->a[i] = CopyAgent(tmp, _BA_, _NOTENSOR_);
                 s->a[i]->fit = fitValue;
                 s->a[i]->r = s->r * (1 - exp(-alpha * t));
                 s->a[i]->A = s->A * alpha;
@@ -185,7 +185,7 @@ double **GenerateNewBatTensor(SearchSpace *s, int tensor_id)
     double **t = NULL;
     int j, k;
 
-    t = AllocateTensor(s->n, tensor_id);
+    t = CreateTensor(s->n, tensor_id);
     for (j = 0; j < s->n; j++)
         for (k = 0; k < tensor_id; k++)
             t[j][k] = s->t_g[j][k] + 0.001 * GenerateUniformRandomNumber(-1, 1);
@@ -239,7 +239,7 @@ void runTensorBA(SearchSpace *s, int tensor_id, prtFun Evaluate, ...)
 
             /* Equation 3
             Here, we generate a temporary agent (bat) */
-            tmp = CopyAgent(s->a[i], _BA_);
+            tmp = CopyAgent(s->a[i], _BA_, _NOTENSOR_);
             tmp_t = CopyTensor(s->a[i]->t, s->n, tensor_id);
             tmp_t_v = CopyTensor(s->a[i]->t_v, s->n, tensor_id);
             for (j = 0; j < s->n; j++)
@@ -250,7 +250,7 @@ void runTensorBA(SearchSpace *s, int tensor_id, prtFun Evaluate, ...)
             prob = GenerateUniformRandomNumber(0, 1);
             if (prob > s->a[i]->r)
             {
-                DeallocateTensor(&tmp_t, s->n);
+                DestroyTensor(&tmp_t, s->n);
                 DestroyAgent(&tmp, _BA_);
                 tmp = GenerateNewAgent(s, _BA_);
                 tmp_t = GenerateNewBatTensor(s, tensor_id);
@@ -263,10 +263,10 @@ void runTensorBA(SearchSpace *s, int tensor_id, prtFun Evaluate, ...)
             prob = GenerateUniformRandomNumber(0, 1);
             if ((fitValue < s->a[i]->fit) && (prob < s->a[i]->A))
             { /* We accept the new solution */
-                DeallocateTensor(&s->a[i]->t, s->n);
-                DeallocateTensor(&s->a[i]->t_v, s->n);
+                DestroyTensor(&s->a[i]->t, s->n);
+                DestroyTensor(&s->a[i]->t_v, s->n);
                 DestroyAgent(&(s->a[i]), _BA_);
-                s->a[i] = CopyAgent(tmp, _BA_);
+                s->a[i] = CopyAgent(tmp, _BA_, _NOTENSOR_);
                 s->a[i]->fit = fitValue;
                 s->a[i]->t = CopyTensor(tmp_t, s->n, tensor_id);
                 s->a[i]->t_v = CopyTensor(tmp_t_v, s->n, tensor_id);
@@ -277,15 +277,15 @@ void runTensorBA(SearchSpace *s, int tensor_id, prtFun Evaluate, ...)
             if (fitValue < s->gfit)
             { /* update the global best */
                 s->gfit = fitValue;
-                DeallocateTensor(&s->t_g, s->n);
+                DestroyTensor(&s->t_g, s->n);
                 s->t_g = CopyTensor(tmp_t, s->n, tensor_id);
                 for (j = 0; j < s->n; j++)
                     s->g[j] = tmp->x[j];
             }
 
             DestroyAgent(&tmp, _BA_);
-            DeallocateTensor(&tmp_t, s->n);
-            DeallocateTensor(&tmp_t_v, s->n);
+            DestroyTensor(&tmp_t, s->n);
+            DestroyTensor(&tmp_t_v, s->n);
         }
 
         fprintf(stderr, "OK (minimum fitness value %lf)", s->gfit);

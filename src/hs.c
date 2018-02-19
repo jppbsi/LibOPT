@@ -53,7 +53,7 @@ void runHS(SearchSpace *s, prtFun Evaluate, ...)
         if ((fitValue < s->a[s->m - 1]->fit))
         { /* We accept the new solution */
             DestroyAgent(&(s->a[s->m - 1]), _HS_);
-            s->a[s->m - 1] = CopyAgent(tmp, _HS_);
+            s->a[s->m - 1] = CopyAgent(tmp, _HS_, _NOTENSOR_);
             s->a[s->m - 1]->fit = fitValue;
         }
 
@@ -112,7 +112,7 @@ void runIHS(SearchSpace *s, prtFun Evaluate, ...)
         if ((fitValue < s->a[s->m - 1]->fit))
         { /* We accept the new solution */
             DestroyAgent(&(s->a[s->m - 1]), _HS_);
-            s->a[s->m - 1] = CopyAgent(tmp, _HS_);
+            s->a[s->m - 1] = CopyAgent(tmp, _HS_, _NOTENSOR_);
             s->a[s->m - 1]->fit = fitValue;
         }
 
@@ -192,7 +192,7 @@ Agent *GenerateNewPSF(SearchSpace *s, double *HMCR, double *PAR, char *op_type)
     int i, j;
     double r, signal;
 
-    a = CreateAgent(s->n, _HS_);
+    a = CreateAgent(s->n, _HS_, _NOTENSOR_);
 
     for (j = 0; j < s->n; j++)
     {
@@ -244,7 +244,7 @@ double **GenerateNewPSFTensor(SearchSpace *s, int tensor_id, double **HMCR, doub
     int i, j, k;
     double r, signal;
 
-    t = AllocateTensor(s->n, tensor_id);
+    t = CreateTensor(s->n, tensor_id);
 
     for (j = 0; j < s->n; j++)
     {
@@ -330,7 +330,7 @@ void runPSF_HS(SearchSpace *s, prtFun Evaluate, ...)
                 for (j = 0; j < s->n; j++)
                     rehearsal[i][j] = op_type[j];
                 DestroyAgent(&(s->a[i]), _HS_);
-                s->a[i] = CopyAgent(tmp, _HS_);
+                s->a[i] = CopyAgent(tmp, _HS_, _NOTENSOR_);
                 DestroyAgent(&tmp, _HS_);
             }
             EvaluateSearchSpace(s, _HS_, Evaluate, arg);
@@ -347,7 +347,7 @@ void runPSF_HS(SearchSpace *s, prtFun Evaluate, ...)
         if ((fitValue < s->a[s->m - 1]->fit))
         { /* We accept the new solution */
             DestroyAgent(&(s->a[s->m - 1]), _HS_);
-            s->a[s->m - 1] = CopyAgent(tmp, _HS_);
+            s->a[s->m - 1] = CopyAgent(tmp, _HS_, _NOTENSOR_);
             s->a[s->m - 1]->fit = fitValue;
             for (j = 0; j < s->n; j++)
                 rehearsal[s->m - 1][j] = op_type[j];
@@ -407,7 +407,7 @@ void runTensorHS(SearchSpace *s, int tensor_id, prtFun Evaluate, ...)
 
         qsort(s->a, s->m, sizeof(Agent **), SortAgent); /* Sorts all harmonies according to their fitness. First position gets the best harmony. */
 
-        tmp = CreateAgent(s->n, _HS_);
+        tmp = CreateAgent(s->n, _HS_, _NOTENSOR_);
         tmp_t = GenerateNewTensor(s, tensor_id);
 
         for (j = 0; j < s->n; j++)
@@ -449,9 +449,9 @@ void runTensorHS(SearchSpace *s, int tensor_id, prtFun Evaluate, ...)
 
         if ((fitValue < s->a[s->m - 1]->fit))
         { /* We accept the new solution */
-            DeallocateTensor(&s->a[s->m - 1]->t, s->n);
+            DestroyTensor(&s->a[s->m - 1]->t, s->n);
             DestroyAgent(&(s->a[s->m - 1]), _HS_);
-            s->a[s->m - 1] = CopyAgent(tmp, _HS_);
+            s->a[s->m - 1] = CopyAgent(tmp, _HS_, _NOTENSOR_);
             s->a[s->m - 1]->fit = fitValue;
             s->a[s->m - 1]->t = CopyTensor(tmp_t, s->n, tensor_id);
         }
@@ -464,7 +464,7 @@ void runTensorHS(SearchSpace *s, int tensor_id, prtFun Evaluate, ...)
         }
 
         DestroyAgent(&tmp, _HS_);
-        DeallocateTensor(&tmp_t, s->n);
+        DestroyTensor(&tmp_t, s->n);
 
         fprintf(stderr, "OK (minimum fitness value %lf)", s->gfit);
     }
@@ -507,7 +507,7 @@ void runTensorIHS(SearchSpace *s, int tensor_id, prtFun Evaluate, ...)
         s->PAR = s->PAR_min + ((s->PAR_max - s->PAR_min) / s->iterations) * t;
         s->bw = s->bw_max * exp((log(s->bw_min / s->bw_max) / s->iterations) * t);
 
-        tmp = CreateAgent(s->n, _HS_);
+        tmp = CreateAgent(s->n, _HS_, _NOTENSOR_);
         tmp_t = GenerateNewTensor(s, tensor_id);
 
         for (j = 0; j < s->n; j++)
@@ -549,9 +549,9 @@ void runTensorIHS(SearchSpace *s, int tensor_id, prtFun Evaluate, ...)
 
         if ((fitValue < s->a[s->m - 1]->fit))
         { /* We accept the new solution */
-            DeallocateTensor(&s->a[s->m - 1]->t, s->n);
+            DestroyTensor(&s->a[s->m - 1]->t, s->n);
             DestroyAgent(&(s->a[s->m - 1]), _HS_);
-            s->a[s->m - 1] = CopyAgent(tmp, _HS_);
+            s->a[s->m - 1] = CopyAgent(tmp, _HS_, _NOTENSOR_);
             s->a[s->m - 1]->fit = fitValue;
             s->a[s->m - 1]->t = CopyTensor(tmp_t, s->n, tensor_id);
         }
@@ -564,7 +564,7 @@ void runTensorIHS(SearchSpace *s, int tensor_id, prtFun Evaluate, ...)
         }
 
         DestroyAgent(&tmp, _HS_);
-        DeallocateTensor(&tmp_t, s->n);
+        DestroyTensor(&tmp_t, s->n);
 
         fprintf(stderr, "OK (minimum fitness value %lf)", s->gfit);
     }
@@ -632,7 +632,7 @@ void runTensorPSF_HS(SearchSpace *s, int tensor_id, prtFun Evaluate, ...)
                         PAR[j][l] = s->PAR;
                     }
                 }
-                tmp = CreateAgent(s->n, _HS_);
+                tmp = CreateAgent(s->n, _HS_, _NOTENSOR_);
                 tmp_t = GenerateNewPSFTensor(s, tensor_id, HMCR, PAR, op_type);
                 CheckTensorLimits(s, tmp_t, tensor_id);
                 for (j = 0; j < s->n; j++)
@@ -641,19 +641,19 @@ void runTensorPSF_HS(SearchSpace *s, int tensor_id, prtFun Evaluate, ...)
                 for (j = 0; j < s->n; j++)
                     for (l = 0; l < tensor_id; l++)
                         rehearsal[i][j][l] = op_type[j][l];
-                DeallocateTensor(&s->a[i]->t, s->n);
+                DestroyTensor(&s->a[i]->t, s->n);
                 DestroyAgent(&(s->a[i]), _HS_);
-                s->a[i] = CopyAgent(tmp, _HS_);
+                s->a[i] = CopyAgent(tmp, _HS_, _NOTENSOR_);
                 s->a[i]->t = CopyTensor(tmp_t, s->n, tensor_id);
                 DestroyAgent(&tmp, _HS_);
-                DeallocateTensor(&tmp_t, s->n);
+                DestroyTensor(&tmp_t, s->n);
             }
             EvaluateTensorSearchSpace(s, _HS_, tensor_id, Evaluate, arg);
         }
 
         qsort(s->a, s->m, sizeof(Agent **), SortAgent); /* Sorts all harmonies according to their fitness. First position gets the best harmony. */
 
-        tmp = CreateAgent(s->n, _HS_);
+        tmp = CreateAgent(s->n, _HS_, _NOTENSOR_);
         tmp_t = GenerateNewPSFTensor(s, tensor_id, HMCR, PAR, op_type);
         CheckTensorLimits(s, tmp_t, tensor_id);
         for (j = 0; j < s->n; j++)
@@ -665,9 +665,9 @@ void runTensorPSF_HS(SearchSpace *s, int tensor_id, prtFun Evaluate, ...)
 
         if ((fitValue < s->a[s->m - 1]->fit))
         { /* We accept the new solution */
-            DeallocateTensor(&s->a[s->m - 1]->t, s->n);
+            DestroyTensor(&s->a[s->m - 1]->t, s->n);
             DestroyAgent(&(s->a[s->m - 1]), _HS_);
-            s->a[s->m - 1] = CopyAgent(tmp, _HS_);
+            s->a[s->m - 1] = CopyAgent(tmp, _HS_, _NOTENSOR_);
             s->a[s->m - 1]->fit = fitValue;
             s->a[s->m - 1]->t = CopyTensor(tmp_t, s->n, tensor_id);
             for (j = 0; j < s->n; j++)
@@ -683,7 +683,7 @@ void runTensorPSF_HS(SearchSpace *s, int tensor_id, prtFun Evaluate, ...)
         }
 
         DestroyAgent(&tmp, _HS_);
-        DeallocateTensor(&tmp_t, s->n);
+        DestroyTensor(&tmp_t, s->n);
 
         fprintf(stderr, "OK (minimum fitness value %lf)", s->gfit);
     }

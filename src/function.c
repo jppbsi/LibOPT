@@ -3498,6 +3498,114 @@ double *f_NOT_(double *x, int n)
 }
 /*****************************/
 
+/* Tensor-based Genetic Programming general-purpose functions */
+/* It computes the tensor sum of two mxn-dimensional tensors
+Parameters:
+x, y:tensors
+m,n n: dimensions */
+double **f_TSUM_(double **x, double **y, int m, int n)
+{
+    if (!x || !y)
+    {
+        fprintf(stderr, "\nInvalid input parameters @f_TSUM_.\n");
+        exit(-1);
+    }
+
+    int i, j;
+    double **out = NULL;
+
+    out = (double **)malloc(m * sizeof(double));
+    for (i = 0; i < m; i++){
+	out[i] = (double *)malloc(n * sizeof(double));
+	
+	for(j = 0; j < n; j++)
+	    out[i][j] = x[i][j] + y[i][j];
+    }
+
+    return out;
+}
+
+/* It computes the tensor subtraction of two mxn-dimensional tensors
+Parameters:
+x, y:tensors
+m,n n: dimensions */
+double **f_TSUB_(double **x, double **y, int m, int n)
+{
+    if (!x || !y)
+    {
+        fprintf(stderr, "\nInvalid input parameters @f_TSUB_.\n");
+        exit(-1);
+    }
+
+    int i, j;
+    double **out = NULL;
+
+    out = (double **)malloc(m * sizeof(double));
+    for (i = 0; i < m; i++){
+	out[i] = (double *)malloc(n * sizeof(double));
+	
+	for(j = 0; j < n; j++)
+	    out[i][j] = x[i][j] - y[i][j];
+    }
+
+    return out;
+}
+
+/* It computes the tensor multiplication of two mxn-dimensional tensors
+Parameters:
+x, y:tensors
+m,n n: dimensions */
+double **f_TMUL_(double **x, double **y, int m, int n)
+{
+    if (!x || !y)
+    {
+        fprintf(stderr, "\nInvalid input parameters @f_TMUL_.\n");
+        exit(-1);
+    }
+
+    int i, j;
+    double **out = NULL;
+
+    out = (double **)malloc(m * sizeof(double));
+    for (i = 0; i < m; i++){
+	out[i] = (double *)malloc(n * sizeof(double));
+	
+	for(j = 0; j < n; j++)
+	    out[i][j] = x[i][j] * y[i][j];
+    }
+
+    return out;
+}
+
+/* It computes the tensor division (protected) of two mxn-dimensional tensors
+Parameters:
+x, y:tensors
+m,n n: dimensions */
+double **f_TDIV_(double **x, double **y, int m, int n)
+{
+    if (!x || !y)
+    {
+        fprintf(stderr, "\nInvalid input parameters @f_TMUL_.\n");
+        exit(-1);
+    }
+
+    int i, j;
+    double **out = NULL;
+
+    out = (double **)malloc(m * sizeof(double));
+    for (i = 0; i < m; i++){
+	out[i] = (double *)malloc(n * sizeof(double));
+	
+	for(j = 0; j < n; j++){
+            if(!y[i][j]) out[i][j] = 0.0;
+            else out[i][j] = x[i][j]/y[i][j];
+	}
+    }
+
+    return out;
+}
+/*****************************/
+
 /* Math functions */
 /* It computes the logist sigmoid function
 Parameters:

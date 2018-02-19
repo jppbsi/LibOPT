@@ -34,9 +34,14 @@ extern "C" {
 #define _HS_ 12 /* Harmony Search */
 #define _BSO_ 13 /* Brain Storm Optimization */
 #define _LOA_ 14 /* Lion Optimization Algorithm */
+#define _DE_ 15 /* Differential Evolution */
 /**************************/
 
+/* Tensor-based Meta-heuristics */
+#define _TGP_ 106 /* Tensor-based Genetic Programming */
+
 /* Tensors */
+#define _NOTENSOR_ -1 /* No tensor is used */
 #define _QUATERNION_ 4 /* Quaternion Space */
 #define _OCTONION_ 8 /* Octonion Space */
 /**************************/
@@ -67,6 +72,10 @@ extern "C" {
 #define _OR_ 9
 #define _XOR_ 10
 #define _NOT_ 11
+#define _TSUM_ 12
+#define _TSUB_ 13
+#define _TMUL_ 14
+#define _TDIV_ 15
 /**************************/
 
 #include <stdio.h>

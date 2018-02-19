@@ -55,7 +55,7 @@ void runCS(SearchSpace *s, prtFun Evaluate, ...)
         va_copy(arg, argtmp);
 
         nest_i = round(GenerateUniformRandomNumber(0, s->m - 1));
-        tmp = CopyAgent(s->a[nest_i], _CS_);
+        tmp = CopyAgent(s->a[nest_i], _CS_, _NOTENSOR_);
 
         /* Equation 1 */
         L = GenerateLevyDistribution(s->n, s->beta);
@@ -72,7 +72,7 @@ void runCS(SearchSpace *s, prtFun Evaluate, ...)
         if (fitValue < s->a[nest_j]->fit)
         { /* We accept the new solution */
             DestroyAgent(&(s->a[nest_j]), _CS_);
-            s->a[nest_j] = CopyAgent(tmp, _CS_);
+            s->a[nest_j] = CopyAgent(tmp, _CS_, _NOTENSOR_);
             s->a[nest_j]->fit = fitValue;
         }
 
@@ -101,7 +101,7 @@ void runCS(SearchSpace *s, prtFun Evaluate, ...)
             if (fitValue < s->a[i]->fit)
             { /* We accept the new solution */
                 DestroyAgent(&(s->a[i]), _CS_);
-                s->a[i] = CopyAgent(tmp, _CS_);
+                s->a[i] = CopyAgent(tmp, _CS_, _NOTENSOR_);
                 s->a[i]->fit = fitValue;
             }
             DestroyAgent(&tmp, _CS_);
@@ -147,7 +147,7 @@ void runTensorCS(SearchSpace *s, int tensor_id, prtFun Evaluate, ...)
         va_copy(arg, argtmp);
 
         nest_i = round(GenerateUniformRandomNumber(0, s->m - 1));
-        tmp = CopyAgent(s->a[nest_i], _CS_);
+        tmp = CopyAgent(s->a[nest_i], _CS_, _NOTENSOR_);
         tmp_t = CopyTensor(s->a[nest_i]->t, s->n, tensor_id);
 
         /* Equation 1 */
@@ -171,15 +171,15 @@ void runTensorCS(SearchSpace *s, int tensor_id, prtFun Evaluate, ...)
         fitValue = Evaluate(tmp, arg); /* It executes the fitness function for agent i */
         if (fitValue < s->a[nest_j]->fit)
         { /* We accept the new solution */
-            DeallocateTensor(&s->a[nest_j]->t, s->n);
+            DestroyTensor(&s->a[nest_j]->t, s->n);
             DestroyAgent(&(s->a[nest_j]), _CS_);
-            s->a[nest_j] = CopyAgent(tmp, _CS_);
+            s->a[nest_j] = CopyAgent(tmp, _CS_, _NOTENSOR_);
             s->a[nest_j]->fit = fitValue;
             s->a[nest_j]->t = CopyTensor(tmp_t, s->n, tensor_id);
         }
 
         DestroyAgent(&tmp, _CS_);
-        DeallocateTensor(&tmp_t, s->n);
+        DestroyTensor(&tmp_t, s->n);
 
         qsort(s->a, s->m, sizeof(Agent **), SortAgent); /* Sorts all nests according to their fitness. First position gets the best nest. */
 
@@ -207,14 +207,14 @@ void runTensorCS(SearchSpace *s, int tensor_id, prtFun Evaluate, ...)
             fitValue = Evaluate(tmp, arg); /* It executes the fitness function for agent i */
             if (fitValue < s->a[i]->fit)
             { /* We accept the new solution */
-                DeallocateTensor(&s->a[i]->t, s->n);
+                DestroyTensor(&s->a[i]->t, s->n);
                 DestroyAgent(&(s->a[i]), _CS_);
-                s->a[i] = CopyAgent(tmp, _CS_);
+                s->a[i] = CopyAgent(tmp, _CS_, _NOTENSOR_);
                 s->a[i]->fit = fitValue;
                 s->a[i]->t = CopyTensor(tmp_t, s->n, tensor_id);
             }
             DestroyAgent(&tmp, _CS_);
-            DeallocateTensor(&tmp_t, s->n);
+            DestroyTensor(&tmp_t, s->n);
         }
 
         qsort(s->a, s->m, sizeof(Agent **), SortAgent); /* Sorts all nests according to their fitness. First position gets the best nest. */

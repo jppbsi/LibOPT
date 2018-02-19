@@ -481,8 +481,8 @@ void Mating(SearchSpace *s, int pride, int *n_offsprings, prtFun Evaluate, va_li
         }
       } while (n_matting_males == 0);
       /* allocating the offsprings */
-      offspring1 = CreateAgent(s->n, _LOA_);
-      offspring2 = CreateAgent(s->n, _LOA_);
+      offspring1 = CreateAgent(s->n, _LOA_, _NOTENSOR_);
+      offspring2 = CreateAgent(s->n, _LOA_, _NOTENSOR_);
       Beta = GenerateGaussianRandomNumber(0.5, 0.01); /* 0.01 indicates variance. The stand deviation is 0.1 */
       /* for each decision variable */
       for (j = 0; j < s->n; j++)
@@ -635,8 +635,8 @@ void NomadMating(SearchSpace *s, int *n_offsprings, int extra_male_nomads, prtFu
       /* selecting a random male for mating with the ith selected female */
       selected_male = (int)GenerateUniformRandomNumber(0, s->n_male_nomads + extra_male_nomads - 0.001);
       /* allocating the offsprings */
-      offspring1 = CreateAgent(s->n, _LOA_);
-      offspring2 = CreateAgent(s->n, _LOA_);
+      offspring1 = CreateAgent(s->n, _LOA_, _NOTENSOR_);
+      offspring2 = CreateAgent(s->n, _LOA_, _NOTENSOR_);
       Beta = GenerateGaussianRandomNumber(0.5, 0.01); /* 0.01 indicates variance. The standard deviation is 0.1 */
       /* for each decision variable */
       for (j = 0; j < s->n; j++)

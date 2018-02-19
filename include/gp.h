@@ -24,5 +24,6 @@ techniques either, but the nodes are employed to build the tree-like representat
 void runBGSGP(SearchSpace *s, prtFun Evaluate, ...); /* It executes the Binary Geometric Semantic Genetic Programming for function minimization */
 void runGSGP(SearchSpace *s, prtFun Evaluate, ...); /* It executes the standard (real-valued) Geometric Semantic Genetic Programming for function minimization */
 void runGP(SearchSpace *s, prtFun Evaluate, ...); /* It executes the Genetic Programming for function minimization */
+void runTGP(SearchSpace *s, prtFun Evaluate, ...); /* It executes the Tensor-based Genetic Programming for function minimization */
 
 #endif
