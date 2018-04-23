@@ -25,7 +25,6 @@ Evaluate: pointer to the function used to evaluate lionsses
 arg: list of additional arguments */
 void Hunting(SearchSpace *s, int pride, int *selected_females, prtFun Evaluate, va_list arg)
 {
-  va_list argtmp;
   int i, j, n_selected, index, center_index;
   int *group = calloc(3, sizeof(int));               /* counter of members of each group */
   int range_group[3][2];                             /* matrix that represents the interval of each grupo (in indexes) */
@@ -33,7 +32,6 @@ void Hunting(SearchSpace *s, int pride, int *selected_females, prtFun Evaluate, 
   Agent **Hunters = NULL;                            /* array of hunters */
   double *Prey = NULL;                               /* prey position in search space */
 
-  va_copy(argtmp, arg);
   /* determining which and how many females will hunt */
   n_selected = 0;
   /* for each female in the pride... */
@@ -142,7 +140,6 @@ void Hunting(SearchSpace *s, int pride, int *selected_females, prtFun Evaluate, 
     CheckAgentLimits(s, Hunters[i]);
     /* Calculating the new fitness of the lioness */
     EvaluateAgent(s, Hunters[i], _LOA_, Evaluate, arg);
-    va_copy(arg, argtmp);
 
     /* if ith lioness improves its own fitness */
     if (Hunters[i]->fit < Hunters[i]->pfit)
@@ -167,11 +164,10 @@ Evaluate: pointer to the function used to evaluate lionsses
 arg: list of additional arguments */
 void MovingSafePlace(SearchSpace *s, int pride, int *selected_females, prtFun Evaluate, va_list arg)
 {
-  va_list argtmp;
   int i, j;
   int tournament_size, index, pride_size, territory_index;
   int sucess = 0;               /* counter of how many lions improved its fitness in the last iteration */
-  int *selected = NULL;         /* binary array that indicates if a agent was already selected (1) for tournament or not (0) */
+  char *selected = NULL;         /* binary array that indicates if a agent was already selected (1) for tournament or not (0) */
   Agent **pride_members = NULL; /* array of all agents of the pride */
   double r1[s->n];              /* vector of direction */
   double *r2 = NULL;            /* pointer to vector of direction perpendicular to r1 */
@@ -197,7 +193,7 @@ void MovingSafePlace(SearchSpace *s, int pride, int *selected_females, prtFun Ev
       sucess++;
   }
 
-  selected = (int *)calloc(pride_size, sizeof(int)); /* allocating the binary array */
+  selected = (char *)calloc(pride_size, sizeof(char)); /* allocating the binary array */
   tournament_size = (int)fmax(2, ceil(sucess / 2));  /* determining the tournament size */
 
   /* for each female in the pride */
@@ -248,14 +244,12 @@ void MovingSafePlace(SearchSpace *s, int pride, int *selected_females, prtFun Ev
 
       CheckAgentLimits(s, s->pride_id[pride].females[i]);
       EvaluateAgent(s, s->pride_id[pride].females[i], _LOA_, Evaluate, arg);
-      va_copy(arg, argtmp);
 
       /* if is not the last female */
       if (i < s->pride_id[pride].n_females - 1)
       {
         /* reset the selected array for the next tournament */
-        for (j = 0; j < pride_size; j++)
-          selected[j] = 0;
+        memset(selected, 0, sizeof(char) * pride_size);
       }
       free(r2);
     }
@@ -272,14 +266,12 @@ Evaluate: pointer to the function used to evaluate lions
 arg: list of additional arguments */
 void Roaming(SearchSpace *s, int pride, prtFun Evaluate, va_list arg)
 {
-  va_list argtmp;
   int i, j, k;
   int pride_size, n_territory, index;
   int *selected = NULL;
   Agent **pride_members = NULL;
   double step, angle, distance;
 
-  va_copy(argtmp, arg);
   pride_size = s->pride_id[pride].n_males + s->pride_id[pride].n_females;
   pride_members = (Agent **)malloc(pride_size * sizeof(Agent *));
 
@@ -324,7 +316,6 @@ void Roaming(SearchSpace *s, int pride, prtFun Evaluate, va_list arg)
         CheckAgentLimits(s, s->pride_id[pride].males[i]);
 
         EvaluateAgent(s, s->pride_id[pride].males[i], _LOA_, Evaluate, arg);
-        va_copy(arg, argtmp);
       }
     }
     /* saving the last fitness value */
@@ -357,9 +348,7 @@ void NomadMovingRandom(SearchSpace *s, int extra_male_nomads, prtFun Evaluate, v
 {
   int i, j;
   double pr, randj;
-  va_list argtmp;
 
-  va_copy(argtmp, arg);
   /* for each nomad female */
   for (i = 0; i < s->n_female_nomads; i++)
   {
@@ -375,7 +364,6 @@ void NomadMovingRandom(SearchSpace *s, int extra_male_nomads, prtFun Evaluate, v
 
     CheckAgentLimits(s, s->female_nomads[i]);
     EvaluateAgent(s, s->female_nomads[i], _LOA_, Evaluate, arg);
-    va_copy(arg, argtmp);
   }
 
   /* for each nomad male */
@@ -393,7 +381,6 @@ void NomadMovingRandom(SearchSpace *s, int extra_male_nomads, prtFun Evaluate, v
 
     CheckAgentLimits(s, s->male_nomads[i]);
     EvaluateAgent(s, s->male_nomads[i], _LOA_, Evaluate, arg);
-    va_copy(arg, argtmp);
   }
 }
 
@@ -406,7 +393,6 @@ Evaluate: pointer to the function used to evaluate the cubs
 arg: list of additional arguments */
 void Mating(SearchSpace *s, int pride, int *n_offsprings, prtFun Evaluate, va_list arg)
 {
-  va_list argtmp;
   int i, j, k;
   int n_matting_females = 0, n_matting_males = 0;
   int male_index = s->pride_id[pride].n_males;     /* index position indicator for the new array of porintes (male) */
@@ -420,7 +406,6 @@ void Mating(SearchSpace *s, int pride, int *n_offsprings, prtFun Evaluate, va_li
   Agent *offspring1 = NULL;
   Agent *offspring2 = NULL;
 
-  va_copy(argtmp, arg);
   /* allocating the 'selected' arrays */
   selected_female = (int *)calloc(s->pride_id[pride].n_females, sizeof(int));
   selected_male = (int *)calloc(s->pride_id[pride].n_males, sizeof(int));
@@ -541,9 +526,7 @@ void Mating(SearchSpace *s, int pride, int *n_offsprings, prtFun Evaluate, va_li
       CheckAgentLimits(s, offspring2);
       /* evaluating the offsprings */
       EvaluateAgent(s, offspring1, _LOA_, Evaluate, arg);
-      va_copy(arg, argtmp);
       EvaluateAgent(s, offspring2, _LOA_, Evaluate, arg);
-      va_copy(arg, argtmp);
       /* moving the idexes */
       male_index++;
       female_index++;
@@ -573,7 +556,6 @@ Evaluate: pointer to the function used to evaluate the cubs
 arg: list of additional arguments */
 void NomadMating(SearchSpace *s, int *n_offsprings, int extra_male_nomads, prtFun Evaluate, va_list arg)
 {
-  va_list argtmp;
   int i, j, k;
   int n_matting_females = 0;
   int male_index = s->n_male_nomads + extra_male_nomads; /* index position indicator for the new array of porintes (male) */
@@ -586,8 +568,6 @@ void NomadMating(SearchSpace *s, int *n_offsprings, int extra_male_nomads, prtFu
   /* each  selected female generate 2 cubs, a male and a female */
   Agent *offspring1 = NULL;
   Agent *offspring2 = NULL;
-
-  va_copy(argtmp, arg);
 
   /* allocating the 'selected' arrays */
   selected_female = (int *)calloc(s->n_female_nomads, sizeof(int));
@@ -688,9 +668,7 @@ void NomadMating(SearchSpace *s, int *n_offsprings, int extra_male_nomads, prtFu
       CheckAgentLimits(s, offspring2);
       /* evaluating the offsprings */
       EvaluateAgent(s, offspring1, _LOA_, Evaluate, arg);
-      va_copy(arg, argtmp);
       EvaluateAgent(s, offspring2, _LOA_, Evaluate, arg);
-      va_copy(arg, argtmp);
       /* moving the idexes */
       male_index++;
       female_index++;
@@ -861,7 +839,7 @@ s: search space
 Evaluate: pointer to the function used to evaluate the cubs */
 void runLOA(SearchSpace *s, prtFun Evaluate, ...)
 {
-  va_list arg, argtmp;
+  va_list arg;
   int i, k;
   int *selected_females = NULL; /* binary array indicating if a female is hunting or not */
   int n_nomad_offspring, extra_male_nomads, extra_female_nomads, n_fill, pride_index;
@@ -870,10 +848,8 @@ void runLOA(SearchSpace *s, prtFun Evaluate, ...)
   int n_migrating[s->n_prides];       /* array that indicates the number of females that will migrate from the pride indicated by the index (will be filled in 'Migration')*/
   Agent **new_nomads = NULL;
   va_start(arg, Evaluate);
-  va_copy(argtmp, arg);
 
   EvaluateSearchSpace(s, _LOA_, Evaluate, arg); /* Initial evaluation */
-  va_copy(arg, argtmp);
   for (k = 0; k < s->iterations; k++)
   {
     fprintf(stderr, "\nRunning iteration %d/%d ... ", k + 1, s->iterations);
@@ -883,22 +859,16 @@ void runLOA(SearchSpace *s, prtFun Evaluate, ...)
     {
       selected_females = (int *)calloc(s->pride_id[i].n_females, sizeof(int));
       Hunting(s, i, selected_females, Evaluate, arg); /* Random selected females go hunting */
-      va_copy(arg, argtmp);
       MovingSafePlace(s, i, selected_females, Evaluate, arg); /* the rest of females go toward a safe place*/
-      va_copy(arg, argtmp);
       Roaming(s, i, Evaluate, arg); /* each male in a pride roams in that pride's territory */
-      va_copy(arg, argtmp);
       Mating(s, i, &n_pride_offspring[i], Evaluate, arg);
-      va_copy(arg, argtmp);
       Defense(s, i, (int)(n_pride_offspring[i] / 2), extra_male_nomads);
       extra_male_nomads += (int)(n_pride_offspring[i] / 2);
       free(selected_females);
     }
     /* For Nomads */
     NomadMovingRandom(s, extra_male_nomads, Evaluate, arg);
-    va_copy(arg, argtmp);
     NomadMating(s, &n_nomad_offspring, extra_male_nomads, Evaluate, arg);
-    va_copy(arg, argtmp);
     /* nomad lions atack pride lions */
     AtackPride(s, (int)(n_nomad_offspring / 2), extra_male_nomads);
     /* females in pride become nomads */

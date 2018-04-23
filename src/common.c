@@ -221,6 +221,7 @@ arg: list of additional arguments */
 void EvaluateAgent(SearchSpace *s, Agent *a, int opt_id, prtFun Evaluate, va_list arg)
 {
     int i;
+    double eva;
     va_list argtmp;
 
     va_copy(argtmp, arg);
@@ -233,8 +234,9 @@ void EvaluateAgent(SearchSpace *s, Agent *a, int opt_id, prtFun Evaluate, va_lis
         /* saving the previous location */
         for (i = 0; i < s->n; i++)
             a->prev_x[i] = a->x[i];
+
         a->fit = Evaluate(a, arg);
-        va_copy(arg, argtmp);
+        
         /* if the actual fit is the best fitness so far of the agent */
         if (a->fit < a->best_fit)
         {
@@ -253,6 +255,9 @@ void EvaluateAgent(SearchSpace *s, Agent *a, int opt_id, prtFun Evaluate, va_lis
         }
         break;
     }
+
+    va_copy(arg, argtmp);
+
 }
 
 /* It generates a new agent according to each technique
