@@ -35,6 +35,7 @@ extern "C" {
 #define _BSO_ 13 /* Brain Storm Optimization */
 #define _LOA_ 14 /* Lion Optimization Algorithm */
 #define _DE_ 15 /* Differential Evolution */
+#define _BSA_ 16 /* Backtracking Search Optimization Algorithm */
 /**************************/
 
 /* Tensor-based Meta-heuristics */

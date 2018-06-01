@@ -176,6 +176,9 @@ typedef struct SearchSpace_{
     Agent **female_nomads; /* array of pointers to female nomad lions */
     Agent **male_nomads; /* array of pointers to male nomad lions */
     
+    /* BSA */
+	double mix_rate; /* controls the number of elements of individuals that will mutate in a trial  */
+	int F; /* controls the amplitude of the search-direction matrix (oldS - s). */
 }SearchSpace;
 
 typedef double (*prtFun)(Agent *, va_list arg); /* Pointer to the function used to evaluate agents */
@@ -187,6 +190,8 @@ void CheckAgentLimits(SearchSpace *s, Agent *a); /* It checks whether a given ag
 Agent *CopyAgent(Agent *a, int opt_id, int tensor_dim); /* It copies an agent */
 void EvaluateAgent(SearchSpace *s, Agent *a, int opt_id, prtFun Evaluate, va_list arg); /* It evaluate an agent according to each technique */
 Agent *GenerateNewAgent(SearchSpace *s, int opt_id); /* It generates a new agent according to each technique */
+void ReplaceSearchSpaceAgents(SearchSpace *s, SearchSpace *oldS); /* It replaces the agents from oldS with a copy from the ones in s */
+void Permutation(SearchSpace *s, int opt_id); /* It performs a SearchSpace permutation */
 /**************************/
 
 /* Search Space-related functions */
@@ -196,6 +201,10 @@ void InitializeSearchSpace(SearchSpace *s, int opt_id); /* It initializes an all
 void ShowSearchSpace(SearchSpace *s, int opt_id); /* It shows a search space */
 void EvaluateSearchSpace(SearchSpace *s, int opt_id, prtFun Evaluate, va_list arg); /* It evaluates a search space */
 char CheckSearchSpace(SearchSpace *s, int opt_id); /* It checks whether a search space has been properly set or not */
+
+
+
+
 /**************************/
 
 /* General-purpose functions */

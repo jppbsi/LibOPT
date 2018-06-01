@@ -62,6 +62,7 @@ Agent *CreateAgent(int n, int opt_id, int tensor_dim){
         case _MBO_:
         case _ABC_:
         case _BSO_:
+		case _BSA_:
         case _HS_:
             a->x = (double *)calloc(n, sizeof(double));
             if ((opt_id != _GP_) && (opt_id != _TGP_) & (opt_id != _BSO_))
@@ -118,6 +119,7 @@ void DestroyAgent(Agent **a, int opt_id){
         case _MBO_:
         case _ABC_:
         case _BSO_:
+		case _BSA_:
         case _HS_:
             if (tmp->x) free(tmp->x);
             if (tmp->v) free(tmp->v);
@@ -193,6 +195,7 @@ Agent *CopyAgent(Agent *a, int opt_id, int tensor_dim)
     case _BHA_:
     case _WCA_:
     case _ABC_:
+	case _BSA_:
     case _HS_:
         memcpy(cpy->x, a->x, a->n * sizeof(double));
         memcpy(cpy->v, a->v, a->n * sizeof(double));
@@ -307,6 +310,9 @@ Agent *GenerateNewAgent(SearchSpace *s, int opt_id)
     case _ABC_:
         a = CreateAgent(s->n, _ABC_, _NOTENSOR_);
         break;
+    case _BSA_:
+        a = CreateAgent(s->n, _BSA_, _NOTENSOR_);
+        break;
     case _HS_:
         a = CreateAgent(s->n, _HS_, _NOTENSOR_);
 
@@ -342,6 +348,58 @@ Agent *GenerateNewAgent(SearchSpace *s, int opt_id)
     }
 
     return a;
+}
+
+
+/* It replaces the agents from oldS with a copy from the ones in s
+Parameters:
+s: search space
+oldS: search space to be replaced*/
+void ReplaceSearchSpaceAgents(SearchSpace *s, SearchSpace *oldS)
+{
+    int j;
+
+    if (!s)
+    {
+        fprintf(stderr, "\nSearch space not allocated @TransferSearchSpace.\n");
+        exit(-1);
+    }
+
+    if (!oldS)
+    {
+        fprintf(stderr, "\nSearch space not allocated @TransferSearchSpace.\n");
+        exit(-1);
+    }
+
+    for (j = 0; j < oldS->n; j++)
+	{
+        DestroyAgent(&(oldS->a[j]), _BSA_);
+        oldS->a[j] = CopyAgent(s->a[j], _BSA_, _NOTENSOR_);
+	}
+}
+
+/* It performs a SearchSpace permutation
+Parameters:
+s: search space
+opt_id: identifier of the optimization technique*/
+void Permutation(SearchSpace *s, int opt_id)
+{
+	int i;
+	Agent *tmp = NULL;
+	for (i = 0; i < s->n; i++)
+	{
+		//generate a random position
+		int r = rand() % s->n;
+		if (r!=i){
+			tmp = CopyAgent(s->a[i], opt_id, _NOTENSOR_);
+			DestroyAgent(&(s->a[i]), opt_id);
+			s->a[i] = CopyAgent(s->a[r], opt_id, _NOTENSOR_);
+			DestroyAgent(&(s->a[r]), opt_id);
+			s->a[r] = CopyAgent(tmp, opt_id, _NOTENSOR_);
+		
+			DestroyAgent(&tmp, opt_id);
+		}
+	}
 }
 
 /**************************/
@@ -429,6 +487,10 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...){
     s->p_one_cluster = NAN;
     s->p_one_center = NAN;
     s->p_two_centers = NAN;
+
+	/* BSA */
+	s->mix_rate = NAN;
+	s->F = 0;
 
     /* GP and LOA uses a different structure than that of others */
     if ((opt_id != _GP_) && (opt_id != _TGP_) && (opt_id != _LOA_)){
@@ -577,6 +639,7 @@ void DestroySearchSpace(SearchSpace **s, int opt_id){
             case _MBO_:
             case _ABC_:
             case _BSO_:
+			case _BSA_:
             case _HS_:
                 if (tmp->g) free(tmp->g);
             break;
@@ -675,12 +738,13 @@ void InitializeSearchSpace(SearchSpace *s, int opt_id){
         case _MBO_:
         case _ABC_:
         case _BSO_:
+        case _BSA_:
         case _HS_:
             for (i = 0; i < s->m; i++){
                 for (j = 0; j < s->n; j++)
                     s->a[i]->x[j] = GenerateUniformRandomNumber(s->LB[j], s->UB[j]);
             }
-        break;
+        	break;
         case _GP_:
             for (i = 0; i < s->n_terminals; i++){
                 for (j = 0; j < s->n; j++){
@@ -859,6 +923,7 @@ void EvaluateSearchSpace(SearchSpace *s, int opt_id, prtFun Evaluate, va_list ar
     case _WCA_:
     case _ABC_:
     case _HS_:
+	case _BSA_:
     case _BSO_:
         for (i = 0; i < s->m; i++)
         {
@@ -1284,6 +1349,19 @@ char CheckSearchSpace(SearchSpace *s, int opt_id)
             OK = 0;
         }
         break;
+    case _BSA_:
+        if (isnan((float)s->mix_rate))
+        {
+            fprintf(stderr, "\n  -> Mix Rate undefined.");
+            OK = 0;
+        }
+        if (s->F <= 0)
+        {
+            fprintf(stderr, "\n  -> F undefined.");
+            OK = 0;
+        }
+
+        break;
     default:
         fprintf(stderr, "\n Invalid optimization identifier @CheckSearchSpace.\n");
         return 0;
@@ -1300,6 +1378,7 @@ char CheckSearchSpace(SearchSpace *s, int opt_id)
 
     return OK;
 }
+
 /**************************/
 
 /* General-purpose functions */
@@ -1698,6 +1777,15 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
             s->iterations = iterations;
             WaiveComment(fp);
             break;
+
+
+        case _BSA_:
+            s = CreateSearchSpace(m, n, _BSA_);
+			s->iterations = iterations;
+            fscanf(fp, "%lf %d", &(s->mix_rate), &(s->F));
+            WaiveComment(fp);
+            break;
+
         default:
             fprintf(stderr, "\nInvalid optimization identifier @ReadSearchSpaceFromFile.\n");
             break;
@@ -3028,4 +3116,6 @@ double **RunTTree(SearchSpace *s, Node *T){
     }
     else return NULL;
 }
+
+
 /***********************/
