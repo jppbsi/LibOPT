@@ -1302,6 +1302,86 @@ char CheckSearchSpace(SearchSpace *s, int opt_id)
 }
 /**************************/
 
+/* It copies a search space
+Parameters:
+s: search space to be copied
+opt_id: identifier of the optimization technique */
+SearchSpace *CopySearchSpace(SearchSpace *s, int opt_id){
+	int i;
+    SearchSpace *cpy = NULL;
+	
+    if (!s){
+        fprintf(stderr, "\nSearch space not allocated @CopySearchSpace.\n");
+        return 0;
+    }
+	
+	switch (opt_id){
+		case _PSO_:
+			cpy = CreateSearchSpace(s->m, s->n, _PSO_);
+			cpy->c1 = s->c1; cpy->c2 = s->c2;
+			cpy->w = s->w; cpy->w_min = s->w_min; cpy->w_max = s->w_max;
+			break;
+		case _BA_:
+			cpy = CreateSearchSpace(s->m, s->n, _BA_);
+			cpy->f_min = s->f_min; cpy->f_max = s->f_max;
+			cpy->A = s->A; cpy->r = s->r;
+			break;
+		case _FPA_:
+			cpy = CreateSearchSpace(s->m, s->n, _FPA_);
+			cpy->beta = s->beta;
+			cpy->p = s->p;
+			break;
+		case _FA_:
+			cpy = CreateSearchSpace(s->m, s->n, _FA_);
+			cpy->alpha = s->alpha; cpy->beta_0 = s->beta_0;
+			cpy->gamma = s->gamma;
+			break;
+		case _CS_:
+			cpy = CreateSearchSpace(s->m, s->n, _CS_);
+			cpy->beta = s->beta; cpy->p = s->p;
+			cpy->alpha = s->alpha;
+			break;
+		case _GA_:
+			cpy = CreateSearchSpace(s->m, s->n, _GA_);
+			cpy->pMutation = s->pMutation;
+			break;
+		case _BHA_:
+			cpy = CreateSearchSpace(s->m, s->n, _BHA_);
+			break;
+		case _WCA_:
+			cpy = CreateSearchSpace(s->m, s->n, _WCA_);
+			cpy->nsr = s->nsr; cpy->dmax = s->dmax;
+			break;
+		case _MBO_:
+			cpy = CreateSearchSpace(s->m, s->n, _MBO_, s->k);
+			cpy->X = s->X; cpy->M = s->M;
+			break;
+		case _ABC_:
+			cpy = CreateSearchSpace(s->m, s->n, _ABC_);
+			cpy->limit = s->limit;
+			break;
+		case _HS_:
+			cpy = CreateSearchSpace(s->m, s->n, _HS_);
+			cpy->HMCR = s->HMCR; cpy->PAR = s->PAR; cpy->bw = s->bw;
+			cpy->PAR_min = s->PAR_min; cpy->PAR_max = s->PAR_max;
+			cpy->bw_min = s->bw_min; cpy->bw_max = s->bw_max;
+			break;
+		case _BSO_:
+			cpy = CreateSearchSpace(s->m, s->n, _BSO_);
+			cpy->k = s->k; cpy->p_one_cluster = s->p_one_cluster;
+			cpy->p_one_center = s->p_one_center; cpy->p_two_centers = s->p_two_centers;
+			break;
+	}
+	
+	cpy->iterations = s->iterations;
+	for (i = 0; i < s->n; i++){
+		cpy->LB[i] = s->LB[i];
+	    cpy->UB[i] = s->UB[i];
+	}
+
+    return cpy;
+}
+
 /* General-purpose functions */
 /* It generates a random number uniformly distributed between low and high
 Parameters:
