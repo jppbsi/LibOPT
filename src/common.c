@@ -1371,14 +1371,20 @@ SearchSpace *CopySearchSpace(SearchSpace *s, int opt_id){
 			cpy->k = s->k; cpy->p_one_cluster = s->p_one_cluster;
 			cpy->p_one_center = s->p_one_center; cpy->p_two_centers = s->p_two_centers;
 			break;
-		case _GP_:
-/*		case _TGP_:
-			if(opt_id == _GP_)
+		/*case _GP_:
+		case _TGP_:
+			if(opt_id == _GP_) cpy = CreateSearchSpace(s->m, s->n, _GP_, s->min_depth, s->max_depth, s->n_terminals, N_CONSTANTS, s->n_functions, s->terminal, s->constant, s->function);
+			else cpy = CreateSearchSpace(s->m, s->n, _TGP_, s->min_depth, s->max_depth, s->n_terminals, N_CONSTANTS, s->n_functions, s->terminal, s->t_constant, s->function, s->tensor_dim);
+				
 			cpy->pReproduction = s->pReproduction;
 			cpy->pMutation = s->pMutation;
 			cpy->pCrossover = s->pCrossover;
 			cpy->is_integer_opt = s->is_integer_opt;
-			cpy->tensor_dim = s->tensor_dim;
+			
+			T
+			tree_fit
+				t_constant
+
 			break;*/
 		case _LOA_:
 			cpy = CreateSearchSpace(s->m, s->n, _LOA_, s->sex_rate, s->nomad_percent, s->roaming_percent, s->mating_prob, s->pMutation, s->imigration_rate, s->n_prides);
