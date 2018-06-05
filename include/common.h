@@ -196,7 +196,6 @@ void InitializeSearchSpace(SearchSpace *s, int opt_id); /* It initializes an all
 void ShowSearchSpace(SearchSpace *s, int opt_id); /* It shows a search space */
 void EvaluateSearchSpace(SearchSpace *s, int opt_id, prtFun Evaluate, va_list arg); /* It evaluates a search space */
 char CheckSearchSpace(SearchSpace *s, int opt_id); /* It checks whether a search space has been properly set or not */
-SearchSpace *CopySearchSpace(SearchSpace *s, int opt_i); /* It copies a search space */
 /**************************/
 
 /* General-purpose functions */
