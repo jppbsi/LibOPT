@@ -25,10 +25,11 @@ void runBSA(SearchSpace *s, prtFun Evaluate, ...)
 	/*Initialization*/
     va_list arg, argtmp;
     int t, i, j;
-    double fitValue;
+	SearchSpace *T = NULL;
+	SearchSpace *oldS = CreateSearchSpace(s->m, s->n, _BSA_);
 
 	double** Mutation = NULL;
-	double** Map = NULL; /*Matrix representing values to be permuted*/
+	double** Map = NULL; /* Matrix representing values to be permuted */
     Mutation = (double **)calloc(s->m, sizeof(double *));
 	Map = (double **)calloc(s->m, sizeof(double *));
     for (i = 0; i < s->m; i++)
@@ -36,12 +37,11 @@ void runBSA(SearchSpace *s, prtFun Evaluate, ...)
         Mutation[i] = (double *)calloc(s->n, sizeof(double));
 		Map[i] = (double *)calloc(s->n, sizeof(double));
 	}
-    Agent *tmp = NULL;
-
-	SearchSpace *oldS = CreateSearchSpace(s->m,s->n,_BSA_);
-	//oldS->iterations = s->iterations;
-	//oldS->mix_rate = s->mix_rate;
-	//oldS->F = s->F;
+	for (j=0;j<s->n;j++)
+	{
+		oldS->LB[j] = s->LB[j];
+		oldS->UB[j] = s->UB[j];
+	}
 	
 	InitializeSearchSpace(oldS, _BSA_);
 
@@ -66,19 +66,21 @@ void runBSA(SearchSpace *s, prtFun Evaluate, ...)
     {
 		fprintf(stderr, "\nRunning iteration %d/%d ... ", t, s->iterations);
 		va_copy(arg, argtmp);
-		/*SELECTION - I*/
-		if(GenerateUniformRandomNumber(0.0, 1.0)<GenerateUniformRandomNumber(0.0, 1.0))
-			ReplaceSearchSpaceAgents(s,oldS);
-		Permutation(oldS, _BSA_);
-		/*GENERATION OF TRIAL POPULATION*/
-		/**MUTATION*/
-		setMutation(s, oldS, Mutation);
-		/**CROOS OVER */			
-		SearchSpace *T = NULL;
-		T = crossOverStrategyOfBSA(s, oldS, Map, Mutation); /*Trial-population*/
-		boundaryControlMechanism(s,T);
 
-		/*SELECTION - II*/
+		/* SELECTION - I */
+		if(GenerateUniformRandomNumber(0.0, 1.0)<GenerateUniformRandomNumber(0.0, 1.0))
+			CopySearchSpaceAgents(s, oldS, _BSA_);
+		Permutation(oldS, _BSA_);
+
+		/* GENERATION OF TRIAL POPULATION */
+		/** MUTATION */
+		InitializeMutation(s, oldS, Mutation);
+
+		/** CROSS OVER */			
+		T = CrossOverStrategyOfBSA(s, Map, Mutation); /* Trial-population */
+		BoundaryControlMechanism(s, T);
+
+		/* SELECTION - II */
 		EvaluateSearchSpace(T, _BSA_, Evaluate, arg);
 		for (i = 0; i < s->m; i++)
 		{
@@ -114,19 +116,27 @@ void runBSA(SearchSpace *s, prtFun Evaluate, ...)
     va_end(arg);
 }
 
-void boundaryControlMechanism(SearchSpace *s,SearchSpace *T)
+void BoundaryControlMechanism(SearchSpace *s, SearchSpace *T)
 {
 	int i,j;
-	double a,b,c,d;
+
+    if (!s)
+    {
+        fprintf(stderr, "\nSearch space not allocated @BoundaryControlMechanism.\n");
+        exit(-1);
+    }
+
+    if (!T)
+    {
+        fprintf(stderr, "\nSearch space not allocated @BoundaryControlMechanism.\n");
+        exit(-1);
+    }
+
 	for (i = 0; i < s->m; i++)
 	{
 		for (j = 0; j < s->n; j++)
 		{
-			//fprintf(stderr, "a = %lf\n",T->a[i]->x[j]);
-			//fprintf(stderr, "b = %lf\n",s->LB[j]);
-			//fprintf(stderr, "c = %lf\n",T->a[i]->x[j]);
-			//fprintf(stderr, "d = %lf\n",s->UB[j]);
-			if (T->a[i]->x[j] < s->LB[j] || T->a[i]->x[j] > s->UB[j])
+			if ((T->a[i]->x[j] < s->LB[j]) || (T->a[i]->x[j] > s->UB[j]))
 			{
 				T->a[i]->x[j] = ( (s->UB[j] - s->LB[j]) * ((double)rand() / RAND_MAX)) + s->LB[j] ;
 			}
@@ -134,9 +144,22 @@ void boundaryControlMechanism(SearchSpace *s,SearchSpace *T)
 	}
 }
 
-void setMutation(SearchSpace *s, SearchSpace *oldS, double** Mutation)
+void InitializeMutation(SearchSpace *s, SearchSpace *oldS, double** Mutation)
 {
 	int i, j;
+
+    if (!s)
+    {
+        fprintf(stderr, "\nSearch space not allocated @InitializeMutation.\n");
+        exit(-1);
+    }
+
+    if (!oldS)
+    {
+        fprintf(stderr, "\nSearch space not allocated @InitializeMutation.\n");
+        exit(-1);
+    }
+
 	for (i = 0; i < s->m; i++)
 	{
 		for (j = 0; j < s->n; j++)
@@ -144,23 +167,39 @@ void setMutation(SearchSpace *s, SearchSpace *oldS, double** Mutation)
 	}
 }
 
-void initializeMap(SearchSpace *s,  double** Map)
+void InitializeMap(SearchSpace *s,  double** Map)
 {
 	int i,j;
+
+    if (!s)
+    {
+        fprintf(stderr, "\nSearch space not allocated @InitializeMap.\n");
+        exit(-1);
+    }
+
     for (i = 0; i < s->m; i++)
 		for (j = 0; j < s->n; j++)
 			Map[i][j] = 1;
 }
 
-SearchSpace *crossOverStrategyOfBSA(SearchSpace *s, SearchSpace *OldS, double** Map, double** Mutation)
+SearchSpace *CrossOverStrategyOfBSA(SearchSpace *s, double** Map, double** Mutation)
 {
-	int i,j, u, MaxU;
-	initializeMap(s, Map);
+	int i,j, u, MaxU, randi;
+	SearchSpace *T = NULL;
 
-	/*number of permutations*/
+    if (!s)
+    {
+        fprintf(stderr, "\nSearch space not allocated @CrossOverStrategyOfBSA.\n");
+        exit(-1);
+    }
+
+
+	InitializeMap(s, Map);
+
+	/* number of permutations */
 	if(GenerateUniformRandomNumber(0.0, 1.0)<GenerateUniformRandomNumber(0.0, 1.0))
 	{
-		MaxU = (int)ceil(s->mix_rate * s->n * GenerateUniformRandomNumber(0.0, 1.0));
+		MaxU = ceil(s->mix_rate * s->n * GenerateUniformRandomNumber(0.0, 1.0));
 		for (i = 0; i < s->m; i++)			
 			for (j = 1; j <= MaxU; j++)
 			{
@@ -169,19 +208,24 @@ SearchSpace *crossOverStrategyOfBSA(SearchSpace *s, SearchSpace *OldS, double** 
 			}
 	}
 	else
-	{
-		int randi;
+	{		
 		for (i = 0; i < s->m; i++)
 		{
 			randi = rand() % s->n;
 			Map[i][randi] = 0;
 		}
 	}
-    SearchSpace *T = NULL;
-	T = CreateSearchSpace(s->m,s->n,_BSA_);
+    
+	T = CreateSearchSpace(s->m, s->n, _BSA_);
+	for (j=0;j<s->n;j++)
+	{
+		T->LB[j] = s->LB[j];
+		T->UB[j] = s->UB[j];
+	}
 	InitializeSearchSpace(T, _BSA_);
 
-	// Generation of a trial population
+
+	/* Generation of a trial population */
     for (i = 0; i < s->m; i++)
 		for (j = 0; j < s->n; j++)
 			T->a[i]->x[j] = Mutation[i][j];
@@ -190,7 +234,7 @@ SearchSpace *crossOverStrategyOfBSA(SearchSpace *s, SearchSpace *OldS, double** 
 	{
 		for (j = 0; j < s->n; j++)
 		{
-			if (Map[i][j] == 1)
+			if (Map[i][j])
 				T->a[i]->x[j] = s->a[i]->x[j];
 		}
 	}

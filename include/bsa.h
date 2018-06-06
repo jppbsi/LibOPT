@@ -21,9 +21,9 @@ limitations under the License.
 #include "opt.h"
 
 void runBSA(SearchSpace *s, prtFun Evaluate, ...); /* It executes the Harmony Search for function minimization */
-void setMutation(SearchSpace *s, SearchSpace *OldS, double** Mutation);  /* It initializes the mutation matrix */
-SearchSpace *crossOverStrategyOfBSA(SearchSpace *s, SearchSpace *OldS, double** Map, double** Mutation); /* It executes the the BSA cross over strategy */
-void boundaryControlMechanism(SearchSpace *s,SearchSpace *T);  /* It controls the boundaries of the new Trial-population */
-void initializeMap(SearchSpace *s,  double** Map);  /* It initializes the map containing the position of features to be permuted */
+void InitializeMutation(SearchSpace *s, SearchSpace *OldS, double** Mutation);  /* It initializes the mutation matrix */
+SearchSpace *CrossOverStrategyOfBSA(SearchSpace *s, double** Map, double** Mutation); /* It executes the the BSA cross over strategy */
+void BoundaryControlMechanism(SearchSpace *s,SearchSpace *T);  /* It controls the boundaries of the new Trial-population */
+void InitializeMap(SearchSpace *s,  double** Map);  /* It initializes the map containing the position of features to be permuted */
 
 #endif

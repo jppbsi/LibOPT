@@ -179,6 +179,10 @@ typedef struct SearchSpace_{
     /* BSA */
 	double mix_rate; /* controls the number of elements of individuals that will mutate in a trial  */
 	int F; /* controls the amplitude of the search-direction matrix (oldS - s). */
+
+	/* JADE */
+	double uCR; /* mean of the crossover probability  */
+	double uF; /* mean of the mutation factor. */
 }SearchSpace;
 
 typedef double (*prtFun)(Agent *, va_list arg); /* Pointer to the function used to evaluate agents */
@@ -190,7 +194,7 @@ void CheckAgentLimits(SearchSpace *s, Agent *a); /* It checks whether a given ag
 Agent *CopyAgent(Agent *a, int opt_id, int tensor_dim); /* It copies an agent */
 void EvaluateAgent(SearchSpace *s, Agent *a, int opt_id, prtFun Evaluate, va_list arg); /* It evaluate an agent according to each technique */
 Agent *GenerateNewAgent(SearchSpace *s, int opt_id); /* It generates a new agent according to each technique */
-void ReplaceSearchSpaceAgents(SearchSpace *s, SearchSpace *oldS); /* It replaces the agents from oldS with a copy from the ones in s */
+void CopySearchSpaceAgents(SearchSpace *s, SearchSpace *oldS, int opt_id); /* It copies the agents from s to oldS */
 void Permutation(SearchSpace *s, int opt_id); /* It performs a SearchSpace permutation */
 /**************************/
 

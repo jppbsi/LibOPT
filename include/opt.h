@@ -36,6 +36,7 @@ extern "C" {
 #define _LOA_ 14 /* Lion Optimization Algorithm */
 #define _DE_ 15 /* Differential Evolution */
 #define _BSA_ 16 /* Backtracking Search Optimization Algorithm */
+#define _JADE_ 17 /* Adaptive Differential Evolution with Optional External Archive */
 /**************************/
 
 /* Tensor-based Meta-heuristics */
