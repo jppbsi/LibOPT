@@ -196,6 +196,7 @@ double* MutationJade(int i, SearchSpace *s, SearchSpace *A, double Fi, int n_ele
 	double* mutation = NULL;
 
 	mutation = (double *)calloc(s->n, sizeof(double));
+
 	bestP = GetBestPAgent(s); /* Randomly choose bestP as one of the 100 p% best vectors */
 	r1 = Getr1Agent(s, i, &r1_index); /* Randomly choose r1 from current population P */
 	r2 = Getr2Agent(s, A, i, r1_index, n_elements_archive); /* Randomly choose r2 from current population P union Archive population A */ 
@@ -362,13 +363,18 @@ Agent * Getr2Agent(SearchSpace *s, SearchSpace *A, int i, int r1_index, int n_el
 	}
 
 	Agent *a = NULL;
-	int r2 = i, m;
+	int r2 = 0, m;
 	m = s->m + n_elements_archive - 1;
 
-	do
+
+	if(s->m > 1)
 	{
-    	r2 = (int)round(GenerateUniformRandomNumber(0.0, (double)m ));
-	}while (r2 == i || r2 == r1_index);
+		r2 = i;
+		do
+		{
+			r2 = (int)round(GenerateUniformRandomNumber(0.0, (double)m ));
+		}while (r2 == i || r2 == r1_index);
+	}
 
 	if(r2 >= s->m)
 	{
@@ -390,9 +396,14 @@ Agent * Getr1Agent(SearchSpace *s, int i, int* r1_index)
     }
 
 	Agent *a = NULL;
-	*r1_index = i;	
-	while(*r1_index == i)
-    	*r1_index = (int)round(GenerateUniformRandomNumber(0, s->m-1));
+	*r1_index = 0;	
+
+	if (s->m > 1)
+	{
+		*r1_index = i;	
+		while(*r1_index == i)
+			*r1_index = (int)round(GenerateUniformRandomNumber(0, s->m-1));
+	}
 	a = CopyAgent(s->a[*r1_index], _JADE_, _NOTENSOR_);
     return a;
 }
