@@ -167,7 +167,7 @@ void InitializeMutation(SearchSpace *s, SearchSpace *oldS, double** Mutation)
 	}
 }
 
-void InitializeMap(SearchSpace *s,  double** Map)
+void InitializeMap(SearchSpace *s, double** Map)
 {
 	int i,j;
 

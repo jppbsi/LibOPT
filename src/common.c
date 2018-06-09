@@ -204,7 +204,7 @@ Agent *CopyAgent(Agent *a, int opt_id, int tensor_dim)
         memcpy(cpy->v, a->v, a->n * sizeof(double));
         if (opt_id == _PSO_)
             memcpy(cpy->xl, a->xl, a->n * sizeof(double));
-        if (opt_id == _FA_)
+        if (opt_id == _FA_ || opt_id == _JADE_ )
             cpy->fit = a->fit;
         break;
     default:
@@ -234,6 +234,18 @@ void EvaluateAgent(SearchSpace *s, Agent *a, int opt_id, prtFun Evaluate, va_lis
 
     switch (opt_id)
     {
+	case _JADE_:
+        a->fit = Evaluate(a, arg); /* It executes the fitness function for agent  */
+
+        if (a->fit < s->gfit)
+        { /* It updates the global best value and position */
+            s->best = i;
+            s->gfit = a->fit;
+            for (i = 0; i < s->n; i++)
+                s->g[i] = a->x[i];
+        }
+
+        break;
     case _LOA_:
         /* saving the last fitness value */
         a->pfit = a->fit;
@@ -505,8 +517,8 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...){
 	s->F = 0;
 
 	/* JADE */	
-	s->uCR = NAN;
-	s->uF = NAN;
+	s->c = NAN;
+	s->p_greediness = NAN;
 
     /* GP and LOA uses a different structure than that of others */
     if ((opt_id != _GP_) && (opt_id != _TGP_) && (opt_id != _LOA_)){
@@ -1383,14 +1395,14 @@ char CheckSearchSpace(SearchSpace *s, int opt_id)
 
         break;
 	case _JADE_:
-        if (isnan((float)s->uCR))
+        if (isnan((float)s->c))
         {
-            fprintf(stderr, "\n  -> uCR undefined.");
+            fprintf(stderr, "\n  -> c undefined.");
             OK = 0;
         }
-        if (isnan((float)s->uF))
+        if (isnan((float)s->p_greediness))
         {
-            fprintf(stderr, "\n  -> uF undefined.");
+            fprintf(stderr, "\n  -> p undefined.");
             OK = 0;
         }
 
@@ -1432,6 +1444,15 @@ variance: variance of the distribution */
 double GenerateGaussianRandomNumber(double mean, double variance)
 {
     return randGaussian(mean, variance);
+}
+
+/* It generates a random number drawn from a Cauchy distribution
+Parameters:
+location: location of the distribution
+scale: scale of the distribution */
+double GenerateCauchyRandomNumber(double location, double scale)
+{
+	return randCauchy(location,scale);
 }
 
 /* It generates an n-dimensional array drawn from a Levy distribution
@@ -1822,7 +1843,7 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
 		case _JADE_:
             s = CreateSearchSpace(m, n, _JADE_);
 			s->iterations = iterations;
-            fscanf(fp, "%lf %lf", &(s->uCR), &(s->uF));
+            fscanf(fp, "%lf %lf", &(s->c), &(s->p_greediness));
             WaiveComment(fp);
             break;
 

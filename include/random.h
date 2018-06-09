@@ -37,5 +37,5 @@ double ran2(int *idum);
 int srandinter(int seed); /* It initializes the random number generator */
 double randinter(double a, double b); /* It returns a random number uniformly distributed between a and b */
 double randGaussian(double mean, double variance); /* It returns a number drawn from a Gaussian distribution */
-
+double randCauchy(double location, double scale); /* It returns a number drawn from a Cauchy distribution */
 #endif

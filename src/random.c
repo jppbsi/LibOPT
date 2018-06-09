@@ -122,3 +122,33 @@ double randGaussian(double mean, double variance)
 
     return v;
 }
+
+/* It returns a number  number drawn from a Cauchy distribution
+Parameters:
+location: location of the distribution
+scale: scale of the distribution */
+double randCauchy(double location, double scale)
+{
+	double x, F;
+    long k = 0;
+    while (1) {
+		x = (double) randinter(0.0, 1.0);
+		F = 1/(M_PI*scale * (1.0 + pow((x-location)/scale, 2)));
+		if (F > 1.0) 
+		{
+			F = 1.0;
+			break;
+		}
+		if (F > 0) break;
+		k = k+1;
+		if (k > 10) 
+		{
+			F = 0.001;
+			break;
+		}
+    }
+	return F;
+}
+
+
+

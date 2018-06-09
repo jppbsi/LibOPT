@@ -1,12 +1,4 @@
-100 10 100 # <n_particles> <dimension> <max_iterations>
+10 2 10 # <n_particles> <dimension> <max_iterations>
 0.3 3 # <mix_rate> <F>
 -30 30 # <LB> <UB> x[0]
 -30 30 # <LB> <UB> x[1]
--30 30 # <LB> <UB> x[2]
--30 30 # <LB> <UB> x[3]
--30 30 # <LB> <UB> x[4]
--30 30 # <LB> <UB> x[5]
--30 30 # <LB> <UB> x[6]
--30 30 # <LB> <UB> x[7]
--30 30 # <LB> <UB> x[8]
--30 30 # <LB> <UB> x[9]

@@ -178,11 +178,12 @@ typedef struct SearchSpace_{
     
     /* BSA */
 	double mix_rate; /* controls the number of elements of individuals that will mutate in a trial  */
-	int F; /* controls the amplitude of the search-direction matrix (oldS - s). */
+	int F; /* controls the amplitude of the search-direction matrix (oldS - s) */
 
 	/* JADE */
-	double uCR; /* mean of the crossover probability  */
-	double uF; /* mean of the mutation factor. */
+	double c; /* rate of parameter adaptation */
+	double p_greediness; /* determines the greediness of the mutation strategy */
+
 }SearchSpace;
 
 typedef double (*prtFun)(Agent *, va_list arg); /* Pointer to the function used to evaluate agents */
@@ -214,6 +215,7 @@ char CheckSearchSpace(SearchSpace *s, int opt_id); /* It checks whether a search
 /* General-purpose functions */
 double GenerateUniformRandomNumber(double low, double high); /* It generates a random number drawn from a uniform distribution whithin [low,high] */
 double GenerateGaussianRandomNumber(double mean, double variance); /* It generates a random number drawn from a Gaussian (normal) distribution */
+double GenerateCauchyRandomNumber(double location, double scale); /* It generates a random number drawn from a Cauchy distribution */
 double *GenerateLevyDistribution(int n, double beta); /* It generates an n-dimensional array drawn from a Levy distribution */
 double EuclideanDistance(double *x, double *y, int n); /* It computes the Euclidean distance between two n-dimensional arrays */
 double *GetPerpendicularVector(double *x, int n); /* It generates a perpendicular vector to a given vector */
