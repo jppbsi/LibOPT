@@ -62,8 +62,9 @@ Agent *CreateAgent(int n, int opt_id, int tensor_dim){
         case _MBO_:
         case _ABC_:
         case _BSO_:
-		case _BSA_:
 		case _JADE_:
+		case _COBIDE_:
+		case _BSA_:
         case _HS_:
             a->x = (double *)calloc(n, sizeof(double));
             if ((opt_id != _GP_) && (opt_id != _TGP_) & (opt_id != _BSO_))
@@ -120,8 +121,9 @@ void DestroyAgent(Agent **a, int opt_id){
         case _MBO_:
         case _ABC_:
         case _BSO_:
-		case _BSA_:
 		case _JADE_:
+		case _COBIDE_:
+		case _BSA_:
         case _HS_:
             if (tmp->x) free(tmp->x);
             if (tmp->v) free(tmp->v);
@@ -177,6 +179,7 @@ opt_id: identifier of the optimization technique
 tensor_dim: dimensionality of the tensor (it takes the value -1 if it is not used) */
 Agent *CopyAgent(Agent *a, int opt_id, int tensor_dim)
 {
+	int i;
     if (!a)
     {
         fprintf(stderr, "\nAgent not allocated @CopyAgent.\n");
@@ -197,14 +200,15 @@ Agent *CopyAgent(Agent *a, int opt_id, int tensor_dim)
     case _BHA_:
     case _WCA_:
     case _ABC_:
-	case _BSA_:
 	case _JADE_:
+	case _COBIDE_:
+	case _BSA_:
     case _HS_:
         memcpy(cpy->x, a->x, a->n * sizeof(double));
         memcpy(cpy->v, a->v, a->n * sizeof(double));
         if (opt_id == _PSO_)
             memcpy(cpy->xl, a->xl, a->n * sizeof(double));
-        if (opt_id == _FA_ || opt_id == _JADE_ )
+        if (opt_id == _FA_ || opt_id == _JADE_  || opt_id == _COBIDE_  || opt_id == _BSA_ )
             cpy->fit = a->fit;
         break;
     default:
@@ -234,6 +238,7 @@ void EvaluateAgent(SearchSpace *s, Agent *a, int opt_id, prtFun Evaluate, va_lis
 
     switch (opt_id)
     {
+	case _COBIDE_:
 	case _JADE_:
         a->fit = Evaluate(a, arg); /* It executes the fitness function for agent  */
 
@@ -331,6 +336,9 @@ Agent *GenerateNewAgent(SearchSpace *s, int opt_id)
 	case _JADE_:
         a = CreateAgent(s->n, _JADE_, _NOTENSOR_);
         break;
+	case _COBIDE_:
+        a = CreateAgent(s->n, _COBIDE_, _NOTENSOR_);
+        break;
     case _HS_:
         a = CreateAgent(s->n, _HS_, _NOTENSOR_);
 
@@ -372,10 +380,11 @@ Agent *GenerateNewAgent(SearchSpace *s, int opt_id)
 /* It copies the agents from s to oldS
 Parameters:
 s: source search space
-oldS: destination search space */
-void CopySearchSpaceAgents(SearchSpace *s, SearchSpace *oldS, int opt_id)
+oldS: destination search space 
+tensor_dim: identifier of tensor's dimension*/
+void CopySearchSpaceAgents(SearchSpace *s, SearchSpace *oldS, int opt_id, int tensor_id)
 {
-    int j;
+    int j, k;
 
     if (!s)
     {
@@ -391,16 +400,65 @@ void CopySearchSpaceAgents(SearchSpace *s, SearchSpace *oldS, int opt_id)
 
     for (j = 0; j < oldS->m; j++)
 	{
+
+		if(oldS->a[j]->t  && tensor_id > 0) DestroyTensor(&(oldS->a[j]->t), oldS->n);
         DestroyAgent(&(oldS->a[j]), opt_id);
-        oldS->a[j] = CopyAgent(s->a[j], opt_id, _NOTENSOR_);
+        oldS->a[j] = CopyAgent(s->a[j], opt_id, tensor_id);
+		if(s->a[j]->t && tensor_id > 0) oldS->a[j]->t = CopyTensor(s->a[j]->t, s->n, tensor_id);
 	}
 }
 
 /* It performs a SearchSpace permutation
 Parameters:
 s: search space
-opt_id: identifier of the optimization technique*/
-void Permutation(SearchSpace *s, int opt_id)
+opt_id: identifier of the optimization technique
+tensor_dim: identifier of tensor's dimension*/
+void TensorPermutation(SearchSpace *s, int opt_id, int tensor_dim)
+{
+	int i;
+
+    if (!s)
+    {
+        fprintf(stderr, "\nSearch space not allocated @Permutation.\n");
+        exit(-1);
+    }
+	Agent *tmp = NULL;
+	double **t = NULL;
+	for (i = 0; i < s->m; i++)
+	{
+		//generate a random position
+		int r = rand() % s->m;
+		if (r!=i){
+			tmp = CopyAgent(s->a[i], opt_id, tensor_dim);
+			t = CopyTensor(s->a[i]->t, s->n, tensor_dim);
+
+			DestroyTensor(&(s->a[i]->t), s->n);
+			DestroyAgent(&(s->a[i]), opt_id);
+
+			s->a[i] = CopyAgent(s->a[r], opt_id, tensor_dim);
+			s->a[i]->t = CopyTensor(s->a[r]->t, s->n, tensor_dim);
+
+			DestroyTensor(&(s->a[r]->t), s->n);
+			DestroyAgent(&(s->a[r]), opt_id);
+
+
+			s->a[r] = CopyAgent(tmp, opt_id,tensor_dim);
+			s->a[r]->t = CopyTensor(t, s->n, tensor_dim);
+		
+			DestroyTensor(&(t), s->n);
+			DestroyAgent(&tmp, opt_id);
+		}
+	}
+	
+	
+}
+
+/* It performs a SearchSpace permutation
+Parameters:
+s: search space
+opt_id: identifier of the optimization technique
+tensor_dim: identifier of tensor's dimension*/
+void Permutation(SearchSpace *s, int opt_id, int tensor_dim)
 {
 	int i;
 
@@ -415,11 +473,11 @@ void Permutation(SearchSpace *s, int opt_id)
 		//generate a random position
 		int r = rand() % s->m;
 		if (r!=i){
-			tmp = CopyAgent(s->a[i], opt_id, _NOTENSOR_);
+			tmp = CopyAgent(s->a[i], opt_id, tensor_dim);
 			DestroyAgent(&(s->a[i]), opt_id);
-			s->a[i] = CopyAgent(s->a[r], opt_id, _NOTENSOR_);
+			s->a[i] = CopyAgent(s->a[r], opt_id, tensor_dim);
 			DestroyAgent(&(s->a[r]), opt_id);
-			s->a[r] = CopyAgent(tmp, opt_id, _NOTENSOR_);
+			s->a[r] = CopyAgent(tmp, opt_id,tensor_dim);
 		
 			DestroyAgent(&tmp, opt_id);
 		}
@@ -519,6 +577,10 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...){
 	/* JADE */	
 	s->c = NAN;
 	s->p_greediness = NAN;
+
+	/* COBIDE */
+	s->pb = NAN;
+	s->ps = NAN;
 
     /* GP and LOA uses a different structure than that of others */
     if ((opt_id != _GP_) && (opt_id != _TGP_) && (opt_id != _LOA_)){
@@ -669,6 +731,7 @@ void DestroySearchSpace(SearchSpace **s, int opt_id){
             case _BSO_:
 			case _BSA_:
 			case _JADE_:
+			case _COBIDE_:
             case _HS_:
                 if (tmp->g) free(tmp->g);
             break;
@@ -769,6 +832,7 @@ void InitializeSearchSpace(SearchSpace *s, int opt_id){
         case _BSO_:
         case _BSA_:
 		case _JADE_:
+		case _COBIDE_:
         case _HS_:
             for (i = 0; i < s->m; i++){
                 for (j = 0; j < s->n; j++)
@@ -840,6 +904,7 @@ void ShowSearchSpace(SearchSpace *s, int opt_id)
     case _ABC_:
     case _BSO_:
 	case _JADE_:
+	case _COBIDE_:
     case _HS_:
         for (i = 0; i < s->m; i++)
         {
@@ -956,6 +1021,7 @@ void EvaluateSearchSpace(SearchSpace *s, int opt_id, prtFun Evaluate, va_list ar
     case _HS_:
 	case _BSA_:
 	case _JADE_:
+	case _COBIDE_:
     case _BSO_:
         for (i = 0; i < s->m; i++)
         {
@@ -1407,6 +1473,19 @@ char CheckSearchSpace(SearchSpace *s, int opt_id)
         }
 
         break;
+	case _COBIDE_:
+        if (isnan((float)s->pb))
+        {
+            fprintf(stderr, "\n  -> pb undefined.");
+            OK = 0;
+        }
+        if (isnan((float)s->ps))
+        {
+            fprintf(stderr, "\n  -> ps undefined.");
+            OK = 0;
+        }
+
+        break;
     default:
         fprintf(stderr, "\n Invalid optimization identifier @CheckSearchSpace.\n");
         return 0;
@@ -1831,22 +1910,24 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
             s->iterations = iterations;
             WaiveComment(fp);
             break;
-
-
         case _BSA_:
             s = CreateSearchSpace(m, n, _BSA_);
 			s->iterations = iterations;
             fscanf(fp, "%lf %d", &(s->mix_rate), &(s->F));
             WaiveComment(fp);
             break;
-
 		case _JADE_:
             s = CreateSearchSpace(m, n, _JADE_);
 			s->iterations = iterations;
             fscanf(fp, "%lf %lf", &(s->c), &(s->p_greediness));
             WaiveComment(fp);
             break;
-
+		case _COBIDE_:
+            s = CreateSearchSpace(m, n, _COBIDE_);
+			s->iterations = iterations;
+			fscanf(fp, "%lf %lf", &(s->pb), &(s->ps));
+            WaiveComment(fp);
+            break;
         default:
             fprintf(stderr, "\nInvalid optimization identifier @ReadSearchSpaceFromFile.\n");
             break;
@@ -2887,9 +2968,15 @@ s: search space
 a: tensor */
 void CheckTensorLimits(SearchSpace *s, double **t, int tensor_dim)
 {
-    if ((!s) || (!t))
+    if (!s)
     {
-        fprintf(stderr, "\nInvalid input parameters @CheckTensorLimits.\n");
+        fprintf(stderr, "\nInvalid SearchSpace parameters @CheckTensorLimits.\n");
+        exit(-1);
+    }
+
+    if (!t)
+    {
+        fprintf(stderr, "\nInvalid Tensor parameters @CheckTensorLimits.\n");
         exit(-1);
     }
 
@@ -3058,6 +3145,7 @@ void EvaluateTensorSearchSpace(SearchSpace *s, int opt_id, int tensor_id, prtFun
     case _CS_:
     case _BHA_:
     case _ABC_:
+	case _BSA_:
     case _HS_:
         for (i = 0; i < s->m; i++)
         {

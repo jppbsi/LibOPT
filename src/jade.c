@@ -28,7 +28,7 @@ void runJADE(SearchSpace *s, prtFun Evaluate, ...)
 	double uF = 0.5, uCR = 0.5; /* Mean Mutation Factor and Crossover parameters, respectivelly */
 	double Fi, CRi; /* Mutation scale Factor and Crossover controle parameter for each individual */
 
-	double* Sf = NULL; /* Crossover parameter for each individual */
+	double* Sf = NULL; /* scale Factor parameter for each individual */
 	double* Scr = NULL; /* Crossover parameter for each individual */
 	double* mutation = NULL;
 	SearchSpace *crossOver = NULL;
@@ -426,7 +426,7 @@ Agent * GetBestPAgent(SearchSpace *s)
 		newS->UB[j] = s->UB[j];
 	}
 	InitializeSearchSpace(newS, _JADE_);
-	CopySearchSpaceAgents(s, newS, _JADE_);
+	CopySearchSpaceAgents(s, newS, _JADE_, _NOTENSOR_);
 	qsort(newS->a, newS->m, sizeof(Agent **), SortAgent);
 	
 	n_best_total = floor(s->m * s->p_greediness );

@@ -26,4 +26,11 @@ SearchSpace *CrossOverStrategyOfBSA(SearchSpace *s, double** Map, double** Mutat
 void BoundaryControlMechanism(SearchSpace *s,SearchSpace *T);  /* It controls the boundaries of the new Trial-population */
 void InitializeMap(SearchSpace *s,  double** Map);  /* It initializes the map containing the position of features to be permuted */
 
+
+/*  Tensor-Based Functions */
+void runTensorBSA(SearchSpace *s, int tensor_id, prtFun Evaluate, ...); /* It executes the tensor-based Backtracking Search Optimization Algorithm for function minimization */
+SearchSpace *CrossOverTensorStrategyOfBSA(SearchSpace *s, double** Map, double*** Mutation, int tensor_id); /* It executes the the tensor-based BSA cross over strategy */
+void InitializeTensorMutation(SearchSpace *s, SearchSpace *oldS, double*** Mutation, int tensor_id); /* It initializes the tensor-based mutation matrix */
+
+
 #endif

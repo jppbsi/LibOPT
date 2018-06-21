@@ -37,6 +37,7 @@ extern "C" {
 #define _DE_ 15 /* Differential Evolution */
 #define _BSA_ 16 /* Backtracking Search Optimization Algorithm */
 #define _JADE_ 17 /* Adaptive Differential Evolution with Optional External Archive */
+#define _COBIDE_ 18 /* Differential evolution based on covariance matrix learning and bimodal distribution parameter */
 /**************************/
 
 /* Tensor-based Meta-heuristics */

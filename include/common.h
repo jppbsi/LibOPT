@@ -184,6 +184,10 @@ typedef struct SearchSpace_{
 	double c; /* rate of parameter adaptation */
 	double p_greediness; /* determines the greediness of the mutation strategy */
 
+	/* CoBiDE */
+	double pb; /* probability to execute DE according to the covariance matrix learning */
+	double ps; /* proportion of the individuals chosen from the current population to calculate the covariance matrix */
+
 }SearchSpace;
 
 typedef double (*prtFun)(Agent *, va_list arg); /* Pointer to the function used to evaluate agents */
@@ -195,8 +199,8 @@ void CheckAgentLimits(SearchSpace *s, Agent *a); /* It checks whether a given ag
 Agent *CopyAgent(Agent *a, int opt_id, int tensor_dim); /* It copies an agent */
 void EvaluateAgent(SearchSpace *s, Agent *a, int opt_id, prtFun Evaluate, va_list arg); /* It evaluate an agent according to each technique */
 Agent *GenerateNewAgent(SearchSpace *s, int opt_id); /* It generates a new agent according to each technique */
-void CopySearchSpaceAgents(SearchSpace *s, SearchSpace *oldS, int opt_id); /* It copies the agents from s to oldS */
-void Permutation(SearchSpace *s, int opt_id); /* It performs a SearchSpace permutation */
+void CopySearchSpaceAgents(SearchSpace *s, SearchSpace *oldS, int opt_id, int tensor_id); /* It copies the agents from s to oldS */
+void Permutation(SearchSpace *s, int opt_id, int tensor_dim); /* It performs a SearchSpace permutation */
 /**************************/
 
 /* Search Space-related functions */
@@ -261,6 +265,7 @@ double TensorSpan(double L, double U, double *t, int tensor_dim); /* It maps the
 double TensorEuclideanDistance(double **t, double **s, int n, int tensor_id); /* It calculates the Euclidean Distance between tensors */
 void EvaluateTensorSearchSpace(SearchSpace *s, int opt_id, int tensor_id, prtFun Evaluate, va_list arg); /* It evaluates a tensor-based search space */
 double **RunTTree(SearchSpace *s, Node *T); /* It runs a given tensor-based tree and outputs its solution array */
+void TensorPermutation(SearchSpace *s, int opt_id, int tensor_dim);  /* It performs a tensor-based SearchSpace permutation */
 /***********************/
 
 #endif
