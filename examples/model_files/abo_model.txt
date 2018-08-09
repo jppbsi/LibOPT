@@ -1,0 +1,4 @@
+10 2 10 # <n_particles> <dimension> <max_iterations>
+0.2 0.05 # <ratio_e> <step_e>
+-5.12 5.12 # <LB> <UB> x[0]
+-5.12 5.12 # <LB> <UB> x[1]

@@ -177,16 +177,20 @@ typedef struct SearchSpace_{
     Agent **male_nomads; /* array of pointers to male nomad lions */
     
     /* BSA */
-	double mix_rate; /* controls the number of elements of individuals that will mutate in a trial  */
-	int F; /* controls the amplitude of the search-direction matrix (oldS - s) */
+    double mix_rate; /* controls the number of elements of individuals that will mutate in a trial  */
+    int F; /* controls the amplitude of the search-direction matrix (oldS - s) */
 
-	/* JADE */
-	double c; /* rate of parameter adaptation */
-	double p_greediness; /* determines the greediness of the mutation strategy */
+    /* JADE */
+    double c; /* rate of parameter adaptation */
+    double p_greediness; /* determines the greediness of the mutation strategy */
 
-	/* CoBiDE */
-	double pb; /* probability to execute DE according to the covariance matrix learning */
-	double ps; /* proportion of the individuals chosen from the current population to calculate the covariance matrix */
+    /* CoBiDE */
+    double pb; /* probability to execute DE according to the covariance matrix learning */
+    double ps; /* proportion of the individuals chosen from the current population to calculate the covariance matrix */
+
+    /* ABO */
+    double ratio_e; /*  */
+    double step_e; /* */
 
 }SearchSpace;
 

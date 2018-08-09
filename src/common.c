@@ -62,9 +62,10 @@ Agent *CreateAgent(int n, int opt_id, int tensor_dim){
         case _MBO_:
         case _ABC_:
         case _BSO_:
-		case _JADE_:
-		case _COBIDE_:
-		case _BSA_:
+        case _JADE_:
+        case _COBIDE_:
+        case _BSA_:
+        case _ABO_:
         case _HS_:
             a->x = (double *)calloc(n, sizeof(double));
             if ((opt_id != _GP_) && (opt_id != _TGP_) & (opt_id != _BSO_))
@@ -121,9 +122,10 @@ void DestroyAgent(Agent **a, int opt_id){
         case _MBO_:
         case _ABC_:
         case _BSO_:
-		case _JADE_:
-		case _COBIDE_:
-		case _BSA_:
+        case _JADE_:
+        case _COBIDE_:
+        case _BSA_:
+        case _ABO_:
         case _HS_:
             if (tmp->x) free(tmp->x);
             if (tmp->v) free(tmp->v);
@@ -200,9 +202,10 @@ Agent *CopyAgent(Agent *a, int opt_id, int tensor_dim)
     case _BHA_:
     case _WCA_:
     case _ABC_:
-	case _JADE_:
-	case _COBIDE_:
-	case _BSA_:
+    case _JADE_:
+    case _COBIDE_:
+    case _BSA_:
+    case _ABO_:
     case _HS_:
         memcpy(cpy->x, a->x, a->n * sizeof(double));
         memcpy(cpy->v, a->v, a->n * sizeof(double));
@@ -333,11 +336,14 @@ Agent *GenerateNewAgent(SearchSpace *s, int opt_id)
     case _BSA_:
         a = CreateAgent(s->n, _BSA_, _NOTENSOR_);
         break;
-	case _JADE_:
+    case _JADE_:
         a = CreateAgent(s->n, _JADE_, _NOTENSOR_);
         break;
-	case _COBIDE_:
+    case _COBIDE_:
         a = CreateAgent(s->n, _COBIDE_, _NOTENSOR_);
+        break;
+    case _ABO_:
+        a = CreateAgent(s->n, _ABO_, _NOTENSOR_);
         break;
     case _HS_:
         a = CreateAgent(s->n, _HS_, _NOTENSOR_);
@@ -570,17 +576,21 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...){
     s->p_one_center = NAN;
     s->p_two_centers = NAN;
 
-	/* BSA */
-	s->mix_rate = NAN;
-	s->F = 0;
+    /* BSA */
+    s->mix_rate = NAN;
+    s->F = 0;
 
-	/* JADE */	
-	s->c = NAN;
-	s->p_greediness = NAN;
+    /* JADE */	
+    s->c = NAN;
+    s->p_greediness = NAN;
 
-	/* COBIDE */
-	s->pb = NAN;
-	s->ps = NAN;
+    /* COBIDE */
+    s->pb = NAN;
+    s->ps = NAN;
+
+    /* ABO */
+    s->ratio_e = NAN;
+    s->step_e = NAN;
 
     /* GP and LOA uses a different structure than that of others */
     if ((opt_id != _GP_) && (opt_id != _TGP_) && (opt_id != _LOA_)){
@@ -729,9 +739,10 @@ void DestroySearchSpace(SearchSpace **s, int opt_id){
             case _MBO_:
             case _ABC_:
             case _BSO_:
-			case _BSA_:
-			case _JADE_:
-			case _COBIDE_:
+            case _BSA_:
+            case _JADE_:
+            case _COBIDE_:
+            case _ABO_:
             case _HS_:
                 if (tmp->g) free(tmp->g);
             break;
@@ -831,8 +842,9 @@ void InitializeSearchSpace(SearchSpace *s, int opt_id){
         case _ABC_:
         case _BSO_:
         case _BSA_:
-		case _JADE_:
-		case _COBIDE_:
+        case _JADE_:
+        case _COBIDE_:
+        case _ABO_:
         case _HS_:
             for (i = 0; i < s->m; i++){
                 for (j = 0; j < s->n; j++)
@@ -903,8 +915,9 @@ void ShowSearchSpace(SearchSpace *s, int opt_id)
     case _WCA_:
     case _ABC_:
     case _BSO_:
-	case _JADE_:
-	case _COBIDE_:
+    case _JADE_:
+    case _COBIDE_:
+    case _ABO_:
     case _HS_:
         for (i = 0; i < s->m; i++)
         {
@@ -1019,9 +1032,10 @@ void EvaluateSearchSpace(SearchSpace *s, int opt_id, prtFun Evaluate, va_list ar
     case _WCA_:
     case _ABC_:
     case _HS_:
-	case _BSA_:
-	case _JADE_:
-	case _COBIDE_:
+    case _BSA_:
+    case _JADE_:
+    case _COBIDE_:
+    case _ABO_:
     case _BSO_:
         for (i = 0; i < s->m; i++)
         {
@@ -1460,7 +1474,7 @@ char CheckSearchSpace(SearchSpace *s, int opt_id)
         }
 
         break;
-	case _JADE_:
+    case _JADE_:
         if (isnan((float)s->c))
         {
             fprintf(stderr, "\n  -> c undefined.");
@@ -1473,7 +1487,7 @@ char CheckSearchSpace(SearchSpace *s, int opt_id)
         }
 
         break;
-	case _COBIDE_:
+    case _COBIDE_:
         if (isnan((float)s->pb))
         {
             fprintf(stderr, "\n  -> pb undefined.");
@@ -1485,6 +1499,18 @@ char CheckSearchSpace(SearchSpace *s, int opt_id)
             OK = 0;
         }
 
+        break;
+    case _ABO_:
+        if (isnan((float)s->ratio_e))
+        {
+            fprintf(stderr, "\n  -> proportion of sunspot butterflies undefined.");
+            OK = 0;
+        }
+        if (isnan((float)s->step_e))
+        {
+            fprintf(stderr, "\n -> step parameter undefined.");
+            OK = 0;
+        }
         break;
     default:
         fprintf(stderr, "\n Invalid optimization identifier @CheckSearchSpace.\n");
@@ -1912,20 +1938,26 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
             break;
         case _BSA_:
             s = CreateSearchSpace(m, n, _BSA_);
-			s->iterations = iterations;
+            s->iterations = iterations;
             fscanf(fp, "%lf %d", &(s->mix_rate), &(s->F));
             WaiveComment(fp);
             break;
-		case _JADE_:
+         case _JADE_:
             s = CreateSearchSpace(m, n, _JADE_);
-			s->iterations = iterations;
+            s->iterations = iterations;
             fscanf(fp, "%lf %lf", &(s->c), &(s->p_greediness));
             WaiveComment(fp);
             break;
-		case _COBIDE_:
+         case _COBIDE_:
             s = CreateSearchSpace(m, n, _COBIDE_);
-			s->iterations = iterations;
-			fscanf(fp, "%lf %lf", &(s->pb), &(s->ps));
+            s->iterations = iterations;
+            fscanf(fp, "%lf %lf", &(s->pb), &(s->ps));
+            WaiveComment(fp);
+            break;
+         case _ABO_:
+            s = CreateSearchSpace(m, n, _ABO_);
+            s->iterations = iterations;
+            fscanf(fp, "%lf %lf", &(s->ratio_e), &(s->step_e));
             WaiveComment(fp);
             break;
         default:

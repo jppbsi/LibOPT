@@ -8,7 +8,7 @@ CC=gcc
 FLAGS=  -g -O0
 CFLAGS=''
 
-all: libopt PSO AIWPSO BA FPA FA CS GP GA BHA WCA MBO GSGP BGSGP ABC HS IHS PSF-HS BSO BSA JADE LOA DE TensorPSO TensorAIWPSO TensorBA TensorFPA TensorFA TensorCS TensorBHA TensorABC TensorHS TensorIHS TensorPSF-HS TensorGP TensorBSA
+all: libopt PSO AIWPSO BA FPA FA CS GP GA BHA WCA MBO GSGP BGSGP ABC HS IHS PSF-HS BSO BSA JADE LOA DE ABO TensorPSO TensorAIWPSO TensorBA TensorFPA TensorFA TensorCS TensorBHA TensorABC TensorHS TensorIHS TensorPSF-HS TensorGP TensorBSA
 
 libopt: $(LIB)/libopt.a
 	echo "libopt.a built..."
@@ -34,6 +34,7 @@ $(OBJ)/bsa.o \
 $(OBJ)/jade.o \
 $(OBJ)/loa.o \
 $(OBJ)/de.o \
+$(OBJ)/abo.o \
 
 	ar csr $(LIB)/libopt.a \
 $(OBJ)/common.o \
@@ -56,6 +57,7 @@ $(OBJ)/bsa.o \
 $(OBJ)/jade.o \
 $(OBJ)/loa.o \
 $(OBJ)/de.o \
+$(OBJ)/abo.o \
 
 $(OBJ)/common.o: $(SRC)/common.c
 	$(CC) $(FLAGS) -I $(INCLUDE) -c $(SRC)/common.c -o $(OBJ)/common.o
@@ -116,6 +118,9 @@ $(OBJ)/loa.o: $(SRC)/loa.c
 
 $(OBJ)/de.o: $(SRC)/de.c
 	$(CC) $(FLAGS) -I $(INCLUDE) -c $(SRC)/de.c -o $(OBJ)/de.o
+
+$(OBJ)/abo.o: $(SRC)/abo.c
+	$(CC) $(FLAGS) -I $(INCLUDE) -c $(SRC)/abo.c -o $(OBJ)/abo.o
 
 PSO: examples/PSO.c
 	$(CC) $(FLAGS) examples/PSO.c -o examples/bin/PSO -I $(INCLUDE) -L $(LIB) -lopt -lm;
@@ -182,6 +187,9 @@ LOA: examples/LOA.c
 
 DE: examples/DE.c
 	$(CC) $(FLAGS) examples/DE.c -o examples/bin/DE -I $(INCLUDE) -L $(LIB) -lopt -lm;
+
+DE: examples/ABO.c
+	$(CC) $(FLAGS) examples/ABO.c -o examples/bin/ABO -I $(INCLUDE) -L $(LIB) -lopt -lm;
 
 TensorPSO: examples/TensorPSO.c
 	$(CC) $(FLAGS) examples/TensorPSO.c -o examples/bin/TensorPSO -I $(INCLUDE) -L $(LIB) -lopt -lm;
