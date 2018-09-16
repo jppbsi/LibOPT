@@ -86,6 +86,10 @@ Agent *CreateAgent(int n, int opt_id, int tensor_dim){
             a->t = CreateTensor(n, tensor_dim);
             a->x = (double *)calloc(n, sizeof(double));
             break;
+        case _SA_:
+            a->x = (double *)calloc(n, sizeof(double));
+            break;
+
         default:
             free(a);
             fprintf(stderr, "\nInvalid optimization identifier @CreateAgent\n.");
@@ -143,6 +147,16 @@ void DestroyAgent(Agent **a, int opt_id){
             if (tmp->x) free(tmp->x);
             if (tmp->t) DestroyTensor(&(tmp->t), tmp->n);
             break;
+        case _SA_:
+          if(tmp->x)
+            free(tmp->x);
+          /* attention: these variables were allocated at CreateSearchSpace, not at CreateAgent. */
+          if(tmp->LB)
+            free(tmp->LB);
+          if(tmp->UB)
+            free(tmp->UB);
+          break;
+
         default:
             fprintf(stderr, "\nInvalid optimization identifier @DestroyAgent.\n");
             break;
@@ -207,6 +221,7 @@ Agent *CopyAgent(Agent *a, int opt_id, int tensor_dim)
     case _BSA_:
     case _ABO_:
     case _HS_:
+    case _SA_:
         memcpy(cpy->x, a->x, a->n * sizeof(double));
         memcpy(cpy->v, a->v, a->n * sizeof(double));
         if (opt_id == _PSO_)
@@ -233,6 +248,17 @@ Evaluate: pointer to the function used to evaluate
 arg: list of additional arguments */
 void EvaluateAgent(SearchSpace *s, Agent *a, int opt_id, prtFun Evaluate, va_list arg)
 {
+    if (opt_id < 1) // invalid opt_id
+    {
+      fprintf(stderr, "\nInvalid optimization identifier @EvaluateAgent.\n");
+      return;
+    }
+
+    if (a == NULL) // not allocated agent
+    {
+        fprintf(stderr, "\nNull pointer to Agent @EvaluateAgent.\n");				return;
+    }
+
     int i;
     double eva;
     va_list argtmp;
@@ -278,6 +304,17 @@ void EvaluateAgent(SearchSpace *s, Agent *a, int opt_id, prtFun Evaluate, va_lis
                 for (i = 0; i < s->n; i++)
                     s->g[i] = a->x[i];
             }
+        }
+        break;
+
+      case _SA_:
+        a->fit = Evaluate(a, arg);
+        /* If the actual position is the best solution so far */
+        if (a->fit < s->gfit)
+        {
+          s->gfit = a->fit;
+          /* update the global best solution */
+          memcpy(s->g, a->x, s->n * sizeof(double));
         }
         break;
     }
@@ -609,6 +646,16 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...){
                         s->a[i]->nb[j] = CreateAgent(s->n, opt_id, _NOTENSOR_);
                 }
             }
+
+            else if(opt_id == _SA_)
+            {
+              /* allocating the array of boudns for each agent */
+              for(i = 0; i < s->m; i++)
+              {
+                s->a[i]->LB = (double *)malloc(s->n * sizeof(double));
+                s->a[i]->UB = (double *)malloc(s->n * sizeof(double));
+              }
+            }
         }
         else{
             free(s->a);
@@ -744,6 +791,7 @@ void DestroySearchSpace(SearchSpace **s, int opt_id){
             case _COBIDE_:
             case _ABO_:
             case _HS_:
+            case _SA_:
                 if (tmp->g) free(tmp->g);
             break;
             default:
@@ -850,7 +898,7 @@ void InitializeSearchSpace(SearchSpace *s, int opt_id){
                 for (j = 0; j < s->n; j++)
                     s->a[i]->x[j] = GenerateUniformRandomNumber(s->LB[j], s->UB[j]);
             }
-        	break;
+            break;
         case _GP_:
             for (i = 0; i < s->n_terminals; i++){
                 for (j = 0; j < s->n; j++){
@@ -883,6 +931,28 @@ void InitializeSearchSpace(SearchSpace *s, int opt_id){
                     for (j = 0; j < s->pride_id[i].n_males; j++)
                         s->pride_id[i].males[j]->x[k] = GenerateUniformRandomNumber(s->LB[k], s->UB[k]);
                 }
+            }
+            break;
+        case _SA_:
+            /* Here we define the area that each agent will seach */
+            /* for each decision variable */
+            for (i = 0; i < s->n; i++)
+            {
+              double increment = (s->UB[i] - s->LB[i]) / s->m;
+              /* the first agent */
+              s->a[0]->LB[i] = s->LB[i];
+              s->a[0]->UB[i] = s->LB[i] + increment;
+              /* Generation random initial position */
+              s->a[0]->x[i] = GenerateUniformRandomNumber(s->a[0]->LB[i], s->a[0]->UB[i]);
+              /* for each agent */
+              for (j = 1; j < s->m; j++)
+              {
+                s->a[j]->LB[i] = s->a[j - 1]->UB[i]; /* lower bound of the agent starts at the upper bound of the previous agent. */
+                s->a[j]->UB[i] = s->a[j]->LB[i] + increment;
+
+                /* Generation random initial position */
+                s->a[j]->x[i] = GenerateUniformRandomNumber(s->a[j]->LB[i], s->a[j]->UB[i]);
+              }
             }
             break;
     }
@@ -927,6 +997,19 @@ void ShowSearchSpace(SearchSpace *s, int opt_id)
             fprintf(stderr, "fitness value: %f", s->a[i]->fit);
         }
         break;
+
+    case _SA_:
+      for (i = 0; i < s->m; i++)
+      {
+          fprintf(stderr, "\nAgent %d-> ", i);
+          for (j = 0; j < s->n; j++)
+              fprintf(stderr, "\nx[%d]: %f   ", j, s->a[i]->x[j]);
+          fprintf(stderr, "\nBoundaries");
+          for (j = 0; j < s->n; j++)
+              fprintf(stderr, "\nUB[%d]: %.2f, LB[%d]: %.2f", j, s->a[i]->UB[j], j, s->a[i]->LB[j]);
+          fprintf(stderr, "\nfitness value: %f", s->a[i]->fit);
+      }
+      break;
     case _GP_:
         for (i = 0; i < s->m; i++)
             fprintf(stderr, "\nAgent %d-> fitness value %lf", i, s->tree_fit[i]);
@@ -1190,6 +1273,11 @@ void EvaluateSearchSpace(SearchSpace *s, int opt_id, prtFun Evaluate, va_list ar
             }
         }
         break;
+
+    case _SA_:
+      for (i = 0; i < s->m; i++)
+        EvaluateAgent(s, s->a[i], _SA_, Evaluate, arg); /* It executes the fitness function for agent i */
+      break;
     default:
         fprintf(stderr, "\n Invalid optimization identifier @EvaluateSearchSpace.\n");
         break;
@@ -1511,6 +1599,17 @@ char CheckSearchSpace(SearchSpace *s, int opt_id)
             fprintf(stderr, "\n -> step parameter undefined.");
             OK = 0;
         }
+    case _SA_:
+      if ((s->cooling_schedule_id < 0) || (s->cooling_schedule_id > TOTAL_COOLING_SCHEDULES))
+      {
+        fprintf(stderr, "\n  -> Undefined Cooling Schedule. @CheckSearchSpace.\n");
+        OK = 0;
+      }
+      if (isnan(s->end_temperature))
+      {
+        fprintf(stderr, "\n  -> Undefined End Temperature. @CheckSearchSpace.\n");
+        OK = 0;
+      }
         break;
     default:
         fprintf(stderr, "\n Invalid optimization identifier @CheckSearchSpace.\n");
@@ -1704,6 +1803,8 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
     int n_prides, tensor_dim = -1;
     char line[LINE_SIZE], *pline = NULL, **function = NULL, **terminal = NULL;
     Node *head = NULL, *tail = NULL, *aux = NULL;
+
+    char cooling_schedule_name[256]; /* SA - to hold the string coming from the file*/
 
     fp = fopen(fileName, "r");
     if (!fp){
@@ -1959,6 +2060,15 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
             s->iterations = iterations;
             fscanf(fp, "%lf %lf", &(s->ratio_e), &(s->step_e));
             WaiveComment(fp);
+            break;
+         case _SA_:
+            s = CreateSearchSpace(m, n, _SA_);
+            s->iterations = iterations;
+            fscanf(fp, "%lf %lf", &(s->init_temperature), &(s->end_temperature));
+            WaiveComment(fp);
+            fscanf(fp, "%s %lf", cooling_schedule_name, &(s->func_param));
+            WaiveComment(fp);
+            s->cooling_schedule_id = getCoolingScheduleId(cooling_schedule_name);
             break;
         default:
             fprintf(stderr, "\nInvalid optimization identifier @ReadSearchSpaceFromFile.\n");
@@ -3298,5 +3408,23 @@ double **RunTTree(SearchSpace *s, Node *T){
     else return NULL;
 }
 
+
+/***********************/
+
+/* Simulated Annealing (SA) related functions */
+/* It returns the identifier of the function used as the SA Cooling Schedule
+Parameters:
+s: string with the cooling function name */
+int getCoolingScheduleId(char *s)
+{
+    if (!strcmp(s, "BOLTZMANN_ANNEALING"))
+        return BOLTZMANN_ANNEALING;
+    else if(!strcmp(s, "FAST_SCHEDULE_ANNEALING"))
+        return FAST_SCHEDULE_ANNEALING;
+    else {
+        fprintf(stderr, "\nUndefined function for Cooling Schedule @getCoolingScheduleId.");
+        exit(-1);
+    }
+}
 
 /***********************/

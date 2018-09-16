@@ -69,6 +69,10 @@ typedef struct Agent_{
     double *prev_x; /* position (associated with pfit) */
     double best_fit; /* best fitness value so far of the agent (associated with xl) */
 
+    /* SA */
+    double *LB; /* lower boundaries of each decision variable of that agent */
+    double *UB; /* upper boundaries of each decision variable of that agent */
+
 }Agent;
 
 /* It defines the search space */
@@ -192,6 +196,12 @@ typedef struct SearchSpace_{
     double ratio_e; /*  */
     double step_e; /* */
 
+    /* SA */
+    int cooling_schedule_id; /* identification number of the cooling schedule used on SA */
+    double init_temperature; /* Initial temperature of the system. If it is 0 (zero) or any value below, we will determine it automatically from the number of iterations. */
+    double end_temperature; /* temperature that means the convergence of the algorithm (Generally = 1) */
+    double func_param; /* extra parameter for the cooling schedule functions */
+
 }SearchSpace;
 
 typedef double (*prtFun)(Agent *, va_list arg); /* Pointer to the function used to evaluate agents */
@@ -270,6 +280,20 @@ double TensorEuclideanDistance(double **t, double **s, int n, int tensor_id); /*
 void EvaluateTensorSearchSpace(SearchSpace *s, int opt_id, int tensor_id, prtFun Evaluate, va_list arg); /* It evaluates a tensor-based search space */
 double **RunTTree(SearchSpace *s, Node *T); /* It runs a given tensor-based tree and outputs its solution array */
 void TensorPermutation(SearchSpace *s, int opt_id, int tensor_dim);  /* It performs a tensor-based SearchSpace permutation */
+/***********************/
+
+/* Simulated Annealing related functions */
+/* Simulated Annealing (SA) Cooling Schedules */
+enum SA_COOLING_SCHEDULES {
+  BOLTZMANN_ANNEALING, /* basic SA cooling strategy */
+  FAST_SCHEDULE_ANNEALING, /* Fast Schedule annealing */
+
+  /* Add other cooling Schedule functions before TOTAL_COOLING_SCHEDULES item. */
+  TOTAL_COOLING_SCHEDULES /* Number of cooling Schedules */
+};
+
+/* It returns the identifier of the function used as the SA Cooling Schedule */
+int getCoolingScheduleId(char *s);
 /***********************/
 
 #endif
