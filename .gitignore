@@ -36,3 +36,6 @@
 *.dSYM/
 *.DS_Store/
 .DS_Store/
+
+# Linux KDE Files
+.directory
