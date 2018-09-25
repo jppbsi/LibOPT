@@ -49,6 +49,7 @@ double Chen_Bird(Agent *a, va_list arg); /* It computes the Chen's Bird function
 double Chen_V(Agent *a, va_list arg); /* It computes the Chen's V function */
 double Chichinadze(Agent *a, va_list arg); /* It computes the Chichinadze's function */
 double Chung_Reynolds(Agent *a, va_list arg); /* It computes the Chung Reynolds' function */
+double Cosine(Agent *a, va_list arg); /* It computes the Cosine's Mixture function */
 double Colville(Agent *a, va_list arg); /* It computes the Colville's function */
 double Cross_Tray(Agent *a, va_list arg); /* It computes the Cross-in-Tray function */
 double Csendes(Agent *a, va_list arg); /* It computes the Csendes' function */
