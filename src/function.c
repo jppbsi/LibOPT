@@ -884,6 +884,39 @@ double Colville(Agent *a, va_list arg)
     return sum;
 }
 
+/* It computes the Cosine's Mixture function
+Parameters:
+a: agent
+---
+Minimum at f(x*) = 0.2 at x* = (0, 0) or f(x*) = 0.4 at x* = (0, 0, 0, 0)
+Domain: -1 <= x_i <= 1 */
+double Cosine(Agent *a, va_list arg)
+{
+    int i;
+    double sum = 0, partial_sum = 0, partial_sum2 = 0;
+
+    if (!a)
+    {
+        fprintf(stderr, "\nAgent not allocated @Cosine.\n");
+        return DBL_MAX;
+    }
+
+    if (a->n < 1)
+    {
+        fprintf(stderr, "\nInvalid number of decision variables @Cosine. It must be greater than 1.\n");
+        return DBL_MAX;
+    }
+
+    for (i = 0; i < a->n; i++) {
+        partial_sum += cos(5 * M_PI * a->x[i]);
+        partial_sum2 += pow(a->x[i], 2);
+    }
+
+    sum = -0.1 * partial_sum - partial_sum2;
+
+    return sum;
+}
+
 /* It computes the Cross-in-Tray function
 Parameters:
 a: agent
