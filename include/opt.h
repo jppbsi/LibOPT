@@ -39,7 +39,6 @@ extern "C" {
 #define _JADE_ 17 /* Adaptive Differential Evolution with Optional External Archive */
 #define _COBIDE_ 18 /* Differential evolution based on covariance matrix learning and bimodal distribution parameter */
 #define _ABO_ 19 /* Artificial Butterfly Algorithm */
-#define _DE_ 20 /* Differential evolution */
 /**************************/
 
 /* Tensor-based Meta-heuristics */
