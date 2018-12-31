@@ -67,6 +67,7 @@ Agent *CreateAgent(int n, int opt_id, int tensor_dim) {
         case _BSA_:
         case _ABO_:
         case _HS_:
+        case _DE_:
             a->x = (double *) calloc(n, sizeof(double));
             if ((opt_id != _GP_) && (opt_id != _TGP_) & (opt_id != _BSO_))
                 a->v = (double *) calloc(n, sizeof(double));
@@ -77,8 +78,6 @@ Agent *CreateAgent(int n, int opt_id, int tensor_dim) {
             a->x = (double *) calloc(n, sizeof(double));
             a->xl = (double *) calloc(n, sizeof(double));
             a->prev_x = (double *) calloc(n, sizeof(double));
-            break;
-        case _DE_:
             break;
         case _TGP_:
             if (tensor_dim == _NOTENSOR_) {
@@ -294,6 +293,9 @@ Agent *GenerateNewAgent(SearchSpace *s, int opt_id) {
     double r, signal;
 
     switch (opt_id) {
+        case _DE_:
+            a = CreateAgent(s->n, _DE_, _NOTENSOR_);
+            break;
         case _PSO_:
             break;
         case _BA_:
@@ -567,6 +569,10 @@ SearchSpace *CreateSearchSpace(int m, int n, int opt_id, ...) {
     s->ratio_e = NAN;
     s->step_e = NAN;
 
+    /* DE */
+    s->mutation_factor = NAN;
+    s->cross_probability = NAN;
+
     /* GP and LOA uses a different structure than that of others */
     if ((opt_id != _GP_) && (opt_id != _TGP_) && (opt_id != _LOA_)) {
         s->a = (Agent **) malloc(s->m * sizeof(Agent * ));
@@ -837,6 +843,7 @@ void InitializeSearchSpace(SearchSpace *s, int opt_id) {
         case _COBIDE_:
         case _ABO_:
         case _HS_:
+        case _DE_:
             for (i = 0; i < s->m; i++) {
                 for (j = 0; j < s->n; j++)
                     s->a[i]->x[j] = GenerateUniformRandomNumber(s->LB[j], s->UB[j]);
@@ -907,6 +914,7 @@ void ShowSearchSpace(SearchSpace *s, int opt_id) {
         case _COBIDE_:
         case _ABO_:
         case _HS_:
+        case _DE_:
             for (i = 0; i < s->m; i++) {
                 fprintf(stderr, "\nAgent %d-> ", i);
                 for (j = 0; j < s->n; j++)
@@ -1013,6 +1021,7 @@ void EvaluateSearchSpace(SearchSpace *s, int opt_id, prtFun Evaluate, va_list ar
         case _COBIDE_:
         case _ABO_:
         case _BSO_:
+        case _DE_:
             for (i = 0; i < s->m; i++) {
                 f = Evaluate(s->a[i], arg); /* It executes the fitness function for agent i */
 
@@ -1844,6 +1853,7 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id) {
         case _DE_:
             s = CreateSearchSpace(m, n, _DE_);
             s->iterations = iterations;
+            fscanf(fp, "%lf %lf", &(s->mutation_factor), &(s->cross_probability));
             break;
         case _BSA_:
             s = CreateSearchSpace(m, n, _BSA_);

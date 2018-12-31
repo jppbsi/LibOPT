@@ -192,6 +192,10 @@ typedef struct SearchSpace_{
     double ratio_e; /*  */
     double step_e; /* */
 
+    /* DE */
+    double mutation_factor; /* Mutation factor */
+    double cross_probability;
+
 }SearchSpace;
 
 typedef double (*prtFun)(Agent *, va_list arg); /* Pointer to the function used to evaluate agents */
