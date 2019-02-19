@@ -1,21 +1,21 @@
 #include "de.h"
 #include "function.h"
 
-Agent *MutationAndRecombination(SearchSpace *searchSpace, int target, prtFun function, ...) {
+void *MutationAndRecombination(SearchSpace *searchSpace, int target, prtFun function, ...) {
     va_list args;
     Agent *mutant;
-    int a, b, c;
+    int a, b, c, k;
 
     va_start(args, function);
 
     mutant = GenerateNewAgent(searchSpace, _DE_);
     a = b = c = target;
 
-    while (a == target) a = rand() % searchSpace->m;
-    while (b == target || b == a) b = rand() % searchSpace->m;
-    while (c == target || c == b || c == a) c = rand() % searchSpace->m;
+    while (a == target) a = GenerateUniformRandomNumber(0, 1) * searchSpace->m;
+    while (b == target || b == a) b = GenerateUniformRandomNumber(0, 1) * searchSpace->m;
+    while (c == target || c == b || c == a) c = GenerateUniformRandomNumber(0, 1) * searchSpace->m;
 
-    for (int k = 0; k < searchSpace->n; k++) {
+    for (k = 0; k < searchSpace->n; k++) {
         mutant->x[k] = GenerateUniformRandomNumber(0, 1) < searchSpace->cross_probability
                        ? searchSpace->a[target]->x[k]
                        : searchSpace->a[a]->x[k]
@@ -25,7 +25,12 @@ Agent *MutationAndRecombination(SearchSpace *searchSpace, int target, prtFun fun
 
     mutant->fit = function(mutant, args);
 
-    return mutant->fit < searchSpace->a[target]->fit ? mutant : searchSpace->a[target];
+    if(mutant->fit < searchSpace->a[target]->fit) {
+        DestroyAgent(&searchSpace->a[target], _DE_);
+        searchSpace->a[target] = CopyAgent(mutant, _DE_, _NOTENSOR_);
+    }
+
+    DestroyAgent(&mutant, _DE_);
 }
 
 /**
@@ -35,6 +40,7 @@ Agent *MutationAndRecombination(SearchSpace *searchSpace, int target, prtFun fun
  * @param ... List of additional arguments
  */
 void runDE(SearchSpace *searchSpace, prtFun function, ...) {
+    int t, k;
     va_list args, initialArgs;
 
     va_start(args, function);
@@ -47,23 +53,20 @@ void runDE(SearchSpace *searchSpace, prtFun function, ...) {
 
     EvaluateSearchSpace(searchSpace, _DE_, function, args); /* Initial evaluation */
 
-//    fprintf(stderr, "\n\n>>");
-//    ShowSearchSpace(searchSpace, _DE_);
-//    fprintf(stderr, "<<\n\n");
-
-    for (int t = 1; t <= searchSpace->iterations; t++) {
+    for (t = 1; t <= searchSpace->iterations; t++) {
         fprintf(stderr, "\nRunning iteration %d/%d ... ", t, searchSpace->iterations);
         va_copy(initialArgs, args);
 
         /* For each particle */
-        for (int k = 0; k < searchSpace->m; k++) {
-            searchSpace->a[k] = MutationAndRecombination(searchSpace, k, function, args);
-        }
+        for (k = 0; k < searchSpace->m; k++) {
+            MutationAndRecombination(searchSpace, k, function, args);
 
-        EvaluateSearchSpace(searchSpace, _DE_, function, args);
+            EvaluateSearchSpace(searchSpace, _DE_, function, args);
+        }
 
         fprintf(stderr, "OK (minimum fitness value %lf)", searchSpace->gfit);
     }
 
     va_end(args);
 }
+

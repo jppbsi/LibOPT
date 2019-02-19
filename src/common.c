@@ -128,6 +128,7 @@ void DestroyAgent(Agent **a, int opt_id) {
         case _BSA_:
         case _ABO_:
         case _HS_:
+        case _DE_:
             if (tmp->x) free(tmp->x);
             if (tmp->v) free(tmp->v);
             if (opt_id == _PSO_)
@@ -139,8 +140,6 @@ void DestroyAgent(Agent **a, int opt_id) {
             if (tmp->v) free(tmp->v);
             if (tmp->xl) free(tmp->xl);
             if (tmp->prev_x) free(tmp->prev_x);
-            break;
-        case _DE_:
             break;
         case _TGP_:
             if (tmp->x) free(tmp->x);
@@ -204,11 +203,12 @@ Agent *CopyAgent(Agent *a, int opt_id, int tensor_dim) {
         case _BSA_:
         case _ABO_:
         case _HS_:
+        case _DE_:
             memcpy(cpy->x, a->x, a->n * sizeof(double));
             memcpy(cpy->v, a->v, a->n * sizeof(double));
             if (opt_id == _PSO_)
                 memcpy(cpy->xl, a->xl, a->n * sizeof(double));
-            if (opt_id == _FA_ || opt_id == _JADE_ || opt_id == _COBIDE_ || opt_id == _BSA_)
+            if (opt_id == _FA_ || opt_id == _JADE_ || opt_id == _COBIDE_ || opt_id == _BSA_ || opt_id == _DE_)
                 cpy->fit = a->fit;
             break;
         default:
@@ -740,9 +740,8 @@ void DestroySearchSpace(SearchSpace **s, int opt_id) {
             case _COBIDE_:
             case _ABO_:
             case _HS_:
-                if (tmp->g) free(tmp->g);
-                break;
             case _DE_:
+                if (tmp->g) free(tmp->g);
                 break;
             default:
                 fprintf(stderr, "\nInvalid optimization identifier @DestroySearchSpace.\n");
@@ -1854,6 +1853,7 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id) {
             s = CreateSearchSpace(m, n, _DE_);
             s->iterations = iterations;
             fscanf(fp, "%lf %lf", &(s->mutation_factor), &(s->cross_probability));
+            WaiveComment(fp);
             break;
         case _BSA_:
             s = CreateSearchSpace(m, n, _BSA_);
