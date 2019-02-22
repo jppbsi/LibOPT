@@ -17,6 +17,9 @@
 *.la
 *.lo
 
+# Binary files
+examples/bin/*
+
 # Shared objects (inc. Windows DLLs)
 *.dll
 *.so
@@ -39,3 +42,6 @@
 
 # Clion
 .idea/
+
+# Linux KDE Files
+.directory

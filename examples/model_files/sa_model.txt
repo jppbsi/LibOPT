@@ -1,0 +1,5 @@
+100 2 10 # <n_particles> <dimension> <max_iterations> <more information can be found at sa.h>
+0 1 # <initial temperature> <final temperature>
+BOLTZMANN_ANNEALING 100.0 # <Cooling Schedule id> <Extra Parameter - useless for this cooling_id>
+-30 30 # <LB> <UB> x[0]
+-30 30 # <LB> <UB> x[1]
