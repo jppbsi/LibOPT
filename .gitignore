@@ -40,5 +40,8 @@ examples/bin/*
 *.DS_Store/
 .DS_Store/
 
+# Clion
+.idea/
+
 # Linux KDE Files
 .directory
