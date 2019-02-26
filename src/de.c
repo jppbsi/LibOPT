@@ -1,7 +1,7 @@
 #include "de.h"
 #include "function.h"
 
-void *MutationAndRecombination(SearchSpace *searchSpace, int target, prtFun function, ...) {
+void MutationAndRecombination(SearchSpace *searchSpace, int target, prtFun function, ...) {
     va_list args;
     Agent *mutant;
     int a, b, c, k;
