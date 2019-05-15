@@ -5,7 +5,7 @@
 # checking if the Enviroment variable is already configured
 if [ $OPT_DIR ] 
 then 
-	echo "# The Enviroment variable OPT_DIR=${OPT_DIR} is already seted, nothing to do here."
+    echo "# The Enviroment variable OPT_DIR=${OPT_DIR} is already set, nothing to do here."
 else
     OPT_DIR=$(pwd)
     echo "Adding Enviroment variable to ${OPT_DIR}."    
