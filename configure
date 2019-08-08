@@ -1,0 +1,20 @@
+#!/bin/bash
+
+########## Enviroment Variable Configuration ##########
+# adding the environment variable of the LibOPT library to the .bashrc
+# checking if the Enviroment variable is already configured
+if [ $OPT_DIR ] 
+then 
+    echo "# The Enviroment variable OPT_DIR=${OPT_DIR} is already set, nothing to do here."
+else
+    OPT_DIR=$(pwd)
+    echo "Adding Enviroment variable to ${OPT_DIR}."    
+    echo "" >> ~/.bashrc
+    echo "# added by LibOPT" >> ~/.bashrc
+    echo "export OPT_DIR=${OPT_DIR}" >> ~/.bashrc
+    
+    echo "Please run the following on your current shell:"
+    echo "source ~/.bashrc"
+    echo "Or close this shell session and open a new one."
+fi 
+####################################################

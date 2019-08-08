@@ -2,18 +2,18 @@
 #include "function.h"
 #include "de.h"
 
-int main(){
-
+int main() {
     SearchSpace *s = NULL;
-    //int i;
 
-    //s = ReadSearchSpaceFromFile("examples/model_files/loa_model.txt", _LOA_); /* It reads the model file and creates a search space. We are going to use LOA to solve our problem. */
-    //InitializeSearchSpace(s, _LOA_);                                          /* It initalizes the search space */
+    /* It reads the model file and creates a search space. We are going to use LOA to solve our problem. */
+    s = ReadSearchSpaceFromFile("examples/model_files/de_model.txt", _DE_);
 
-    //if (CheckSearchSpace(s, _LOA_)) /* It checks wether the search space is valid or not */
-      //  runLOA(s, Sphere);          /* It minimizes function Sphere */
+    InitializeSearchSpace(s, _DE_);   /* It initializes the search space */
 
-    //DestroySearchSpace(&s, _LOA_); /* It deallocates the search space */
+    if (CheckSearchSpace(s, _DE_))    /* It checks whether the search space is valid or not */
+        runDE(s, Sphere);             /* It minimizes function Sphere */
+
+    DestroySearchSpace(&s, _DE_);     /* It de-allocates the search space */
 
     return 0;
 }

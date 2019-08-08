@@ -196,6 +196,10 @@ typedef struct SearchSpace_{
     double ratio_e; /*  */
     double step_e; /* */
 
+    /* DE */
+    double mutation_factor; /* Mutation factor */
+    double cross_probability;
+
     /* SA */
     int cooling_schedule_id; /* identification number of the cooling schedule used on SA */
     double init_temperature; /* Initial temperature of the system. If it is 0 (zero) or any value below, we will determine it automatically from the number of iterations. */

@@ -7,6 +7,6 @@ as well as wikipedia page at https://en.wikipedia.org/wiki/Differential_evolutio
 #include "opt.h"
 
 /* DE-related functions */
-/*************************/
+void runDE(SearchSpace *s, prtFun Evaluate, ...); /* It executes the Differential evolution for function minimization */
 
 #endif

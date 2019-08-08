@@ -1,0 +1,4 @@
+10 2 10 # <n_particles> <dimension> <max_iterations>
+0.8 0.7 # <mutation_factor> <cross_probability>
+-5.12 5.12 # <LB> <UB> x[0]
+-5.12 5.12 # <LB> <UB> x[1]
