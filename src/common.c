@@ -2077,7 +2077,10 @@ SearchSpace *ReadSearchSpaceFromFile(char *fileName, int opt_id){
 
     if ((opt_id != _GP_) && (opt_id != _TGP_)){
         for (j = 0; j < s->n; j++){
-            fscanf(fp, "%lf %lf", &(s->LB[j]), &(s->UB[j]));
+            if (fscanf(fp, "%lf %lf", &(s->LB[j]), &(s->UB[j])) == -1) {
+                fprintf(stderr, "\nMissing lower or upper bounds. Please check your model file.\n");
+                exit(1);
+            }
             WaiveComment(fp);
         }
     }

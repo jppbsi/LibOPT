@@ -66,7 +66,7 @@ void runABO(SearchSpace *s, prtFun Evaluate, ...)
             rand = round(GenerateUniformRandomNumber(0, 1));
             k = round(GenerateUniformRandomNumber(0, sunspot - 1));
             for(j = 0; j < s->n; j++){
-                s->a[i]->x[j] = s->a[i]->x[j] + ((s->a[i]->x[j] - s->a[k]->x[j])/abs(s->a[i]->x[j] - s->a[k]->x[j]))*(s->LB[j] - s->UB[j])*step*rand;
+                s->a[i]->x[j] = s->a[i]->x[j] + ((s->a[i]->x[j] - s->a[k]->x[j])/fabs(s->a[i]->x[j] - s->a[k]->x[j]))*(s->LB[j] - s->UB[j])*step*rand;
             }
 
             CheckAgentLimits(s, s->a[i]);
@@ -83,7 +83,7 @@ void runABO(SearchSpace *s, prtFun Evaluate, ...)
                 rand = round(GenerateUniformRandomNumber(0, 1));
                 k = round(GenerateUniformRandomNumber(0, sunspot - 1));
                 for(j = 0; j < s->n; j++){
-                    D = abs(2*rand*(s->a[k]->x[j] - s->a[i]->x[j]));
+                    D = fabs(2*rand*(s->a[k]->x[j] - s->a[i]->x[j]));
                     s->a[i]->x[j] = s->a[k]->x[j] - 2*alpha*rand - alpha*D;
                 }
             }
