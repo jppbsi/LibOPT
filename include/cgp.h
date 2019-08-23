@@ -13,8 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-//TODO
-/* CGP implementation is based on the paper available at https://arxiv.org/pdf/1003.1594.pdf */
+/* CGP implementation is based on the paper available at https://docs.wixstatic.com/ugd/5ef763_8cd1d7d566e84ac79a037cf4205ec527.pdf */
 
 #ifndef CGP_H
 #define CGP_H
