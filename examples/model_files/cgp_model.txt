@@ -1,0 +1,5 @@
+10 2 10 # <n_particles> <dimension> <max_iterations>
+10 100 5 500 # <n_rows> <n_collumns> <levels_back> <n_input_values>
+0.3 # <probability_of_mutation>
+-5.12 5.12 # <LB> <UB> x[0]
+-5.12 5.12 # <LB> <UB> x[1]

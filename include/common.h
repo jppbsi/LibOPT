@@ -38,6 +38,12 @@ typedef struct _Data{
     double val;
 }Data;
 
+typedef struct _CGP_Node {
+    int func_id; /* index that represents the function in the function_table */
+    int connection0; /* index for the 0th input gene of the node */
+    int connection1; /* index for the 1th input gene of the node */
+}CGP_Node;
+
 /* It defines the agent (solution) to be used for all optimization techniques */
 typedef struct Agent_{
     /* common definitions */
@@ -72,6 +78,11 @@ typedef struct Agent_{
     /* SA */
     double *LB; /* lower boundaries of each decision variable of that agent */
     double *UB; /* upper boundaries of each decision variable of that agent */
+
+    /* CGP */
+    CGP_Node* genotype; /* array of nodes */
+    double* input_values; /* array of input random values used to feed the agent/graph */
+    int* output_nodes; /* array containing the operation nodes output indexes */
 
 }Agent;
 
@@ -206,6 +217,12 @@ typedef struct SearchSpace_{
     double end_temperature; /* temperature that means the convergence of the algorithm (Generally = 1) */
     double func_param; /* extra parameter for the cooling schedule functions */
 
+    /* CGP */
+    int levels_back; /* number of columns before the current could be used as input nodes. */
+    int n_columns; /* number of columns a given program will have */
+    int n_rows; /* number of rows a given program will have */
+    int n_input_values; /* lenght of the input array filled with random numbers */
+    
 }SearchSpace;
 
 typedef double (*prtFun)(Agent *, va_list arg); /* Pointer to the function used to evaluate agents */
