@@ -40,6 +40,7 @@ extern "C" {
 #define _COBIDE_ 18 /* Differential evolution based on covariance matrix learning and bimodal distribution parameter */
 #define _ABO_ 19 /* Artificial Butterfly Algorithm */
 #define _SA_ 20 /* Simulated Annealing Optimization Algorithm */
+#define _CGP_ 21 /* Cartesian Genetic Programming */
 /**************************/
 
 /* Tensor-based Meta-heuristics */
